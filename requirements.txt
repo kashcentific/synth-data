@@ -1,0 +1,8 @@
+pandas
+scipy
+langgraph
+python-dotenv
+langchain
+langchain-openai
+openai
+datasets
