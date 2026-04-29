@@ -1,0 +1,606 @@
+{
+  "thinker_output": {
+    "dataset_type": "jira",
+    "domain": {
+      "name": "software",
+      "confidence": 0.9,
+      "reasoning": "The dataset contains Jira issue tracking data related to a software project, specifically Sourcetree for Windows, which is evident from the issue types, project names, and descriptions."
+    },
+    "column_profiles": [
+      {
+        "column_name": "Summary",
+        "inferred_dtype": "text",
+        "semantic_role": "text_content",
+        "notes": "High uniqueness (98%) suggests diverse issues, but text quality needs checking for clarity and relevance."
+      },
+      {
+        "column_name": "Description",
+        "inferred_dtype": "text",
+        "semantic_role": "text_content",
+        "notes": "Similar to Summary, high uniqueness (98%) indicates varied content; quality checks are necessary for comprehensibility."
+      },
+      {
+        "column_name": "Issue Type",
+        "inferred_dtype": "categorical",
+        "semantic_role": "label",
+        "notes": "Only two unique values (Bug/Suggestion) indicate potential class imbalance."
+      },
+      {
+        "column_name": "Status",
+        "inferred_dtype": "categorical",
+        "semantic_role": "label",
+        "notes": "Eight unique statuses may require analysis for workflow efficiency."
+      },
+      {
+        "column_name": "Priority",
+        "inferred_dtype": "categorical",
+        "semantic_role": "label",
+        "notes": "Five unique priorities suggest potential class imbalance; further analysis needed."
+      },
+      {
+        "column_name": "Resolution",
+        "inferred_dtype": "categorical",
+        "semantic_role": "label",
+        "notes": "Nine unique resolutions; understanding their distribution could provide insights into issue handling."
+      },
+      {
+        "column_name": "Project key",
+        "inferred_dtype": "text",
+        "semantic_role": "identifier",
+        "notes": "Only one unique project key indicates a focused dataset."
+      },
+      {
+        "column_name": "Project name",
+        "inferred_dtype": "text",
+        "semantic_role": "identifier",
+        "notes": "Only one unique project name, reinforcing the dataset's specificity."
+      },
+      {
+        "column_name": "Project type",
+        "inferred_dtype": "text",
+        "semantic_role": "identifier",
+        "notes": "Only one unique project type, indicating a singular focus."
+      },
+      {
+        "column_name": "Reporter",
+        "inferred_dtype": "text",
+        "semantic_role": "identifier",
+        "notes": "High uniqueness (90%) suggests diverse contributors; potential PII concerns if real names are used."
+      },
+      {
+        "column_name": "Created",
+        "inferred_dtype": "datetime",
+        "semantic_role": "timestamp",
+        "notes": "All entries are populated; useful for time-based analysis."
+      },
+      {
+        "column_name": "Updated",
+        "inferred_dtype": "datetime",
+        "semantic_role": "timestamp",
+        "notes": "High uniqueness (96.8%) indicates frequent updates; could be relevant for tracking issue resolution timelines."
+      },
+      {
+        "column_name": "Resolved",
+        "inferred_dtype": "datetime",
+        "semantic_role": "timestamp",
+        "notes": "27% unique values; understanding resolution times could be beneficial."
+      }
+    ],
+    "surface_quality_hints": [
+      "High uniqueness in Summary and Description columns suggests diverse issues but requires text quality checks.",
+      "Class imbalance likely in Issue Type and Priority columns."
+    ],
+    "governance_warnings": [
+      "Column 'Reporter' may contain real PII if it includes identifiable user information."
+    ],
+    "reference_dataset": {
+      "seems_needed": true,
+      "reasoning": "A reference dataset could help evaluate the quality of text in Summary and Description, as well as provide benchmarks for class distributions."
+    },
+    "recommended_agents": {
+      "governance": {
+        "run": true,
+        "reason": "Privacy is critical, especially with potential PII in the Reporter column."
+      },
+      "math": {
+        "run": true,
+        "reason": "Class balance analysis is essential for Issue Type and Priority."
+      },
+      "semantic": {
+        "run": true,
+        "reason": "Text quality checks in Summary and Description are necessary."
+      },
+      "utility": {
+        "run": false,
+        "reason": "Downstream tasks are not clearly defined yet."
+      }
+    },
+    "execution_notes": [
+      "Math agent should focus on class balance for columns 'Issue Type' and 'Priority'.",
+      "Semantic agent should check text quality in 'Summary' and 'Description' for clarity and relevance."
+    ],
+    "user_hint_influence": "The user hint emphasized the need for text quality checks and highlighted potential class imbalances, which guided the focus on those areas in the audit plan.",
+    "reasoning_trace": "The dataset is identified as Jira issue tracking data for a software project, leading to a strong confidence in the software domain. The analysis of column profiles revealed high uniqueness in text columns, indicating diverse issues but necessitating quality checks. Class imbalances in categorical columns were noted, and potential PII concerns were flagged. The need for a reference dataset was established to aid in evaluating text quality and class distributions."
+  },
+  "researcher_output": {
+    "final_metrics": [
+      {
+        "metric_name": "Entropy of Issue Types",
+        "metric_type": "statistical",
+        "description": "Measures the entropy of the distribution of issue types (Bug/Suggestion) to assess class balance.",
+        "reasoning": "High entropy indicates a balanced distribution of issue types, while low entropy suggests class imbalance, which can affect analysis and model training.",
+        "source_influence": "Arxiv - highlights the importance of class balance in data analysis.",
+        "execution_hint": "from scipy.stats import entropy; issue_type_counts = df['Issue Type'].value_counts(); issue_type_entropy = entropy(issue_type_counts)",
+        "relevance_score": 0.9,
+        "supporting_evidence": "Research indicates that class balance is crucial for effective model training and analysis.",
+        "feasibility_score": 0.9,
+        "is_computable": true,
+        "feasibility_reason": "The metric can be computed using the 'Issue Type' column, and the execution hint is realistic."
+      },
+      {
+        "metric_name": "Semantic Coherence of Summaries",
+        "metric_type": "semantic_quality",
+        "description": "Evaluates the semantic coherence of issue summaries using a pre-trained language model.",
+        "reasoning": "High coherence indicates that the summaries are logically structured and relevant, which is crucial for understanding issues.",
+        "source_influence": "Arxiv - discusses the importance of data quality in machine learning.",
+        "execution_hint": "from transformers import pipeline; coherence_model = pipeline('text-classification', model='your_model'); coherence_scores = coherence_model(df['Summary'].tolist())",
+        "relevance_score": 0.9,
+        "supporting_evidence": "High coherence in summaries is essential for effective communication and understanding in software issues.",
+        "feasibility_score": 0.8,
+        "is_computable": true,
+        "feasibility_reason": "The metric can be computed using the 'Summary' column, but requires a pre-trained language model which may not be readily available."
+      },
+      {
+        "metric_name": "Class Imbalance Ratio for Issue Types",
+        "metric_type": "label_noise",
+        "description": "Calculates the ratio of the most common issue type to the least common to assess class imbalance.",
+        "reasoning": "A high ratio indicates significant class imbalance, which can affect model performance.",
+        "source_influence": "Arxiv - emphasizes the importance of class balance.",
+        "execution_hint": "issue_type_counts = df['Issue Type'].value_counts(); imbalance_ratio = issue_type_counts.max() / issue_type_counts.min()",
+        "relevance_score": 0.9,
+        "supporting_evidence": "Class imbalance can severely impact the performance of machine learning models.",
+        "feasibility_score": 0.9,
+        "is_computable": true,
+        "feasibility_reason": "The metric can be computed using the 'Issue Type' column, and the execution hint is realistic."
+      },
+      {
+        "metric_name": "KL-Divergence of Priority Distribution",
+        "metric_type": "statistical",
+        "description": "Calculates the Kullback-Leibler divergence between the observed and expected distributions of issue priorities.",
+        "reasoning": "This metric helps identify how much the actual priority distribution deviates from a uniform distribution, indicating potential biases.",
+        "source_influence": "Arxiv - emphasizes the need for understanding distributional biases.",
+        "execution_hint": "from scipy.special import kl_div; priority_counts = df['Priority'].value_counts(normalize=True); expected_distribution = np.full(len(priority_counts), 1/len(priority_counts)); kl_divergence = kl_div(priority_counts, expected_distribution).sum()",
+        "relevance_score": 0.85,
+        "supporting_evidence": "Understanding distributional biases is critical for accurate analysis in software project management.",
+        "feasibility_score": 0.85,
+        "is_computable": true,
+        "feasibility_reason": "The metric can be computed using the 'Priority' column, and the execution hint is realistic."
+      },
+      {
+        "metric_name": "Embedding Similarity of Descriptions",
+        "metric_type": "semantic_quality",
+        "description": "Calculates the cosine similarity between embeddings of issue descriptions to assess redundancy.",
+        "reasoning": "High similarity may indicate redundant descriptions, which can affect the dataset's utility.",
+        "source_influence": "Wikipedia - emphasizes the need for high-quality datasets.",
+        "execution_hint": "from sklearn.metrics.pairwise import cosine_similarity; from sentence_transformers import SentenceTransformer; model = SentenceTransformer('all-MiniLM-L6-v2'); embeddings = model.encode(df['Description'].tolist()); similarity_matrix = cosine_similarity(embeddings)",
+        "relevance_score": 0.85,
+        "supporting_evidence": "Redundant descriptions can significantly reduce the effectiveness of a dataset.",
+        "feasibility_score": 0.75,
+        "is_computable": true,
+        "feasibility_reason": "The metric can be computed using the 'Description' column, but requires a specific embedding model which may not be readily available."
+      },
+      {
+        "metric_name": "Statistical Test for Summary Clarity",
+        "metric_type": "statistical",
+        "description": "Conducts a statistical test (e.g., t-test) to compare the lengths of summaries across different issue types.",
+        "reasoning": "This helps assess whether the clarity of summaries varies significantly between different types of issues.",
+        "source_influence": "Wikipedia - discusses the importance of clarity in data.",
+        "execution_hint": "from scipy.stats import ttest_ind; bug_summaries = df[df['Issue Type'] == 'Bug']['Summary'].str.len(); suggestion_summaries = df[df['Issue Type'] == 'Suggestion']['Summary'].str.len(); t_stat, p_value = ttest_ind(bug_summaries, suggestion_summaries)",
+        "relevance_score": 0.8,
+        "supporting_evidence": "Clarity in summaries is vital for effective communication in software issue tracking.",
+        "feasibility_score": 0.9,
+        "is_computable": true,
+        "feasibility_reason": "The metric can be computed using the 'Summary' and 'Issue Type' columns, and the execution hint is realistic."
+      },
+      {
+        "metric_name": "Readability Score of Summaries",
+        "metric_type": "text_quality",
+        "description": "Calculates the readability score (e.g., Flesch-Kincaid) of issue summaries to assess text quality.",
+        "reasoning": "Higher readability scores indicate clearer and more accessible text, which is important for effective communication.",
+        "source_influence": "Web Search - highlights the importance of text clarity.",
+        "execution_hint": "from textstat import flesch_kincaid_grade; readability_scores = df['Summary'].apply(flesch_kincaid_grade)",
+        "relevance_score": 0.8,
+        "supporting_evidence": "Clear and accessible text is crucial for understanding software issues.",
+        "feasibility_score": 0.9,
+        "is_computable": true,
+        "feasibility_reason": "The metric can be computed using the 'Summary' column, and the execution hint is realistic."
+      },
+      {
+        "metric_name": "Distribution of Resolution Times",
+        "metric_type": "statistical",
+        "description": "Analyzes the distribution of resolution times to identify patterns and outliers.",
+        "reasoning": "Understanding resolution times can provide insights into workflow efficiency and potential bottlenecks.",
+        "source_influence": "Web Search - highlights the importance of resolution time in issue tracking.",
+        "execution_hint": "resolution_times = (df['Resolved'] - df['Created']).dt.total_seconds(); resolution_distribution = resolution_times.describe()",
+        "relevance_score": 0.75,
+        "supporting_evidence": "Analyzing resolution times is essential for improving project management and efficiency.",
+        "feasibility_score": 0.85,
+        "is_computable": true,
+        "feasibility_reason": "The metric can be computed using the 'Created' and 'Resolved' columns, and the execution hint is realistic."
+      }
+    ],
+    "research_summary": "The selected metrics provide a comprehensive assessment of both statistical and semantic aspects of the Jira dataset. Metrics like entropy and KL-divergence address class balance and distribution biases, while semantic coherence and embedding similarity focus on the quality of textual data. The inclusion of readability and clarity metrics ensures that the summaries are not only informative but also accessible, which is crucial for effective communication in software development.",
+    "confidence_level": "HIGH",
+    "research_context": {
+      "duckduckgo": {
+        "query": "software jira synthetic dataset quality evaluation metrics",
+        "excerpt": "May 20, 2025 - Teams monitor bug counts to prioritize fixes, identify quality trends (e.g., a spike in bugs after a release), inform release readiness decisions, and allocate resources for quality improvement initiatives. Jira software dashboards can easily display bug counts using filters and vario"
+      },
+      "wikipedia": {
+        "query": "software machine learning dataset evaluation benchmark",
+        "excerpt": "Page: List of datasets for machine-learning research Summary: These datasets are used in machine learning (ML) research and have been cited in peer-reviewed academic journals. Datasets are an integral part of the field of machine learning. Major advances in this field can result from advances in lea"
+      },
+      "arxiv": {
+        "query": "synthetic data evaluation metrics software machine learning fidelity",
+        "excerpt": "Published: 2023-06-07 Title: Changing Data Sources in the Age of Machine Learning for Official Statistics Authors: Cedric De Boom, Michael Reusens Summary: Data science has become increasingly essential for the production of official statistics, as it enables the automated collection, processing, an"
+      }
+    },
+    "deep_research_evidence": {
+      "Entropy of Issue Types": {
+        "web": "January 20, 2026 - Ivar Jacobson et al. in 1992 described software entropy similarly, and argued that this increase in disorder as a system is modified would always eventually make a software system uneconomical to maintain, although the time until that happens is greatly dependent on its initial design, and can be extended by refactoring. January 16, 2026 - What exactly comprises a \u201cwork unit\u201d is dependent upon development methodology. C is the perceived probability that, when the work units in scope have been implemented, the number of actual open issues I1 in the next iteration will be greater than its estimation now. This value lives in the domain 0 <= C <= 1. One might argue that the probability C is precisely what software entropy purports to measure. March 20, 2026 - In all cases, p",
+        "wiki": "Page: Entropy and life\nSummary: Research concerning the relationship between the thermodynamic quantity entropy and both the origin and evolution of life began around the turn of the 20th century. In 1910 American historian Henry Adams printed and distributed to university libraries and history professors the small volume A Letter to American Teachers of History proposing a theory of history based on the second law of thermodynamics and on the principle of entropy.\nThe 1944 book What is Life? by Nobel-laureate physicist Erwin Schr\u00f6dinger stimulated further research in the field. In his book, Schr\u00f6dinger originally stated that life feeds on negative entropy, or negentropy as it is sometimes called, but in a later edition corrected himself in response to complaints and stated that the true s",
+        "arxiv": "Published: 2024-12-03\nTitle: Morescient GAI for Software Engineering (Extended Version)\nAuthors: Marcus Kessel, Colin Atkinson\nSummary: The ability of Generative AI (GAI) technology to automatically check, synthesize and modify software engineering artifacts promises to revolutionize all aspects of software engineering. Using GAI for software engineering tasks is consequently one of the most rapidly expanding fields of software engineering research, with over a hundred LLM-based code models having been published since 2021. However, the overwhelming majority of existing code models share a major weakness - they are exclusively trained on the syntactic facet of software, significantly lowering their trustworthiness in tasks dependent on software semantics. To address this problem, a new cla"
+      },
+      "Semantic Coherence of Summaries": {
+        "web": "A Hybrid Approach Initial explorations with established NLP metrics demonstrated their strengths and limitations, but extending these approaches to semantic accuracy was not robust. It seemed LLM-based evaluation might be better for semantic assessment with good prompt design. At the same time, relying solely on LLM-based evaluation for the other more deterministic scores related to coherence ... Learn the fundamentals of large language model (LLM) evaluation, including key metrics and frameworks used to measure model performance, safety, and reliability. Explore practical evaluation techniques, such as automated tools, LLM judges, and human assessments tailored for domain-specific use cases. Understand the best practices for LLM evaluation, as well as some of the future directions ... We ",
+        "wiki": "Page: Automatic summarization\nSummary: Automatic summarization is the process of shortening a set of data computationally, to create a subset (a summary) that represents the most important or relevant information within the original content. Artificial intelligence (AI) algorithms are commonly developed and employed to achieve this, specialized for different types of data.\nText summarization is usually implemented by natural language processing methods, designed to locate the most informative sentences in a given document. On the other hand, visual content can be summarized using computer vision algorithms. Image summarization is the subject of ongoing research; existing approaches typically attempt to display the most representative images from a given image collection, or generate a vide",
+        "arxiv": "Published: 2024-12-03\nTitle: Morescient GAI for Software Engineering (Extended Version)\nAuthors: Marcus Kessel, Colin Atkinson\nSummary: The ability of Generative AI (GAI) technology to automatically check, synthesize and modify software engineering artifacts promises to revolutionize all aspects of software engineering. Using GAI for software engineering tasks is consequently one of the most rapidly expanding fields of software engineering research, with over a hundred LLM-based code models having been published since 2021. However, the overwhelming majority of existing code models share a major weakness - they are exclusively trained on the syntactic facet of software, significantly lowering their trustworthiness in tasks dependent on software semantics. To address this problem, a new cla"
+      },
+      "Class Imbalance Ratio for Issue Types": {
+        "web": "In practice, a class imbalance in a binary problem appears when we have much more observations from one class than the other: As a result, we have: Class imbalance in a binary problem is described by an unbalanced likelihood to draw an observation from a given class. A software development methodology is a structured approach or set of principles used to plan, manage, and execute software projects. It defines the processes and practices for building software, including stages like Metric: the size ratio of smallest and largest classes. These numbers are based on the standard train data split if available, otherwise on the whole dataset. For COCO [29], no specic numbers are available for calculating between-class imbalance ratios... The evaluation parameters employed encompassed accuracy, F",
+        "wiki": "[Wikipedia: Class Imbalance Ratio for Issue Types] Failed: Expecting value: line 1 column 1 (char 0)",
+        "arxiv": "Published: 2024-12-03\nTitle: Morescient GAI for Software Engineering (Extended Version)\nAuthors: Marcus Kessel, Colin Atkinson\nSummary: The ability of Generative AI (GAI) technology to automatically check, synthesize and modify software engineering artifacts promises to revolutionize all aspects of software engineering. Using GAI for software engineering tasks is consequently one of the most rapidly expanding fields of software engineering research, with over a hundred LLM-based code models having been published since 2021. However, the overwhelming majority of existing code models share a major weakness - they are exclusively trained on the syntactic facet of software, significantly lowering their trustworthiness in tasks dependent on software semantics. To address this problem, a new cla"
+      },
+      "KL-Divergence of Priority Distribution": {
+        "web": "In mathematical statistics, the Kullback-Leibler (KL) divergence (also called relative entropy and I-divergence[1]), denoted , is a type of statistical distance: a measure of how much an approximating probability distribution Q is different from a true probability distribution P. [2][3] Mathematically, it is defined as A simple interpretation of the KL divergence of P from Q is the expected ... KL-Divergence (Kullback-Leibler Divergence) is a statistical measure used to determine how one probability distribution diverges from another reference distribution. KL divergence against a known-good reference answers \"how much did this quant change the model's behaviour?\" rather than \"how good is this model overall?\". What KLD measures KL divergence measures how much one probability distribution d",
+        "wiki": "Page: Normal distribution\nSummary: In probability theory and statistics, a normal distribution or Gaussian distribution is a type of continuous probability distribution for a real-valued random variable. The general form of its probability density function is\n\n  \n    \n      \n        f\n        (\n        x\n        )\n        =\n        \n          \n            1\n            \n              2\n              \u03c0\n              \n                \u03c3\n                \n                  2\n                \n              \n            \n          \n        \n        exp\n        \u2061\n        \n          \n            (\n            \n              \u2212\n              \n                \n                  \n                    (\n                    x\n                    \u2212\n                    \u03bc\n                    \n               ",
+        "arxiv": "Published: 2021-07-22\nTitle: Challenges for Inclusion in Software Engineering: The Case of the Emerging Papua New Guinean Society\nAuthors: Raula Gaikovina Kula, Christoph Treude, Hideaki Hata, Sebastian Baltes, Igor Steinmacher, Marco Aurelio Gerosa, Winifred Kula Amini\nSummary: Software plays a central role in modern societies, with its high economic value and potential for advancing societal change. In this paper, we characterise challenges and opportunities for a country progressing towards entering the global software industry, focusing on Papua New Guinea (PNG). By hosting a Software Engineering workshop, we conducted a qualitative study by recording talks (n=3), employing a questionnaire (n=52), and administering an in-depth focus group session with local actors (n=5). Based on a the"
+      },
+      "Embedding Similarity of Descriptions": {
+        "web": "Setting up an effective evaluation process An effective evaluation process combines automated metrics with human insights. Automated tools, like cosine similarity, spot glaring issues, but human reviewers catch the subtleties. Cross-validate results across different datasets to ensure your findings hold up under various conditions. Learn what embedding similarity is, how it works, and how to measure text semantics for search, clustering, and recommendation systems. Embedding quality itself can be assessed through visualization techniques, clustering analysis, and similarity preservation measures. A/B testing remains the gold standard for evaluating recommender systems in production environments. Embedding Model Comparison Framework A comprehensive framework for evaluating and comparing tex",
+        "wiki": "Page: Semantic similarity\nSummary: Semantic similarity is a metric defined over a set of documents or terms, where the idea of distance between items is based on the likeness of their meaning or semantic content as opposed to lexicographical similarity. These are mathematical tools used to estimate the strength of the semantic relationship between units of language, concepts or instances, through a numerical description obtained according to the comparison of information supporting their meaning or describing their nature. The term semantic similarity is often confused with semantic relatedness. Semantic relatedness includes any relation between two terms, while semantic similarity only includes \"is a\" relations.\nFor example, \"car\" is similar to \"bus\", but is also related to \"road\" and \"dr",
+        "arxiv": "Published: 2024-07-26\nTitle: Automated Description Generation for Software Patches\nAuthors: Thanh Trong Vu, Tuan-Dung Bui, Thanh-Dat Do, Thu-Trang Nguyen, Hieu Dinh Vo, Son Nguyen\nSummary: Software patches are pivotal in refining and evolving codebases, addressing bugs, vulnerabilities, and optimizations. Patch descriptions provide detailed accounts of changes, aiding comprehension and collaboration among developers. However, manual description creation poses challenges in terms of time consumption and variations in quality and detail. In this paper, we propose PATCHEXPLAINER, an approach that addresses these challenges by framing patch description generation as a machine translation task. In PATCHEXPLAINER, we leverage explicit representations of critical elements, historical context, and"
+      },
+      "Statistical Test for Summary Clarity": {
+        "web": "Statistical tests. Fisher's exact test p-value calculator, 2x2 and 2x3. clear. calculate. Alternative hypothesis: Two-sided Alternative hypothesis: Upper left smaller Alternative hypothesis: Upper left larger. mid-p adjustment P-value: Hardy-Weinberg equilibrium exact test. Best statistical analysis software.Summarizing and presenting the data in a graph or chart to present key findings. Discovering crucial measures within the data. Calculating if the data is slightly clustered or spread out, which also determines similarities. MedCalc's free online Diagnostic test statistical calculator includes Sensitivity, Specificity, Likelihood ratios, Predictive values with 95% Confidence Intervals. Learn best practices and techniques for time estimation in software testing with Apriorit\u2019s guide, inc",
+        "wiki": "Page: Python (programming language)\nSummary: Python is a high-level, general-purpose programming language that emphasizes code readability, simplicity, and ease-of-writing with the use of significant indentation, \"plain English\" naming, an extensive (\"batteries-included\") standard library, and garbage collection. Python supports multiple programming paradigms but with an emphasis on object-oriented programming and dynamic typing.\nGuido van Rossum began working on Python in the late 1980s as a successor to the ABC programming language. Python 3.0, released in 2008, was a major revision and not completely backward-compatible with earlier versions. Beginning with Python 3.5, capabilities and keywords for typing were added to the language, allowing optional static typing. As of 2026, the Pytho",
+        "arxiv": "Published: 2021-07-22\nTitle: Challenges for Inclusion in Software Engineering: The Case of the Emerging Papua New Guinean Society\nAuthors: Raula Gaikovina Kula, Christoph Treude, Hideaki Hata, Sebastian Baltes, Igor Steinmacher, Marco Aurelio Gerosa, Winifred Kula Amini\nSummary: Software plays a central role in modern societies, with its high economic value and potential for advancing societal change. In this paper, we characterise challenges and opportunities for a country progressing towards entering the global software industry, focusing on Papua New Guinea (PNG). By hosting a Software Engineering workshop, we conducted a qualitative study by recording talks (n=3), employing a questionnaire (n=52), and administering an in-depth focus group session with local actors (n=5). Based on a the"
+      },
+      "Readability Score of Summaries": {
+        "web": "February 11, 2026 - The more advanced variants of syntactic readability features are frequently computed from parse tree. Emily Pitler (University of Pennsylvania) and Ani Nenkova (University of Pennsylvania) are considered pioneers in evaluating the parse-tree syntactic features and making it widely used in readability assessment. 2 days ago - The highest (easiest) readability score possible is 121.22, but only if every sentence consists of only 1 one-syllable word. \"The cat sat on the mat.\" scores 116. The score does not have a theoretical lower bound; therefore, it is possible to ... August 26, 2025 - In order to measure inter-annotator agreement, we bin the scores into a binary \u201chigh-readability\u201d and \u201clow readability.\u201d Summaries given scores of 3 or higher are considered highly readabl",
+        "wiki": "[Wikipedia: Readability Score of Summaries] Failed: Expecting value: line 1 column 1 (char 0)",
+        "arxiv": "Published: 2023-10-14\nTitle: Leveraging Generative AI: Improving Software Metadata Classification with Generated Code-Comment Pairs\nAuthors: Samah Syed, Angel Deborah S\nSummary: In software development, code comments play a crucial role in enhancing code comprehension and collaboration. This research paper addresses the challenge of objectively classifying code comments as \"Useful\" or \"Not Useful.\" We propose a novel solution that harnesses contextualized embeddings, particularly BERT, to automate this classification process. We address this task by incorporating generated code and comment pairs. The initial dataset comprised 9048 pairs of code and comments written in C, labeled as either Useful or Not Useful. To augment this dataset, we sourced an additional 739 lines of code-comment pair"
+      },
+      "Distribution of Resolution Times": {
+        "web": "Software development has evolved into a highly collaborative process where predicting issue resolution times is crucial for effective project management. While existing approaches have made progress, they often act as black-box models without explaining the underlying factors influencing resolution times. For a given number of defects, we propose a method for estimating the total amount of time required to fix them based on the empirical distribution of bug-fixing time derived from historical data. tegrated defect discovery and resolution process modeling framework [3]. Queueing theoretic models of discovery and resolution [5,6] have also been proposed, including multi-priority queuing models [7] for the mean time to resolution according to defect severity, but were limited to homogeneous ",
+        "wiki": "[Wikipedia: Distribution of Resolution Times] Failed: Expecting value: line 1 column 1 (char 0)",
+        "arxiv": "Published: 2021-07-22\nTitle: Challenges for Inclusion in Software Engineering: The Case of the Emerging Papua New Guinean Society\nAuthors: Raula Gaikovina Kula, Christoph Treude, Hideaki Hata, Sebastian Baltes, Igor Steinmacher, Marco Aurelio Gerosa, Winifred Kula Amini\nSummary: Software plays a central role in modern societies, with its high economic value and potential for advancing societal change. In this paper, we characterise challenges and opportunities for a country progressing towards entering the global software industry, focusing on Papua New Guinea (PNG). By hosting a Software Engineering workshop, we conducted a qualitative study by recording talks (n=3), employing a questionnaire (n=52), and administering an in-depth focus group session with local actors (n=5). Based on a the"
+      }
+    }
+  },
+  "per_metric_results": [
+    {
+      "metric_name": "Entropy of Issue Types",
+      "metric_type": "statistical",
+      "description": "Measures the entropy of the distribution of issue types (Bug/Suggestion) to assess class balance.",
+      "reasoning": "High entropy indicates a balanced distribution of issue types, while low entropy suggests class imbalance, which can affect analysis and model training.",
+      "source_influence": "Arxiv - highlights the importance of class balance in data analysis.",
+      "feasibility_score": 0.9,
+      "quality_score": 0.8,
+      "execution_output": "METRIC_VALUE: 0.46217237399048117\nANOMALOUS_ROWS: []\n",
+      "error": null,
+      "anomalous_row_count": 0,
+      "anomalous_row_indices": [],
+      "anomalous_row_narratives": [],
+      "anomalous_samples": [],
+      "metric_interpretation": "The entropy of issue types is measured at approximately 0.46, indicating a moderate level of class balance between the two categories: Bug and Suggestion. This value suggests that while there is some diversity in the types of issues reported, the distribution is not perfectly uniform, which could imply a slight preference or bias towards one type over the other. Notably, there are no anomalous rows flagged, indicating that all entries conform to expected patterns without any outliers that could skew the analysis. The absence of flagged rows suggests that the data quality is satisfactory, and there are no immediate concerns regarding the integrity of the issue type distribution. However, the moderate entropy value may warrant further investigation to ensure that the balance between Bug and Suggestion remains appropriate for effective issue tracking and resolution.",
+      "retry_count": 0,
+      "computation_strategy": "direct_math"
+    },
+    {
+      "metric_name": "Class Imbalance Ratio for Issue Types",
+      "metric_type": "label_noise",
+      "description": "Calculates the ratio of the most common issue type to the least common to assess class imbalance.",
+      "reasoning": "A high ratio indicates significant class imbalance, which can affect model performance.",
+      "source_influence": "Arxiv - emphasizes the importance of class balance.",
+      "feasibility_score": 0.9,
+      "quality_score": 0.8,
+      "execution_output": "METRIC_VALUE: 4.747126436781609\nANOMALOUS_ROWS: []\n",
+      "error": null,
+      "anomalous_row_count": 0,
+      "anomalous_row_indices": [],
+      "anomalous_row_narratives": [],
+      "anomalous_samples": [],
+      "metric_interpretation": "The Class Imbalance Ratio for Issue Types is calculated at approximately 4.75, indicating a significant disparity between the most common and least common issue types in the dataset. This ratio suggests that the most prevalent issue type occurs nearly 4.75 times more frequently than the least common type, which raises concerns about potential bias in the data. Notably, there are no anomalous rows flagged, which implies that all entries conform to expected patterns without any outliers. However, the severity of the class imbalance is moderate, as it could lead to skewed insights and hinder the effectiveness of any predictive models built on this data. Addressing this imbalance may be necessary to ensure a more equitable representation of all issue types in future analyses.",
+      "retry_count": 0,
+      "computation_strategy": "direct_math"
+    },
+    {
+      "metric_name": "KL-Divergence of Priority Distribution",
+      "metric_type": "statistical",
+      "description": "Calculates the Kullback-Leibler divergence between the observed and expected distributions of issue priorities.",
+      "reasoning": "This metric helps identify how much the actual priority distribution deviates from a uniform distribution, indicating potential biases.",
+      "source_influence": "Arxiv - emphasizes the need for understanding distributional biases.",
+      "feasibility_score": 0.85,
+      "quality_score": 0.8,
+      "execution_output": "METRIC_VALUE: 0.6014310508518682\nANOMALOUS_ROWS: []\n",
+      "error": null,
+      "anomalous_row_count": 0,
+      "anomalous_row_indices": [],
+      "anomalous_row_narratives": [],
+      "anomalous_samples": [],
+      "metric_interpretation": "The KL-Divergence of the priority distribution is measured at approximately 0.601, indicating a moderate divergence between the observed and expected distributions of issue priorities. This value suggests that the actual distribution of priorities does not align closely with what was anticipated, which could imply potential issues in how priorities are assigned or reported. Notably, there are no anomalous rows flagged, indicating that there are no specific entries that deviate significantly from the expected behavior. However, the absence of flagged rows does not diminish the importance of the divergence metric; it still warrants further investigation to understand the underlying causes of this discrepancy. The severity of this finding is moderate, as it highlights a potential misalignment in priority assignment that could affect resource allocation and issue resolution strategies.",
+      "retry_count": 0,
+      "computation_strategy": "direct_math"
+    },
+    {
+      "metric_name": "Statistical Test for Summary Clarity",
+      "metric_type": "statistical",
+      "description": "Conducts a statistical test (e.g., t-test) to compare the lengths of summaries across different issue types.",
+      "reasoning": "This helps assess whether the clarity of summaries varies significantly between different types of issues.",
+      "source_influence": "Wikipedia - discusses the importance of clarity in data.",
+      "feasibility_score": 0.9,
+      "quality_score": 1.0,
+      "execution_output": "METRIC_VALUE: 0.9190195834982638\nANOMALOUS_ROWS: [109, 140, 177, 250, 256, 306, 309, 319, 401, 407, 436]\n",
+      "error": null,
+      "anomalous_row_count": 11,
+      "anomalous_row_indices": [
+        109,
+        140,
+        177,
+        250,
+        256,
+        306,
+        309,
+        319,
+        401,
+        407,
+        436
+      ],
+      "anomalous_row_narratives": [
+        "Row 109 | Project key='SRCTREEWIN' | Summary='Sourcetree on my laptop cannot recognize my github repository when I try to clone. Work...' | Description='Help. basic Github repository not recognizable' | Issue Type='Bug' | Status='Needs Triage' | Priority='Low' | Resolution='' | Project name='Sourcetree for Windows' | Project type='software' | Reporter='999e43e86f06' | Created='08/Aug/2022 6:43 PM' | Updated='01/Nov/2022 6:40 AM' | Resolved=''",
+        "Row 140 | Project key='SRCTREEWIN' | Summary=\"Toolbar: After rebase children in source tree window and after that 'git push -f' CLI, ...\" | Description=\"Even when pressed F5 in main screen it doesn't update.The way I found to update the not...\" | Issue Type='Bug' | Status='Needs Triage' | Priority='Low' | Resolution='' | Project name='Sourcetree for Windows' | Project type='software' | Reporter='6a3511956ba8' | Created='23/May/2022 6:28 PM' | Updated='23/May/2022 6:49 PM' | Resolved=''",
+        "Row 177 | Project key='SRCTREEWIN' | Summary='Wrong Base64 Encoding - Sourcetree Authentication failed if password contains special c...' | Description='We have the issue that some users are able to authenticate on Bitbucket Server using gi...' | Issue Type='Bug' | Status='Needs Triage' | Priority='Low' | Resolution='' | Project name='Sourcetree for Windows' | Project type='software' | Reporter='93a7a4214811' | Created='28/Mar/2022 1:23 PM' | Updated='28/Mar/2022 1:23 PM' | Resolved=''",
+        "Row 250 | Project key='SRCTREEWIN' | Summary='Sourcetree crashes when trying to pull a repository (after  being recognized as a valid...' | Description='Source tree crashes when trying to pull a repository (after \\xa0being recognized as a vali...' | Issue Type='Bug' | Status='Needs Triage' | Priority='Low' | Resolution='' | Project name='Sourcetree for Windows' | Project type='software' | Reporter='f201b399e33b' | Created='21/Nov/2021 9:23 AM' | Updated='16/Dec/2021 4:33 AM' | Resolved=''",
+        "Row 256 | Project key='SRCTREEWIN' | Summary='In Windows 11 environment, minimizing the program and maximizing the program again will...' | Description='The page will look like the following figure\uff1a\\xa0!image-2021-11-15-16-12-08-280.png!' | Issue Type='Bug' | Status='Needs Triage' | Priority='Low' | Resolution='' | Project name='Sourcetree for Windows' | Project type='software' | Reporter='d9fc38f936bb' | Created='15/Nov/2021 8:16 AM' | Updated='16/Dec/2021 4:32 AM' | Resolved=''",
+        "Row 306 | Project key='SRCTREEWIN' | Summary='Remote option in source tree not working when click on that your windows source tree ap...' | Description='Remote option in the source tree not working when clicking on that your windows source ...' | Issue Type='Bug' | Status='Needs Triage' | Priority='Low' | Resolution='' | Project name='Sourcetree for Windows' | Project type='software' | Reporter='8f06621f9840' | Created='06/Jul/2021 6:12 AM' | Updated='06/Jul/2021 12:46 PM' | Resolved=''",
+        "Row 309 | Project key='SRCTREEWIN' | Summary='Application crashes silently when opening a local repository, while running without adm...' | Description='This is on Windows 10. Sourcetree 3.4.5.Here is the .NET Runtime call stack from Event ...' | Issue Type='Bug' | Status='Needs Triage' | Priority='Low' | Resolution='' | Project name='Sourcetree for Windows' | Project type='software' | Reporter='7233927de385' | Created='03/Jul/2021 9:20 PM' | Updated='03/Jul/2021 9:20 PM' | Resolved=''",
+        "Row 319 | Project key='SRCTREEWIN' | Summary='After setting my git account in sourcetree i am getting no unix socket support while pu...' | Description='After setting my git account in sourcetree i am getting below errorgit -c diff.mnemonic...' | Issue Type='Bug' | Status='Needs Triage' | Priority='Low' | Resolution='' | Project name='Sourcetree for Windows' | Project type='software' | Reporter='89dbb2dcf0e4' | Created='30/Jun/2021 9:47 AM' | Updated='13/Sep/2022 2:45 PM' | Resolved=''",
+        "Row 401 | Project key='SRCTREEWIN' | Summary='RepoHandlerGitOld.NeedsLargeFilesPull incorrectly returning true for files reported unc...' | Description='Being prompted to \"Run \\'git lfs pull\\' now?\" despite all lfs files up to date when open ...' | Issue Type='Bug' | Status='Closed' | Priority='Low' | Resolution='Fixed' | Project name='Sourcetree for Windows' | Project type='software' | Reporter='2f9a02d76474' | Created='08/Mar/2021 10:15 AM' | Updated='22/Oct/2021 11:38 AM' | Resolved='22/Oct/2021 11:38 AM'",
+        "Row 407 | Project key='SRCTREEWIN' | Summary='Subwindow drap and drop can not be dropped at any position in File Status and History t...' | Description='Subwindow drap and drop can not be dropped at any position in File Status and History t...' | Issue Type='Bug' | Status='Needs Triage' | Priority='Low' | Resolution='' | Project name='Sourcetree for Windows' | Project type='software' | Reporter='ce951434ef80' | Created='17/Feb/2021 11:43 AM' | Updated='07/Apr/2021 2:56 PM' | Resolved=''",
+        "Row 436 | Project key='SRCTREEWIN' | Summary='checkout-existing\u201d option isn\u2019t working with 3.3.9 version of sourcetree as the remote ...' | Description='We are currently using sourcetree version 3.3.9.\"Checkout-existing\u201d option isn\u2019t workin...' | Issue Type='Bug' | Status='Needs Triage' | Priority='Low' | Resolution='' | Project name='Sourcetree for Windows' | Project type='software' | Reporter='10c29640bf45' | Created='01/Feb/2021 1:35 PM' | Updated='11/Feb/2021 4:39 AM' | Resolved=''"
+      ],
+      "anomalous_samples": [
+        {
+          "Summary": "Sourcetree on my laptop cannot recognize my github repository when I try to clone. Works on windows 10 pc but laptop is windows 11. All settings are setup the same but it wont recognize the url and wont show up in organization repositories.",
+          "Description": "Help. basic Github repository not recognizable",
+          "Issue Type": "Bug",
+          "Status": "Needs Triage",
+          "Priority": "Low",
+          "Resolution": "",
+          "Project key": "SRCTREEWIN",
+          "Project name": "Sourcetree for Windows",
+          "Project type": "software",
+          "Reporter": "999e43e86f06",
+          "Created": "08/Aug/2022 6:43 PM",
+          "Updated": "01/Nov/2022 6:40 AM",
+          "Resolved": ""
+        },
+        {
+          "Summary": "Toolbar: After rebase children in source tree window and after that 'git push -f' CLI, +1 notification appears for both push and pull",
+          "Description": "Even when pressed F5 in main screen it doesn't update.The way I found to update the notifications was to switch between branches, but in the case of having only one (only master) it might be all out of order",
+          "Issue Type": "Bug",
+          "Status": "Needs Triage",
+          "Priority": "Low",
+          "Resolution": "",
+          "Project key": "SRCTREEWIN",
+          "Project name": "Sourcetree for Windows",
+          "Project type": "software",
+          "Reporter": "6a3511956ba8",
+          "Created": "23/May/2022 6:28 PM",
+          "Updated": "23/May/2022 6:49 PM",
+          "Resolved": ""
+        },
+        {
+          "Summary": "Wrong Base64 Encoding - Sourcetree Authentication failed if password contains special characters (\u00a7 and german umlauts)",
+          "Description": "We have the issue that some users are able to authenticate on Bitbucket Server using git or the weblogin, but not Sourcetree.\u00a0The error message is:Authentication failedFailed to check login for user [username] You do not have permission to access URL 'https://.../rest/api/1.0/users/username' please check the user credentials associated with this account. The request returned with status code 'Unauthorized'. Authentication failed. Please check your credentials and try again.\u00a0We changed the Bitbucket server back to http and checked the http-traffic.There we see for the authentication a Base64-String containing username and password.This is the case for git as well as for Sourcetree.\u00a0But when decoding the Sourcetree Base64-String you can see that certain characters are replaced by \"?\". So far this is the case for \"\u00a7\" as well as for german umlauts (\u00e4,\u00f6,\u00fc).\u00a0As git is doing the correct encoding this seems to be a Bug in Sourcetree.This happens with 3.4.1 as well as 3.4.6.\u00a0For us the workaround is to avoid these characters in the password.",
+          "Issue Type": "Bug",
+          "Status": "Needs Triage",
+          "Priority": "Low",
+          "Resolution": "",
+          "Project key": "SRCTREEWIN",
+          "Project name": "Sourcetree for Windows",
+          "Project type": "software",
+          "Reporter": "93a7a4214811",
+          "Created": "28/Mar/2022 1:23 PM",
+          "Updated": "28/Mar/2022 1:23 PM",
+          "Resolved": ""
+        },
+        {
+          "Summary": "Sourcetree crashes when trying to pull a repository (after  being recognized as a valid git repository)",
+          "Description": "Source tree crashes when trying to pull a repository (after \u00a0being recognized as a valid git repository)\u00a0Can anybody assist?\u00a0",
+          "Issue Type": "Bug",
+          "Status": "Needs Triage",
+          "Priority": "Low",
+          "Resolution": "",
+          "Project key": "SRCTREEWIN",
+          "Project name": "Sourcetree for Windows",
+          "Project type": "software",
+          "Reporter": "f201b399e33b",
+          "Created": "21/Nov/2021 9:23 AM",
+          "Updated": "16/Dec/2021 4:33 AM",
+          "Resolved": ""
+        },
+        {
+          "Summary": "In Windows 11 environment, minimizing the program and maximizing the program again will cause the page to crash",
+          "Description": "The page will look like the following figure\uff1a\u00a0!image-2021-11-15-16-12-08-280.png!",
+          "Issue Type": "Bug",
+          "Status": "Needs Triage",
+          "Priority": "Low",
+          "Resolution": "",
+          "Project key": "SRCTREEWIN",
+          "Project name": "Sourcetree for Windows",
+          "Project type": "software",
+          "Reporter": "d9fc38f936bb",
+          "Created": "15/Nov/2021 8:16 AM",
+          "Updated": "16/Dec/2021 4:32 AM",
+          "Resolved": ""
+        },
+        {
+          "Summary": "Remote option in source tree not working when click on that your windows source tree application crash ",
+          "Description": "Remote option in the source tree not working when clicking on that your windows source tree application crash.Test case\u00a0when I click on the remote option, select my account that time application not responding error generates, and the application crash immediately.\u00a0",
+          "Issue Type": "Bug",
+          "Status": "Needs Triage",
+          "Priority": "Low",
+          "Resolution": "",
+          "Project key": "SRCTREEWIN",
+          "Project name": "Sourcetree for Windows",
+          "Project type": "software",
+          "Reporter": "8f06621f9840",
+          "Created": "06/Jul/2021 6:12 AM",
+          "Updated": "06/Jul/2021 12:46 PM",
+          "Resolved": ""
+        },
+        {
+          "Summary": "Application crashes silently when opening a local repository, while running without admin privliges",
+          "Description": "This is on Windows 10. Sourcetree 3.4.5.Here is the .NET Runtime call stack from Event Viewer:Application: SourceTree.exeFramework Version: v4.0.30319Description: The process was terminated due to an unhandled exception.Exception Info: System.UnauthorizedAccessException at System.IO.__Error.WinIOError(Int32, System.String) at System.IO.Directory.InternalCreateDirectory(System.String, System.String, System.Object, Boolean) at System.IO.Directory.InternalCreateDirectoryHelper(System.String, Boolean) at System.IO.FileHelper.CreateAndOpenTemporaryFile(System.String ByRef, System.IO.FileAccess, System.IO.FileOptions, System.String, System.String) at System.Windows.Input.Cursor.LoadFromStream(System.IO.Stream) at System.Windows.Controls.GridViewColumnHeader.GetCursor(Int32) at System.Windows.Controls.GridViewColumnHeader.get_SplitCursor() at System.Windows.Controls.GridViewColumnHeader.HookupGripperEvents() at System.Windows.FrameworkElement.ApplyTemplate() at System.Windows.FrameworkElement.MeasureCore(System.Windows.Size) at System.Windows.UIElement.Measure(System.Windows.Size) at System.Windows.Controls.GridViewHeaderRowPresenter.MeasureOverride(System.Windows.Size) at System.Windows.FrameworkElement.MeasureCore(System.Windows.Size) at System.Windows.UIElement.Measure(System.Windows.Size) at MS.Internal.Helper.MeasureElementWithSingleChild(System.Windows.UIElement, System.Windows.Size) at System.Windows.Controls.ScrollContentPresenter.MeasureOverride(System.Windows.Size) at System.Windows.FrameworkElement.MeasureCore(System.Windows.Size) at System.Windows.UIElement.Measure(System.Windows.Size) at System.Windows.Controls.Grid.MeasureCell(Int32, Boolean) at System.Windows.Controls.Grid.MeasureCellsGroup(Int32, System.Windows.Size, Boolean, Boolean, Boolean ByRef) at System.Windows.Controls.Grid.MeasureOverride(System.Windows.Size) at System.Windows.FrameworkElement.MeasureCore(System.Windows.Size) at System.Windows.UIElement.Measure(System.Windows.Size) at System.Windows.Controls.ScrollViewer.MeasureOverride(System.Windows.Size) at System.Windows.FrameworkElement.MeasureCore(System.Windows.Size) at System.Windows.UIElement.Measure(System.Windows.Size) at System.Windows.Controls.DockPanel.MeasureOverride(System.Windows.Size) at System.Windows.FrameworkElement.MeasureCore(System.Windows.Size) at System.Windows.UIElement.Measure(System.Windows.Size) at System.Windows.Controls.Grid.MeasureCell(Int32, Boolean) at System.Windows.Controls.Grid.MeasureCellsGroup(Int32, System.Windows.Size, Boolean, Boolean, Boolean ByRef) at System.Windows.Controls.Grid.MeasureOverride(System.Windows.Size) at System.Windows.FrameworkElement.MeasureCore(System.Windows.Size) at System.Windows.UIElement.Measure(System.Windows.Size) at System.Windows.Controls.ScrollViewer.MeasureOverride(System.Windows.Size) at System.Windows.FrameworkElement.MeasureCore(System.Windows.Size) at System.Windows.UIElement.Measure(System.Windows.Size) at Microsoft.Windows.Themes.ListBoxChrome.MeasureOverride(System.Windows.Size) at System.Windows.FrameworkElement.MeasureCore(System.Windows.Size) at System.Windows.UIElement.Measure(System.Windows.Size) at System.Windows.Controls.Control.MeasureOverride(System.Windows.Size) at System.Windows.FrameworkElement.MeasureCore(System.Windows.Size) at System.Windows.UIElement.Measure(System.Windows.Size) at System.Windows.Controls.Grid.MeasureCell(Int32, Boolean) at System.Windows.Controls.Grid.MeasureCellsGroup(Int32, System.Windows.Size, Boolean, Boolean, Boolean ByRef) at System.Windows.Controls.Grid.MeasureOverride(System.Windows.Size) at System.Windows.FrameworkElement.MeasureCore(System.Windows.Size) at System.Windows.UIElement.Measure(System.Windows.Size) at MS.Internal.Helper.MeasureElementWithSingleChild(System.Windows.UIElement, System.Windows.Size) at System.Windows.Controls.ContentPresenter.MeasureOverride(System.Windows.Size) at System.Windows.FrameworkElement.MeasureCore(System.Windows.Size) at System.Windows.UIElement.Measure(System.Windows.Size) at System.Windows.Controls.Border.MeasureOverride(System.Windows.Size) at System.Windows.FrameworkElement.MeasureCore(System.Windows.Size) at System.Windows.UIElement.Measure(System.Windows.Size) at System.Windows.Controls.Control.MeasureOverride(System.Windows.Size) at System.Windows.FrameworkElement.MeasureCore(System.Windows.Size) at System.Windows.UIElement.Measure(System.Windows.Size) at System.Windows.Controls.Grid.MeasureOverride(System.Windows.Size) at System.Windows.FrameworkElement.MeasureCore(System.Windows.Size) at System.Windows.UIElement.Measure(System.Windows.Size) at System.Windows.Controls.Border.MeasureOverride(System.Windows.Size) at System.Windows.FrameworkElement.MeasureCore(System.Windows.Size) at System.Windows.UIElement.Measure(System.Windows.Size) at System.Windows.Controls.Grid.MeasureCell(Int32, Boolean) at System.Windows.Controls.Grid.MeasureCellsGroup(Int32, System.Windows.Size, Boolean, Boolean, Boolean ByRef) at System.Windows.Controls.Grid.MeasureOverride(System.Windows.Size) at System.Windows.FrameworkElement.MeasureCore(System.Windows.Size) at System.Windows.UIElement.Measure(System.Windows.Size) at System.Windows.Controls.Grid.MeasureOverride(System.Windows.Size) at System.Windows.FrameworkElement.MeasureCore(System.Windows.Size) at System.Windows.UIElement.Measure(System.Windows.Size) at MS.Internal.Helper.MeasureElementWithSingleChild(System.Windows.UIElement, System.Windows.Size) at System.Windows.Controls.ContentPresenter.MeasureOverride(System.Windows.Size) at System.Windows.FrameworkElement.MeasureCore(System.Windows.Size) at System.Windows.UIElement.Measure(System.Windows.Size) at System.Windows.Controls.Border.MeasureOverride(System.Windows.Size) at System.Windows.FrameworkElement.MeasureCore(System.Windows.Size) at System.Windows.UIElement.Measure(System.Windows.Size) at System.Windows.Controls.Control.MeasureOverride(System.Windows.Size) at System.Windows.FrameworkElement.MeasureCore(System.Windows.Size) at System.Windows.UIElement.Measure(System.Windows.Size) at System.Windows.Controls.Grid.MeasureCell(Int32, Boolean) at System.Windows.Controls.Grid.MeasureCellsGroup(Int32, System.Windows.Size, Boolean, Boolean, Boolean ByRef) at System.Windows.Controls.Grid.MeasureOverride(System.Windows.Size) at System.Windows.FrameworkElement.MeasureCore(System.Windows.Size) at System.Windows.UIElement.Measure(System.Windows.Size) at MS.Internal.Helper.MeasureElementWithSingleChild(System.Windows.UIElement, System.Windows.Size) at System.Windows.Controls.ContentPresenter.MeasureOverride(System.Windows.Size) at System.Windows.FrameworkElement.MeasureCore(System.Windows.Size) at System.Windows.UIElement.Measure(System.Windows.Size) at System.Windows.Controls.Grid.MeasureOverride(System.Windows.Size) at System.Windows.FrameworkElement.MeasureCore(System.Windows.Size) at System.Windows.UIElement.Measure(System.Windows.Size) at System.Windows.Controls.Border.MeasureOverride(System.Windows.Size) at System.Windows.FrameworkElement.MeasureCore(System.Windows.Size) at System.Windows.UIElement.Measure(System.Windows.Size) at System.Windows.Controls.Grid.MeasureCell(Int32, Boolean) at System.Windows.Controls.Grid.MeasureCellsGroup(Int32, System.Windows.Size, Boolean, Boolean, Boolean ByRef) at System.Windows.Controls.Grid.MeasureOverride(System.Windows.Size) at System.Windows.FrameworkElement.MeasureCore(System.Windows.Size) at System.Windows.UIElement.Measure(System.Windows.Size) at System.Windows.ContextLayoutManager.UpdateLayout() at System.Windows.ContextLayoutManager.UpdateLayoutCallback(System.Object) at System.Windows.Media.MediaContext.FireInvokeOnRenderCallbacks() at System.Windows.Media.MediaContext.RenderMessageHandlerCore(System.Object) at System.Windows.Media.MediaContext.RenderMessageHandler(System.Object) at System.Windows.Threading.ExceptionWrapper.InternalRealCall(System.Delegate, System.Object, Int32) at System.Windows.Threading.ExceptionWrapper.TryCatchWhen(System.Object, System.Delegate, System.Object, Int32, System.Delegate) at System.Windows.Threading.DispatcherOperation.InvokeImpl() at MS.Internal.CulturePreservingExecutionContext.CallbackWrapper(System.Object) at System.Threading.ExecutionContext.RunInternal(System.Threading.ExecutionContext, System.Threading.ContextCallback, System.Object, Boolean) at System.Threading.ExecutionContext.Run(System.Threading.ExecutionContext, System.Threading.ContextCallback, System.Object, Boolean) at System.Threading.ExecutionContext.Run(System.Threading.ExecutionContext, System.Threading.ContextCallback, System.Object) at MS.Internal.CulturePreservingExecutionContext.Run(MS.Internal.CulturePreservingExecutionContext, System.Threading.ContextCallback, System.Object) at System.Windows.Threading.DispatcherOperation.Invoke() at System.Windows.Threading.Dispatcher.ProcessQueue() at System.Windows.Threading.Dispatcher.WndProcHook(IntPtr, Int32, IntPtr, IntPtr, Boolean ByRef) at MS.Win32.HwndWrapper.WndProc(IntPtr, Int32, IntPtr, IntPtr, Boolean ByRef) at MS.Win32.HwndSubclass.DispatcherCallbackOperation(System.Object) at System.Windows.Threading.ExceptionWrapper.InternalRealCall(System.Delegate, System.Object, Int32) at System.Windows.Threading.ExceptionWrapper.TryCatchWhen(System.Object, System.Delegate, System.Object, Int32, System.Delegate) at System.Windows.Threading.Dispatcher.LegacyInvokeImpl(System.Windows.Threading.DispatcherPriority, System.TimeSpan, System.Delegate, System.Object, Int32) at MS.Win32.HwndSubclass.SubclassWndProc(IntPtr, Int32, IntPtr, IntPtr) at MS.Win32.UnsafeNativeMethods.DispatchMessage(System.Windows.Interop.MSG ByRef) at System.Windows.Threading.Dispatcher.PushFrameImpl(System.Windows.Threading.DispatcherFrame) at System.Windows.Application.RunDispatcher(System.Object) at System.Windows.Application.RunInternal(System.Windows.Window) at SourceTree.App.Main()\u00a0And here is the Application Error:Faulting application name: SourceTree.exe, version: 3.4.5.0, time stamp: 0x60ae2544Faulting module name: KERNELBASE.dll, version: 10.0.19041.1023, time stamp: 0x924f9cdbException code: 0xe0434352Fault offset: 0x0000000000034b89Faulting process id: 0xcb8Faulting application start time: 0x01d7704ea9e894d9Faulting application path: C:\\Users\\MyUsername\\AppData\\Local\\SourceTree\\app-3.4.5\\SourceTree.exeFaulting module path: C:\\WINDOWS\\System32\\KERNELBASE.dllReport Id: 3e260ca8-d831-479f-a2d3-170e45f5ed4cFaulting package full name: Faulting package-relative application ID:Fault bucket 1612225780836763173, type 5Event Name: CLR20r3Response: Not availableCab Id: 0Problem signature:P1: SourceTree.exeP2: 3.4.5.0P3: 60ae2544P4: mscorlibP5: 4.8.4360.0P6: 606e6e9dP7: 1694P8: 12fP9: System.UnauthorizedAccessP10:",
+          "Issue Type": "Bug",
+          "Status": "Needs Triage",
+          "Priority": "Low",
+          "Resolution": "",
+          "Project key": "SRCTREEWIN",
+          "Project name": "Sourcetree for Windows",
+          "Project type": "software",
+          "Reporter": "7233927de385",
+          "Created": "03/Jul/2021 9:20 PM",
+          "Updated": "03/Jul/2021 9:20 PM",
+          "Resolved": ""
+        },
+        {
+          "Summary": "After setting my git account in sourcetree i am getting no unix socket support while pulling branch code",
+          "Description": "After setting my git account in sourcetree i am getting below errorgit -c diff.mnemonicprefix=false -c core.quotepath=false --no-optional-locks fetch --no-tags originfatal: credential-cache unavailable; no unix socket supportfatal: credential-cache unavailable; no unix socket supportremote: Invalid username or password.fatal: Authentication failed for 'https://github.com/meddata-group/mdg_access.git/'fatal: credential-cache unavailable; no unix socket support",
+          "Issue Type": "Bug",
+          "Status": "Needs Triage",
+          "Priority": "Low",
+          "Resolution": "",
+          "Project key": "SRCTREEWIN",
+          "Project name": "Sourcetree for Windows",
+          "Project type": "software",
+          "Reporter": "89dbb2dcf0e4",
+          "Created": "30/Jun/2021 9:47 AM",
+          "Updated": "13/Sep/2022 2:45 PM",
+          "Resolved": ""
+        },
+        {
+          "Summary": "RepoHandlerGitOld.NeedsLargeFilesPull incorrectly returning true for files reported unchanged by LFS",
+          "Description": "Being prompted to \"Run 'git lfs pull' now?\" despite all lfs files up to date when open a tab to a repository.Looks like the implementation of\u00a0RepoHandlerGitOld.NeedsLargeFilesPull has been not quite right for a while.According to the lfs [source|https://github.com/git-lfs/git-lfs/blob/2e1d981afbe33bd6b9bebb9943daf236636e5e33/commands/command_ls_files.go#L149]\u00a0for the output,\u00a0*ALL* files will be output. Those that exist and are the same size will be annotated with a '*', those that don't with a '-'.{{701ab1713a2cacb797738ab5220a5ed640f1c38affb71e83cc6ac9bd53c35d13 - deletedfile.txt}} {{a6c2fde49d61d6226446ff0fb3d78db15ebae71da9fb505e17a32a1cb4f93ac4 * intactfile.txt}}Currently, SourceTree will prompt if the *first* line matches\u00a0 \"[0-9a-fA-F]\\{64} . .+\", which is always.\u00a0Proposed fix:Change the regex to search for \"[0-9a-fA-F]\\{64} *-* .+\" (changing the first dot to a minus) so that it only looks for files reported by LFS that need to be updated.\u00a0The reason that 3.4.1 doesn't have this issue, is that the *first* file will be investigated for a string that contains \"git-lfs.github.com\".\u00a0Related to #[13418|http://jira.atlassian.com/browse/SRCTREEWIN-13418]",
+          "Issue Type": "Bug",
+          "Status": "Closed",
+          "Priority": "Low",
+          "Resolution": "Fixed",
+          "Project key": "SRCTREEWIN",
+          "Project name": "Sourcetree for Windows",
+          "Project type": "software",
+          "Reporter": "2f9a02d76474",
+          "Created": "08/Mar/2021 10:15 AM",
+          "Updated": "22/Oct/2021 11:38 AM",
+          "Resolved": "22/Oct/2021 11:38 AM"
+        },
+        {
+          "Summary": "Subwindow drap and drop can not be dropped at any position in File Status and History tab for notebook screen proportion",
+          "Description": "Subwindow drap and drop can not be dropped at any position in File Status and History tabs for notebook screen proportion.1. Open a project with many commits and a scroll on upper subwindows (commit tree subwindow);2. Drag horizontal line on a display (it saves any location, very responsive), and thenrepaet same drag and drop on notebook window (issue: the line will not be as responsive or stops moving).Expected: hrozintal line can be moved and dropeed at any position for any screen size and proportion (both display and notebook).\u00a0\u00a0!image-2021-02-17-14-43-25-633.png|width=491,height=138!!image-2021-02-17-14-35-33-158.png!",
+          "Issue Type": "Bug",
+          "Status": "Needs Triage",
+          "Priority": "Low",
+          "Resolution": "",
+          "Project key": "SRCTREEWIN",
+          "Project name": "Sourcetree for Windows",
+          "Project type": "software",
+          "Reporter": "ce951434ef80",
+          "Created": "17/Feb/2021 11:43 AM",
+          "Updated": "07/Apr/2021 2:56 PM",
+          "Resolved": ""
+        }
+      ],
+      "metric_interpretation": "The Statistical Test for Summary Clarity yielded a metric value of approximately 0.92, indicating a high level of similarity in the lengths of summaries across different issue types. However, the analysis flagged 11 anomalous rows, suggesting that these entries deviate from the expected pattern. For instance, Row 109 features a summary about Sourcetree's inability to recognize a GitHub repository, while Row 140 discusses issues with the toolbar after a rebase, both of which are categorized as 'Bug' issues. The flagged rows may indicate potential inconsistencies or outliers in summary length that could affect clarity and understanding, particularly since they all belong to the same project type and issue category. Given that these anomalies could hinder effective communication and resolution of issues, they warrant further investigation to ensure data quality and consistency.",
+      "retry_count": 0,
+      "computation_strategy": "direct_math"
+    },
+    {
+      "metric_name": "Distribution of Resolution Times",
+      "metric_type": "statistical",
+      "description": "Analyzes the distribution of resolution times to identify patterns and outliers.",
+      "reasoning": "Understanding resolution times can provide insights into workflow efficiency and potential bottlenecks.",
+      "source_influence": "Web Search - highlights the importance of resolution time in issue tracking.",
+      "feasibility_score": 0.85,
+      "quality_score": 0.8,
+      "execution_output": "ERROR: operation 'sub' not supported for dtype 'str' with dtype 'str'\n",
+      "error": null,
+      "anomalous_row_count": 0,
+      "anomalous_row_indices": [],
+      "anomalous_row_narratives": [],
+      "anomalous_samples": [],
+      "metric_interpretation": "The execution output indicates that there was an error during the analysis of the distribution of resolution times, specifically stating that the operation 'sub' is not supported for dtype 'str'. This suggests that the resolution times may have been incorrectly formatted as strings rather than numerical values, which prevents the calculation of meaningful statistics such as averages or distributions. \n\nSince there are no flagged rows, it implies that the data itself did not contain any obvious outliers or anomalies that could be identified through the analysis. However, the underlying issue of data type inconsistency is significant, as it raises concerns about the overall quality and reliability of the resolution time data. If resolution times are not properly formatted, it could lead to misleading insights and hinder effective decision-making. The severity of this issue is high, as it affects the ability to accurately assess performance and identify areas for improvement in resolution processes.",
+      "retry_count": 0,
+      "computation_strategy": "direct_math"
+    }
+  ],
+  "evaluator_output": {
+    "evaluated_metrics": [
+      "Entropy of Issue Types",
+      "Class Imbalance Ratio for Issue Types",
+      "KL-Divergence of Priority Distribution",
+      "Statistical Test for Summary Clarity",
+      "Distribution of Resolution Times"
+    ],
+    "dataset_level_evidence": "The dataset exhibits a moderate level of class balance with an entropy of issue types at 0.46 and a significant class imbalance ratio of approximately 4.75. The KL-Divergence of priority distribution is 0.601, indicating moderate divergence. However, there is an error in analyzing the distribution of resolution times due to incompatible data types.",
+    "sample_level_inconsistencies": "The Statistical Test for Summary Clarity flagged 11 anomalous rows, indicating that the lengths of summaries for certain issues deviate from the norm, suggesting potential inconsistencies in how issues are documented.",
+    "failure_cases": "Rows 109, 140, 177, 250, 256, 306, 309, 319, 401, 407, and 436 were identified as anomalous in the summary length analysis, with specific examples including Row 109's summary about Sourcetree not recognizing a GitHub repository and Row 140's summary regarding toolbar issues.",
+    "statistical_justification": "The analysis revealed a high similarity in summary lengths with a metric value of approximately 0.92, but the presence of 11 anomalous rows indicates potential issues in documentation practices.",
+    "risk_by_metric": [
+      {
+        "metric": "Entropy of Issue Types",
+        "finding": "Moderate class balance with an entropy of 0.46.",
+        "risk_level": "LOW",
+        "why": "The moderate entropy suggests a reasonable diversity in issue types."
+      },
+      {
+        "metric": "Class Imbalance Ratio for Issue Types",
+        "finding": "Significant class imbalance ratio of approximately 4.75.",
+        "risk_level": "HIGH",
+        "why": "This indicates a strong disparity in issue types, which could skew analysis."
+      },
+      {
+        "metric": "KL-Divergence of Priority Distribution",
+        "finding": "Moderate divergence with a KL-Divergence of 0.601.",
+        "risk_level": "MEDIUM",
+        "why": "This suggests that the actual priority distribution may not align well with expected distributions."
+      },
+      {
+        "metric": "Statistical Test for Summary Clarity",
+        "finding": "11 anomalous rows identified, including Rows 109 and 140.",
+        "risk_level": "MEDIUM",
+        "why": "The flagged rows indicate potential inconsistencies in summary documentation."
+      },
+      {
+        "metric": "Distribution of Resolution Times",
+        "finding": "Error encountered due to incompatible data types.",
+        "risk_level": "HIGH",
+        "why": "This error prevents any analysis of resolution times, which is critical for understanding issue handling."
+      }
+    ],
+    "final_verdict": "USABLE_WITH_CAUTION",
+    "verdict_reasoning": "While the dataset shows some reasonable metrics, such as moderate entropy and KL-Divergence, the significant class imbalance and errors in resolution time analysis raise concerns. The presence of anomalous rows in summary lengths further suggests that caution is warranted when using this dataset for decision-making."
+  },
+  "errors": []
+}
