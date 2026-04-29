@@ -1,5 +1,6 @@
 # main.py
 
+import io
 import json
 import os
 import sys
@@ -7,6 +8,36 @@ import sys
 from datasets import load_dataset
 from graph import build_graph
 from config import REPORT_OUTPUT_PATH
+from visualize import generate_pipeline_graph
+
+BENCHMARK_REPORT_PATH   = "benchmarking_results.json"
+BENCHMARK_WORKFLOW_PATH = "benchmarking_workflow.log"
+
+
+# ──────────────────────────────────────────────────────────────────────
+# Tee logger — mirrors everything printed to console into a log file
+# ──────────────────────────────────────────────────────────────────────
+
+class _Tee:
+    """Writes to both the real stdout and a log file simultaneously."""
+    def __init__(self, stream, log_path: str):
+        self._stream  = stream
+        self._logfile = open(log_path, "w", encoding="utf-8", errors="replace")
+
+    def write(self, data):
+        self._stream.write(data)
+        self._logfile.write(data)
+
+    def flush(self):
+        self._stream.flush()
+        self._logfile.flush()
+
+    def close(self):
+        self._logfile.close()
+
+    # Delegate everything else (isatty, fileno, etc.) to the real stream
+    def __getattr__(self, name):
+        return getattr(self._stream, name)
 
 
 # ──────────────────────────────────────────────────────────────────────
@@ -210,12 +241,16 @@ def _display_evaluator(evaluator_out: dict, per_metric: list):
 
         verdict = evaluator_out.get("final_verdict", "UNKNOWN")
         emoji   = {
-            "SAFE"                : "✅",
-            "USABLE_WITH_CAUTION" : "⚠️ ",
-            "UNSAFE"              : "❌",
+            "HIGH_QUALITY"       : "✅",
+            "ACCEPTABLE_QUALITY" : "⚠️ ",
+            "POOR_QUALITY"       : "❌",
+            # legacy fallbacks
+            "SAFE"               : "✅",
+            "USABLE_WITH_CAUTION": "⚠️ ",
+            "UNSAFE"             : "❌",
         }.get(verdict, "❓")
 
-        print(f"\n  {emoji}  VERDICT: {verdict}")
+        print(f"\n  {emoji}  DATA QUALITY VERDICT: {verdict}")
         print(f"\n  Reasoning:")
         for line in evaluator_out.get("verdict_reasoning", "").splitlines():
             print(f"    {line}")
@@ -224,27 +259,28 @@ def _display_evaluator(evaluator_out: dict, per_metric: list):
         for line in evaluator_out.get("dataset_level_evidence", "").splitlines():
             print(f"    {line}")
 
-        print(f"\n  Sample-level Inconsistencies:")
-        for line in evaluator_out.get("sample_level_inconsistencies", "").splitlines():
-            print(f"    {line}")
-
-        print(f"\n  Failure Cases:")
-        for line in evaluator_out.get("failure_cases", "").splitlines():
-            print(f"    {line}")
+        obs = evaluator_out.get("quality_observations", evaluator_out.get("sample_level_inconsistencies", ""))
+        if obs:
+            print(f"\n  Quality Observations:")
+            for line in obs.splitlines():
+                print(f"    {line}")
 
         print(f"\n  Statistical Justification:")
         for line in evaluator_out.get("statistical_justification", "").splitlines():
             print(f"    {line}")
 
-        risk = evaluator_out.get("risk_by_metric", [])
-        if risk:
-            _sub("Risk by Metric")
-            for rb in risk:
-                lvl  = rb.get("risk_level", "?")
-                icon = {"LOW": "🟢", "MEDIUM": "🟡", "HIGH": "🔴"}.get(lvl, "⚪")
-                print(f"  │  {icon} [{lvl:<6}] {rb.get('metric', '')}")
-                print(f"  │           Finding : {rb.get('finding', '')}")
-                print(f"  │           Why     : {rb.get('why', '')}")
+        quality = evaluator_out.get("quality_by_metric", evaluator_out.get("risk_by_metric", []))
+        if quality:
+            _sub("Quality by Metric")
+            for rb in quality:
+                lvl  = rb.get("quality_level", rb.get("risk_level", "?"))
+                icon = {"GOOD": "🟢", "ACCEPTABLE": "🟡", "POOR": "🔴",
+                        "LOW": "🟢", "MEDIUM": "🟡", "HIGH": "🔴"}.get(lvl, "⚪")
+                print(f"  │  {icon} [{lvl:<10}] {rb.get('metric', '')}")
+                print(f"  │             Finding : {rb.get('finding', '')}")
+                note = rb.get("note", rb.get("why", ""))
+                if note:
+                    print(f"  │             Note    : {note}")
 
 
 # ──────────────────────────────────────────────────────────────────────
@@ -263,10 +299,11 @@ def _save_report(state: dict):
     for r in report.get("per_metric_results", []):
         r.pop("generated_code", None)
 
+    out_path = BENCHMARK_REPORT_PATH
     try:
-        with open(REPORT_OUTPUT_PATH, "w", encoding="utf-8") as f:
+        with open(out_path, "w", encoding="utf-8") as f:
             json.dump(report, f, indent=2, default=str)
-        print(f"\n  ✔  Full JSON report saved → {os.path.abspath(REPORT_OUTPUT_PATH)}")
+        print(f"\n  [OK] Structured report saved  → {os.path.abspath(out_path)}")
     except Exception as exc:
         print(f"\n  [WARN] Could not save report: {exc}")
 
@@ -297,55 +334,63 @@ def display_result(state: dict):
 # Entry point
 # ──────────────────────────────────────────────────────────────────────
 
+
 def main():
-    _section("SYNAGENT — SYNTHETIC DATA AUDIT SYSTEM", "═")
+    # ── Start Tee logger before anything is printed ──────────────────
+    tee = _Tee(sys.stdout, BENCHMARK_WORKFLOW_PATH)
+    sys.stdout = tee
 
-    print("\n  Loading dataset: Jira Public Dataset (cesaranasco/jira-dataset-public) ...")
     try:
-        import kagglehub
+        _run_pipeline()
+    finally:
+        sys.stdout = tee._stream
+        tee.close()
+
+
+def _run_pipeline():
+    _section("SYNAGENT — SYNTHETIC DATA AUDIT SYSTEM  [BENCHMARKING RUN]", "═")
+    print(f"\n  Report   → {BENCHMARK_REPORT_PATH}")
+    print(f"  Workflow → {BENCHMARK_WORKFLOW_PATH}")
+
+    print("\n  Loading dataset: Solaris99/AgentBank (apps) ...")
+    try:
         import pandas as pd
-        from datasets import Dataset
+        from datasets import Dataset, load_dataset as _load
 
-        csv_path = kagglehub.dataset_download("cesaranasco/jira-dataset-public")
-        csv_file = os.path.join(csv_path, "GFG_FINAL.csv")
+        raw_ds = _load("Solaris99/AgentBank", "apps", split="train[:500]")
 
-        df_raw = pd.read_csv(csv_file, low_memory=False)
+        rows = []
+        for item in raw_ds:
+            convs    = item.get("conversations", [])
+            problem  = next((c["value"] for c in convs if c.get("from") == "human"), "")
+            solution = next((c["value"] for c in convs if c.get("from") == "gpt"),   "")
+            rows.append({
+                "id":                  item["id"],
+                "problem":             problem,
+                "solution":            solution,
+                "has_thought_process": int(solution.strip().startswith("Thought:")),
+                "problem_length":      len(problem),
+                "solution_length":     len(solution),
+                "num_turns":           len(convs),
+            })
 
-        # Select the most informative columns for data quality analysis
-        keep_cols = [
-            "Summary",          # free text — semantic metrics
-            "Description",      # free text — semantic metrics
-            "Issue Type",       # categorical — class distribution
-            "Status",           # categorical — status distribution
-            "Priority",         # categorical — severe imbalance expected
-            "Resolution",       # categorical — high null rate (~69%)
-            "Project key",      # identifier / grouping
-            "Project name",     # categorical
-            "Project type",     # categorical
-            "Reporter",         # categorical
-            "Created",          # datetime string
-            "Updated",          # datetime string
-            "Resolved",         # datetime string — high null rate
-        ]
-        keep_cols = [c for c in keep_cols if c in df_raw.columns]
-        df = df_raw[keep_cols].head(500).reset_index(drop=True)
-
-        # Fill NaN with empty string for object cols so HF Dataset serialises cleanly
-        for col in df.select_dtypes(include="object").columns:
-            df[col] = df[col].fillna("")
-
+        df = pd.DataFrame(rows)
         ds = Dataset.from_pandas(df, preserve_index=False)
         print(f"  [OK] Loaded {len(ds)} rows x {len(ds.column_names)} columns.")
-        print(f"  Columns: {ds.column_names}")
+        print(f"  Columns : {ds.column_names}")
+        print(f"  Avg problem length  : {df.problem_length.mean():.0f} chars")
+        print(f"  Avg solution length : {df.solution_length.mean():.0f} chars")
+        print(f"  Has thought process : {df.has_thought_process.sum()} / {len(df)} rows")
     except Exception as exc:
         print(f"  [ERROR] Failed to load dataset: {exc}")
+        import traceback; traceback.print_exc()
         sys.exit(1)
 
     user_hint = (
-        "Jira public issue tracker data with ticket summaries, descriptions, "
-        "issue types (Bug/Suggestion), statuses, priorities, and resolution info. "
-        "Expect class imbalance in Priority and Issue Type. "
-        "Check text quality in Summary and Description columns."
+        "AgentBank APPS benchmark — agent-generated solutions to competitive programming problems. "
+        "Each row contains a problem statement (problem) and the agent's step-by-step solution (solution). "
+        "Check semantic consistency of solutions with their problems, solution length distribution, "
+        "whether thought-process reasoning is present, and text quality across both columns."
     )
 
     app = build_graph()
@@ -360,6 +405,15 @@ def main():
     final_state = app.invoke(initial_state)
 
     display_result(final_state)
+
+    # Auto-generate pipeline execution graph
+    graph_path = os.path.splitext(BENCHMARK_REPORT_PATH)[0] + "_pipeline_graph.png"
+    try:
+        generate_pipeline_graph(final_state, output_path=graph_path)
+    except Exception as exc:
+        print(f"\n  [WARN] Could not generate pipeline graph: {exc}")
+
+    print(f"\n  [OK] Workflow log saved       → {os.path.abspath(BENCHMARK_WORKFLOW_PATH)}")
 
 
 if __name__ == "__main__":

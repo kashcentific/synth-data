@@ -6,30 +6,26 @@ import operator
 
 class ThinkerState(TypedDict, total=False):
     """
-    Shared LangGraph state for Thinker pipeline
+    Shared LangGraph state flowing through the entire pipeline:
+      extract_metadata -> thinker -> researcher -> evaluator -> END
     """
 
-    # -----------------------------------
-    # Input from main.py
-    # -----------------------------------
+    # --- Inputs ------------------------------------------------
+    dataset: Any                      # raw HuggingFace dataset object
+    user_hint: Optional[str]          # optional user-supplied context
 
-    dataset: Any
-    user_hint: Optional[str]
+    # --- Metadata extraction output ----------------------------
+    raw_metadata: Dict[str, Any]      # deterministic column statistics
 
-    # -----------------------------------
-    # Metadata extraction output
-    # -----------------------------------
+    # --- Agent outputs -----------------------------------------
+    thinker_output: Dict[str, Any]    # domain/type/column profiles/agents
+    researcher_output: Dict[str, Any] # proposed metrics + research context
+    researcher_iteration: int          # how many times researcher has looped
+    researcher_retry: bool             # researcher signals it needs another pass
 
-    raw_metadata: Dict[str, Any]
+    # --- Evaluator ---------------------------------------------
+    per_metric_results: List[Dict[str, Any]]  # one entry per computed metric
+    evaluator_output: Dict[str, Any]          # final synthesised verdict
 
-    # -----------------------------------
-    # Thinker output
-    # -----------------------------------
-
-    thinker_output: Dict[str, Any]
-
-    # -----------------------------------
-    # Error accumulator
-    # -----------------------------------
-
+    # --- Error accumulator (merged across all nodes) -----------
     errors: Annotated[List[str], operator.add]
