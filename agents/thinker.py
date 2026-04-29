@@ -1,4 +1,10 @@
 import json
+import sys
+import os
+
+# Ensure project root is on sys.path so "from base import BaseAgent" works
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from typing import Any, Dict
 
 from base import BaseAgent
@@ -105,8 +111,25 @@ Return exactly this structure:
         metadata  = state["raw_metadata"]
         user_hint = state.get("user_hint")
 
-        print("[THINKER] Calling LLM for deep reasoning…")
-        raw = self.call_llm(self.build_prompt(metadata, user_hint))
+        # Show what the Thinker is analyzing
+        print("\n" + "="*70)
+        print("[THINKER] 🧠 THINKING PHASE — Dataset Understanding")
+        print("="*70)
+        print(f"[THINKER] Analyzing {len(metadata.get('columns', []))} columns...")
+        print(f"[THINKER] Dataset size: {metadata.get('n_rows', '?')} rows")
+        if user_hint:
+            print(f"[THINKER] User hint provided: \"{user_hint}\"")
+        
+        print("\n[THINKER] 📋 Column Analysis:")
+        for col_info in metadata.get('columns', [])[:5]:  # Show first 5
+            col_name = col_info.get('name', '?')
+            col_type = col_info.get('inferred_dtype', '?')
+            print(f"[THINKER]   • {col_name} ({col_type})")
+        if len(metadata.get('columns', [])) > 5:
+            print(f"[THINKER]   ... and {len(metadata['columns']) - 5} more columns")
+        
+        print("\n[THINKER] 🤔 Now reasoning about domain, data quality, and next steps...")
+        raw = self.call_llm(self.build_prompt(metadata, user_hint), stream=True)
         result = self.parse_json(raw)
 
         if result.get("_parse_error"):
@@ -115,6 +138,7 @@ Return exactly this structure:
                 "errors": ["Thinker: JSON parse failed — raw response stored in thinker_output.raw"],
             }
 
+        print("\n[THINKER] ✓ Analysis complete")
         return {
             "thinker_output": result,
             "errors": [],
