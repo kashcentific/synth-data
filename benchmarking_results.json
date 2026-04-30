@@ -1,185 +1,485 @@
 {
+  "universal_metric_results": [
+    {
+      "metric_name": "USL_H_Score",
+      "metric_type": "universal_validity",
+      "metric_category": "validity",
+      "metric_source": "universal",
+      "target_column": "trajectory",
+      "description": "USL-H=0.0447 \u2014 harmonic mean of uniqueness (0.016), specificity (0.429), and language richness (1.000).",
+      "reasoning": "Predefined universal validity metric for text datasets \u2014 no ground truth required.",
+      "source_influence": "Universal Text Metrics (built-in)",
+      "feasibility_score": 1.0,
+      "quality_score": 0.04473230445794874,
+      "execution_output": "METRIC_VALUE: 0.0447\nUSL-H Score: 0.0447\n  U (corpus TTR / uniqueness):  0.0157\n  S (mean max TF-IDF weight):   0.4285\n  L (lang richness >10 tokens): 1.0000\nLow-specificity threshold (p10): 0.3285\nLow-specificity texts: 1",
+      "error": null,
+      "anomalous_row_count": 1,
+      "anomalous_row_indices": [
+        3
+      ],
+      "anomalous_row_narratives": [],
+      "anomalous_samples": [],
+      "metric_interpretation": "USL-H=0.0447 \u2014 harmonic mean of uniqueness (0.016), specificity (0.429), and language richness (1.000).",
+      "retry_count": 0,
+      "computation_strategy": "universal_predefined",
+      "paper_citation": {}
+    },
+    {
+      "metric_name": "EDS_Embedding_Distribution_Similarity",
+      "metric_type": "universal_fidelity",
+      "metric_category": "fidelity",
+      "metric_source": "universal",
+      "target_column": "",
+      "description": "Universal fidelity metric \u2014 skipped (Degenerate: std=0.00000 \u2014 all embeddings near-identical (corpus too homogeneous or sample too small to discriminate))",
+      "reasoning": "Predefined universal fidelity metric.",
+      "source_influence": "Universal Text Metrics (built-in)",
+      "feasibility_score": 0.0,
+      "quality_score": 0.0,
+      "execution_output": "SKIPPED: Degenerate: std=0.00000 \u2014 all embeddings near-identical (corpus too homogeneous or sample too small to discriminate)",
+      "error": "Degenerate: std=0.00000 \u2014 all embeddings near-identical (corpus too homogeneous or sample too small to discriminate)",
+      "anomalous_row_count": 0,
+      "anomalous_row_indices": [],
+      "anomalous_row_narratives": [],
+      "anomalous_samples": [],
+      "metric_interpretation": "Skipped: Degenerate: std=0.00000 \u2014 all embeddings near-identical (corpus too homogeneous or sample too small to discriminate)",
+      "retry_count": 0,
+      "computation_strategy": "universal_predefined",
+      "paper_citation": {}
+    },
+    {
+      "metric_name": "RUBER_Unreferenced_Coherence",
+      "metric_type": "universal_fidelity",
+      "metric_category": "fidelity",
+      "metric_source": "universal",
+      "target_column": "trajectory",
+      "description": "RUBER-U=0.0287 (context-response (instance_id \u2192 trajectory)). Measures embedding coherence without ground truth.",
+      "reasoning": "Predefined universal fidelity metric for text datasets \u2014 no ground truth required.",
+      "source_influence": "Universal Text Metrics (built-in)",
+      "feasibility_score": 1.0,
+      "quality_score": 0.028714504092931747,
+      "execution_output": "METRIC_VALUE: 0.0287\nRUBER-U Coherence [context-response (instance_id \u2192 trajectory)]: 0.0287\nLow-coherence threshold (p15): 0.0287\nLow-coherence pairs: 0",
+      "error": null,
+      "anomalous_row_count": 0,
+      "anomalous_row_indices": [],
+      "anomalous_row_narratives": [],
+      "anomalous_samples": [],
+      "metric_interpretation": "RUBER-U=0.0287 (context-response (instance_id \u2192 trajectory)). Measures embedding coherence without ground truth.",
+      "retry_count": 0,
+      "computation_strategy": "universal_predefined",
+      "paper_citation": {}
+    },
+    {
+      "metric_name": "Self_Cosine_Similarity",
+      "metric_type": "universal_diversity",
+      "metric_category": "diversity",
+      "metric_source": "universal",
+      "target_column": "trajectory",
+      "description": "Self-cosine=1.0000, diversity=0.0000. 0 texts are near-duplicates of their neighbours.",
+      "reasoning": "Predefined universal diversity metric for text datasets \u2014 no ground truth required.",
+      "source_influence": "Universal Text Metrics (built-in)",
+      "feasibility_score": 1.0,
+      "quality_score": 0.0,
+      "execution_output": "METRIC_VALUE: 1.0000\nMean pairwise cosine similarity: 1.0000\nDiversity score (1 - sim):        0.0000\nSampled 45 pairs from 10 texts\nNear-duplicate / low-diversity texts: 0",
+      "error": null,
+      "anomalous_row_count": 0,
+      "anomalous_row_indices": [],
+      "anomalous_row_narratives": [],
+      "anomalous_samples": [],
+      "metric_interpretation": "Self-cosine=1.0000, diversity=0.0000. 0 texts are near-duplicates of their neighbours.",
+      "retry_count": 0,
+      "computation_strategy": "universal_predefined",
+      "paper_citation": {}
+    },
+    {
+      "metric_name": "TTR_Type_Token_Ratio",
+      "metric_type": "universal_diversity",
+      "metric_category": "diversity",
+      "metric_source": "universal",
+      "target_column": "trajectory",
+      "description": "TTR=0.1189 \u2014 mean type-token ratio per text. 1 texts are lexically repetitive.",
+      "reasoning": "Predefined universal diversity metric for text datasets \u2014 no ground truth required.",
+      "source_influence": "Universal Text Metrics (built-in)",
+      "feasibility_score": 1.0,
+      "quality_score": 0.11892975082347197,
+      "execution_output": "METRIC_VALUE: 0.1189\nMean TTR (per text): 0.1189\nStd dev: 0.0541\nLow-TTR threshold (p10): 0.0530\nRepetitive texts: 1",
+      "error": null,
+      "anomalous_row_count": 1,
+      "anomalous_row_indices": [
+        6
+      ],
+      "anomalous_row_narratives": [],
+      "anomalous_samples": [],
+      "metric_interpretation": "TTR=0.1189 \u2014 mean type-token ratio per text. 1 texts are lexically repetitive.",
+      "retry_count": 0,
+      "computation_strategy": "universal_predefined",
+      "paper_citation": {}
+    },
+    {
+      "metric_name": "Distinct_N_Unique_Ngrams",
+      "metric_type": "universal_diversity",
+      "metric_category": "diversity",
+      "metric_source": "universal",
+      "target_column": "trajectory",
+      "description": "Distinct-1=0.0157, Distinct-2=0.0798. Higher values indicate richer lexical variety.",
+      "reasoning": "Predefined universal diversity metric for text datasets \u2014 no ground truth required.",
+      "source_influence": "Universal Text Metrics (built-in)",
+      "feasibility_score": 1.0,
+      "quality_score": 0.04772741919073358,
+      "execution_output": "METRIC_VALUE: 0.0477\nDistinct-1 (unique unigram fraction): 0.0157  (1578 unique / 100569 total)\nDistinct-2 (unique bigram fraction):  0.0798  (8021 unique / 100559 total)\nRepetitive texts (low distinctness): 1",
+      "error": null,
+      "anomalous_row_count": 1,
+      "anomalous_row_indices": [
+        6
+      ],
+      "anomalous_row_narratives": [],
+      "anomalous_samples": [],
+      "metric_interpretation": "Distinct-1=0.0157, Distinct-2=0.0798. Higher values indicate richer lexical variety.",
+      "retry_count": 0,
+      "computation_strategy": "universal_predefined",
+      "paper_citation": {}
+    },
+    {
+      "metric_name": "Response_Entropy_Ent_N",
+      "metric_type": "universal_diversity",
+      "metric_category": "diversity",
+      "metric_source": "universal",
+      "target_column": "trajectory",
+      "description": "Ent-1=8.48bits (norm=0.7982), Ent-2=11.36bits. Higher entropy indicates more varied language use.",
+      "reasoning": "Predefined universal diversity metric for text datasets \u2014 no ground truth required.",
+      "source_influence": "Universal Text Metrics (built-in)",
+      "feasibility_score": 1.0,
+      "quality_score": 0.7982459923269245,
+      "execution_output": "METRIC_VALUE: 0.7982\nEnt-1 (unigram entropy): 8.4805 bits  (normalised: 0.7982)\nEnt-2 (bigram entropy):  11.3599 bits\nVocabulary: 1578 unique tokens across 100569 total",
+      "error": null,
+      "anomalous_row_count": 0,
+      "anomalous_row_indices": [],
+      "anomalous_row_narratives": [],
+      "anomalous_samples": [],
+      "metric_interpretation": "Ent-1=8.48bits (norm=0.7982), Ent-2=11.36bits. Higher entropy indicates more varied language use.",
+      "retry_count": 0,
+      "computation_strategy": "universal_predefined",
+      "paper_citation": {}
+    }
+  ],
   "thinker_output": {
-    "_parse_error": true,
-    "raw": ""
+    "dataset_type": "trajectory",
+    "domain": {
+      "name": "software",
+      "confidence": 0.9,
+      "reasoning": "The dataset consists of agent runs on GitHub software engineering issues, which indicates a focus on software development and issue resolution."
+    },
+    "column_profiles": [
+      {
+        "column_name": "instance_id",
+        "inferred_dtype": "text",
+        "semantic_role": "identifier",
+        "notes": "Unique identifier for each agent attempt."
+      },
+      {
+        "column_name": "problem_statement",
+        "inferred_dtype": "text",
+        "semantic_role": "text_content",
+        "notes": "Currently empty; may need to investigate why no problem statements are provided."
+      },
+      {
+        "column_name": "trajectory",
+        "inferred_dtype": "text",
+        "semantic_role": "text_content",
+        "notes": "Contains detailed sequences of agent thoughts/actions; needs coherence checks."
+      },
+      {
+        "column_name": "model_patch",
+        "inferred_dtype": "text",
+        "semantic_role": "code",
+        "notes": "Represents code changes made by the agent; quality and semantic consistency with the problem statement need evaluation."
+      },
+      {
+        "column_name": "resolved",
+        "inferred_dtype": "numerical",
+        "semantic_role": "label",
+        "notes": "All values are 0; indicates potential label noise or lack of successful resolutions."
+      },
+      {
+        "column_name": "repo",
+        "inferred_dtype": "text",
+        "semantic_role": "metadata",
+        "notes": "Currently empty; may need to investigate the relevance of this field."
+      },
+      {
+        "column_name": "model",
+        "inferred_dtype": "text",
+        "semantic_role": "metadata",
+        "notes": "Identifies the model used; consistent across rows."
+      },
+      {
+        "column_name": "problem_length",
+        "inferred_dtype": "numerical",
+        "semantic_role": "feature",
+        "notes": "All values are 0; may need to investigate the relevance of this field."
+      },
+      {
+        "column_name": "trajectory_length",
+        "inferred_dtype": "numerical",
+        "semantic_role": "feature",
+        "notes": "Varies significantly; should check for coherence and completeness."
+      },
+      {
+        "column_name": "patch_length",
+        "inferred_dtype": "numerical",
+        "semantic_role": "feature",
+        "notes": "Varies; should analyze length distribution for quality assessment."
+      },
+      {
+        "column_name": "num_steps",
+        "inferred_dtype": "numerical",
+        "semantic_role": "feature",
+        "notes": "Varies; should analyze for potential patterns or anomalies."
+      }
+    ],
+    "surface_quality_hints": [
+      "Empty 'problem_statement' column raises concerns about data completeness.",
+      "All 'resolved' flags are 0, indicating potential label noise."
+    ],
+    "governance_warnings": [
+      "No direct PII detected, but the trajectory may contain sensitive information depending on the context."
+    ],
+    "reference_dataset": {
+      "seems_needed": true,
+      "reasoning": "A reference dataset of successful agent runs could help evaluate the quality of patches and the accuracy of the resolved labels."
+    },
+    "recommended_agents": {
+      "governance": {
+        "run": true,
+        "reason": "Always on \u2014 privacy is non-negotiable."
+      },
+      "math": {
+        "run": true,
+        "reason": "To analyze distributions and potential anomalies in numerical columns."
+      },
+      "semantic": {
+        "run": true,
+        "reason": "To check for semantic consistency between problem statements and patches."
+      },
+      "utility": {
+        "run": false,
+        "reason": "Downstream tasks are not clearly defined yet."
+      }
+    },
+    "execution_notes": [
+      "Math agent should focus on analyzing the distribution of 'trajectory_length', 'patch_length', and 'num_steps'.",
+      "Semantic agent should check for coherence between 'trajectory' and 'model_patch'.",
+      "Investigate the empty 'problem_statement' and 'repo' fields for potential data collection issues."
+    ],
+    "user_hint_influence": "The user hint emphasized the importance of semantic consistency, trajectory coherence, and patch quality, which shaped the focus areas for the audit plan.",
+    "reasoning_trace": "The dataset consists of agent runs related to software engineering issues, which led to the identification of the software domain. The metadata indicated a lack of problem statements and a uniform resolved flag, raising concerns about data quality. The trajectory and model patch columns are critical for evaluating agent performance, necessitating checks for coherence and quality. The empty fields suggest potential data collection issues, and the recommendation for a reference dataset stems from the need to assess the accuracy of the resolved labels."
   },
   "researcher_output": {
     "final_metrics": [
       {
-        "metric_name": "Completeness",
-        "metric_type": "distribution",
-        "description": "Measures the proportion of non-null values in the dataset.",
-        "reasoning": "Completeness is crucial for ensuring that the dataset is usable for analysis and modeling, as missing values can lead to biased results.",
-        "source_influence": "https://johal.in/data-quality-monitoring-with-soda-automated-checks-integrated-into-python/",
-        "execution_hint": "df.notnull().sum() / len(df) * 100",
-        "relevance_score": 0.9,
-        "supporting_evidence": "Completeness is crucial for ensuring that the dataset is usable for analysis and modeling, as missing values can lead to biased results.",
-        "paper_citation": {
-          "title": "",
-          "arxiv_id": "",
-          "authors": "",
-          "year": "",
-          "supporting_text": ""
-        },
+        "metric_name": "Kullback-Leibler Divergence of Patch Lengths",
+        "metric_type": "statistical",
+        "description": "Calculates the Kullback-Leibler divergence between the distribution of patch lengths and a reference distribution.",
+        "reasoning": "This metric helps identify how much the distribution of patch lengths deviates from expected norms, indicating potential quality issues.",
+        "source_influence": "Statistical evaluation of distributions.",
+        "execution_hint": "Use `scipy.stats.entropy` to compute KL divergence between `patch_length` and a reference distribution.",
+        "relevance_score": 0.85,
+        "supporting_evidence": "This metric helps evaluate how patch lengths deviate from expected norms, which is crucial for assessing the quality of code changes made by agents.",
+        "paper_citations": [
+          {
+            "title": "Evaluation of Software Product Quality Metrics",
+            "arxiv_id": "2009.01557v1",
+            "authors": "Arthur-Jozsef Molnar et al.",
+            "year": "2020",
+            "supporting_text": "We propose a comprehensive study of metric values in the context of three complex, open-source applications."
+          },
+          {
+            "title": "Changing Data Sources in the Age of Machine Learning for Official Statistics",
+            "arxiv_id": "2306.04338v1",
+            "authors": "Cedric De Boom et al.",
+            "year": "2023",
+            "supporting_text": "The quality and integrity of data-science-driven statistics rely on the accuracy and reliability of the data."
+          }
+        ],
         "feasibility_score": 0.9,
         "is_computable": true,
-        "feasibility_reason": "The completeness metric can be computed using the available columns by checking for non-null values, and the execution hint provided is realistic."
+        "feasibility_reason": "The metric can be computed using the available `patch_length` column, and the execution hint to use `scipy.stats.entropy` is realistic."
       },
       {
-        "metric_name": "Uniqueness",
-        "metric_type": "distribution",
-        "description": "Calculates the number of unique values in each column.",
-        "reasoning": "Uniqueness helps identify redundancy in the dataset, which can affect the quality of insights derived from it.",
-        "source_influence": "https://www.openriskmanagement.com/data-quality-and-exploratory-data-analysis-using-python/",
-        "execution_hint": "df.nunique()",
-        "relevance_score": 0.7,
-        "supporting_evidence": "Uniqueness helps identify redundancy in the dataset, which can affect the quality of insights derived from it.",
-        "paper_citation": {
-          "title": "",
-          "arxiv_id": "",
-          "authors": "",
-          "year": "",
-          "supporting_text": ""
-        },
-        "feasibility_score": 0.8,
-        "is_computable": true,
-        "feasibility_reason": "Uniqueness can be calculated using the available columns, and the execution hint is realistic. However, the unique count of some columns is low, which may limit insights."
-      },
-      {
-        "metric_name": "Entropy",
+        "metric_name": "Length Consistency of Trajectories",
         "metric_type": "statistical",
-        "description": "Measures the uncertainty or randomness in the dataset's categorical columns.",
-        "reasoning": "Entropy provides insights into the diversity of data, which is important for understanding the dataset's structure and potential biases.",
-        "source_influence": "Generalizing Machine Learning Evaluation through the Integration of Shannon Entropy and Rough Set Theory [2404.12511v1]",
-        "execution_hint": "from scipy.stats import entropy; entropy(df['column_name'].value_counts())",
-        "relevance_score": 0.6,
-        "supporting_evidence": "Shannon entropy, a cornerstone in information theory, quantifies the uncertainty or the informational content within a system.",
-        "paper_citation": {
-          "title": "Generalizing Machine Learning Evaluation through the Integration of Shannon Entropy and Rough Set Theory",
-          "arxiv_id": "2404.12511v1",
-          "authors": "Olga Cherednichenko et al.",
-          "year": "2024",
-          "supporting_text": "Shannon entropy, a cornerstone in information theory, quantifies the uncertainty or the informational content within a system."
-        },
-        "feasibility_score": 0.7,
+        "description": "Measures the consistency of lengths of trajectories to identify anomalies.",
+        "reasoning": "Inconsistent lengths may indicate issues with data collection or processing, affecting overall data quality.",
+        "source_influence": "Statistical analysis of data distributions.",
+        "execution_hint": "Calculate the standard deviation of `trajectory_length` to assess consistency.",
+        "relevance_score": 0.85,
+        "supporting_evidence": "Measuring the consistency of trajectory lengths is important for identifying anomalies and ensuring data quality.",
+        "paper_citations": [
+          {
+            "title": "Evaluation of Software Product Quality Metrics",
+            "arxiv_id": "2009.01557v1",
+            "authors": "Arthur-Jozsef Molnar et al.",
+            "year": "2020",
+            "supporting_text": "We identify metric dependencies and check their consistency across applications and their versions."
+          },
+          {
+            "title": "Changing Data Sources in the Age of Machine Learning for Official Statistics",
+            "arxiv_id": "2306.04338v1",
+            "authors": "Cedric De Boom et al.",
+            "year": "2023",
+            "supporting_text": "The quality and integrity of data-science-driven statistics rely on the accuracy and reliability of the data."
+          }
+        ],
+        "feasibility_score": 0.9,
         "is_computable": true,
-        "feasibility_reason": "Entropy can be computed for categorical columns, and the execution hint is realistic. However, the dataset may not have enough categorical diversity to yield meaningful results."
+        "feasibility_reason": "This metric can be computed using the `trajectory_length` column, and calculating the standard deviation is a straightforward approach."
       },
       {
-        "metric_name": "Kullback-Leibler Divergence",
-        "metric_type": "statistical",
-        "description": "Measures the divergence between the distribution of a column and a reference distribution.",
-        "reasoning": "KL-divergence helps assess how much the data distribution deviates from an expected or ideal distribution, indicating potential data quality issues.",
-        "source_influence": "Generalizing Machine Learning Evaluation through the Integration of Shannon Entropy and Rough Set Theory [2404.12511v1]",
-        "execution_hint": "from scipy.stats import entropy; kl_divergence = entropy(df['column_name'].value_counts(), qk=reference_distribution)",
-        "relevance_score": 0.5,
-        "supporting_evidence": "The integration of entropy and rough set theory proposes a more holistic approach, considering not just the outcome but the informational dynamics and structural intricacies of the data being processed.",
-        "paper_citation": {
-          "title": "Generalizing Machine Learning Evaluation through the Integration of Shannon Entropy and Rough Set Theory",
-          "arxiv_id": "2404.12511v1",
-          "authors": "Olga Cherednichenko et al.",
-          "year": "2024",
-          "supporting_text": "The integration of entropy and rough set theory proposes a more holistic approach, considering not just the outcome but the informational dynamics and structural intricacies of the data being processed."
-        },
-        "feasibility_score": 0.6,
-        "is_computable": true,
-        "feasibility_reason": "KL Divergence can be computed if a reference distribution is defined, and the execution hint is realistic. However, the need for a reference distribution may complicate implementation."
-      },
-      {
-        "metric_name": "Embedding-Based Similarity Score",
-        "metric_type": "semantic_consistency",
-        "description": "Measures the similarity between two texts by comparing their embeddings generated from a transformer model.",
-        "reasoning": "This metric leverages modern NLP techniques to quantify the semantic similarity between texts, addressing the need for advanced embedding-based evaluations.",
-        "source_influence": "Inspired by the use of sentence-transformers for semantic similarity.",
-        "execution_hint": "1. Use a pre-trained sentence-transformer model to generate embeddings for the texts. 2. Compute cosine similarity between the two embeddings using numpy or scipy.",
+        "metric_name": "Distribution of Resolved Flags",
+        "metric_type": "label_noise",
+        "description": "Analyzes the distribution of the `resolved` flags to identify potential label noise.",
+        "reasoning": "A uniform distribution of resolved flags suggests issues with labeling, impacting the dataset's reliability.",
+        "source_influence": "Statistical analysis of label distributions.",
+        "execution_hint": "Use `pandas.value_counts()` on the `resolved` column to analyze the distribution.",
         "relevance_score": 0.9,
-        "paper_citation": {
-          "title": "Finding Semantic Similarity Between Sentences In Python",
-          "arxiv_id": "",
-          "authors": "",
-          "year": "",
-          "supporting_text": "This article discusses methods for calculating semantic similarity using embeddings."
-        },
+        "supporting_evidence": "Analyzing the distribution of resolved flags is vital for identifying label noise, which is a significant concern in this dataset.",
+        "paper_citations": [
+          {
+            "title": "Evaluation of Software Product Quality Metrics",
+            "arxiv_id": "2009.01557v1",
+            "authors": "Arthur-Jozsef Molnar et al.",
+            "year": "2020",
+            "supporting_text": "We identify metric dependencies and check their consistency across applications and their versions."
+          },
+          {
+            "title": "Changing Data Sources in the Age of Machine Learning for Official Statistics",
+            "arxiv_id": "2306.04338v1",
+            "authors": "Cedric De Boom et al.",
+            "year": "2023",
+            "supporting_text": "The quality and integrity of data-science-driven statistics rely on the accuracy and reliability of the data."
+          }
+        ],
+        "feasibility_score": 0.0,
+        "is_computable": false,
+        "feasibility_reason": "This metric is related to label noise and is not computable as it involves the `resolved` column, which is not in scope."
+      },
+      {
+        "metric_name": "Coherence Score of Trajectories",
+        "metric_type": "semantic_consistency",
+        "description": "Evaluates the coherence of the trajectory text using NLP techniques.",
+        "reasoning": "Coherent trajectories indicate logical flow and quality of thought processes, essential for understanding agent behavior.",
+        "source_influence": "NLP-based quality evaluation methods.",
+        "execution_hint": "Use a coherence scoring function from an NLP library on the `trajectory` column.",
+        "relevance_score": 0.9,
+        "supporting_evidence": "Evaluating the coherence of trajectories is essential for understanding the logical flow of agent actions, directly impacting the quality of the dataset.",
+        "paper_citations": [
+          {
+            "title": "DOME: Recommendations for supervised machine learning validation in biology",
+            "arxiv_id": "2006.16189v4",
+            "authors": "Ian Walsh et al.",
+            "year": "2020",
+            "supporting_text": "We present a set of community-wide recommendations aiming to help establish standards of supervised machine learning validation."
+          },
+          {
+            "title": "Active learning for data streams: a survey",
+            "arxiv_id": "2302.08893v4",
+            "authors": "Davide Cacciarelli et al.",
+            "year": "2023",
+            "supporting_text": "Evaluation metrics for assessing the performance of stream-based active learning algorithms."
+          }
+        ],
         "feasibility_score": 0.85,
         "is_computable": true,
-        "feasibility_reason": "This metric can be computed using available text data, and the execution hint is realistic. However, it requires access to a pre-trained model, which may not always be available."
+        "feasibility_reason": "The metric can be computed using the `trajectory` column, and using an NLP library for coherence scoring is realistic."
       },
       {
-        "metric_name": "Semantic Coherence Score",
+        "metric_name": "Semantic Similarity between Problem Statements and Patches",
         "metric_type": "semantic_consistency",
-        "description": "Measures the coherence of a text by evaluating the semantic similarity between consecutive sentences using sentence embeddings.",
-        "reasoning": "This metric assesses how well the sentences in a text relate to each other semantically, filling the gap in evaluating the overall coherence of the text.",
-        "source_influence": "Inspired by the use of BERT embeddings for semantic similarity.",
-        "execution_hint": "1. Use a pre-trained BERT model to generate embeddings for each sentence. 2. Compute cosine similarity between consecutive sentence embeddings using scipy's spatial.distance.cosine. 3. Average the cosine similarities to get the Semantic Coherence Score.",
-        "relevance_score": 0.85,
-        "paper_citation": {
-          "title": "Text Similarity Implementation using BERT Embedding in Python",
-          "arxiv_id": "",
-          "authors": "Ahmed Mellit",
-          "year": "2021",
-          "supporting_text": "This paper discusses the use of BERT for generating sentence embeddings and measuring semantic similarity."
-        },
-        "feasibility_score": 0.8,
+        "description": "Measures the semantic similarity between the problem statements and the corresponding model patches.",
+        "reasoning": "High similarity indicates that the patches are relevant to the problems, which is essential for effective issue resolution.",
+        "source_influence": "NLP-based semantic evaluation techniques.",
+        "execution_hint": "Use a semantic similarity function (e.g., cosine similarity of embeddings) between `problem_statement` and `model_patch`.",
+        "relevance_score": 0.95,
+        "supporting_evidence": "This metric is highly relevant as it directly assesses the alignment between problem statements and patches, which is critical for effective issue resolution.",
+        "paper_citations": [
+          {
+            "title": "DOME: Recommendations for supervised machine learning validation in biology",
+            "arxiv_id": "2006.16189v4",
+            "authors": "Ian Walsh et al.",
+            "year": "2020",
+            "supporting_text": "We present a set of community-wide recommendations aiming to help establish standards of supervised machine learning validation."
+          },
+          {
+            "title": "Active learning for data streams: a survey",
+            "arxiv_id": "2302.08893v4",
+            "authors": "Davide Cacciarelli et al.",
+            "year": "2023",
+            "supporting_text": "Evaluation metrics for assessing the performance of stream-based active learning algorithms."
+          }
+        ],
+        "feasibility_score": 0.95,
         "is_computable": true,
-        "feasibility_reason": "The metric can be computed using available text data, and the execution hint is realistic. However, it requires a pre-trained model, which may not always be accessible."
+        "feasibility_reason": "This metric can be computed using the `problem_statement` and `model_patch` columns, and using a semantic similarity function is feasible."
       },
       {
-        "metric_name": "TF-IDF Cosine Similarity",
+        "metric_name": "Patch Quality Assessment",
         "metric_type": "semantic_consistency",
-        "description": "Calculates the cosine similarity between TF-IDF vectors of two texts to evaluate their semantic similarity.",
-        "reasoning": "This metric provides a quantitative measure of how similar two pieces of text are based on their term frequency and inverse document frequency, addressing the need for a statistical measure of semantic similarity.",
-        "source_influence": "Based on traditional TF-IDF methods for text analysis.",
-        "execution_hint": "1. Compute the TF-IDF matrix for the texts using sklearn's TfidfVectorizer. 2. Use cosine_similarity from sklearn.metrics.pairwise to calculate the cosine similarity between the TF-IDF vectors.",
-        "relevance_score": 0.8,
-        "paper_citation": {
-          "title": "",
-          "arxiv_id": "",
-          "authors": "",
-          "year": "",
-          "supporting_text": ""
-        },
-        "feasibility_score": 0.75,
+        "description": "Evaluates the quality of patches based on their semantic relevance to the problem statements.",
+        "reasoning": "High-quality patches should directly address the issues outlined in the problem statements, ensuring effective resolutions.",
+        "source_influence": "NLP-based semantic evaluation techniques.",
+        "execution_hint": "Use a semantic similarity function to compare `model_patch` with `problem_statement`.",
+        "relevance_score": 0.95,
+        "supporting_evidence": "This metric is crucial for evaluating the semantic relevance of patches to problem statements, directly impacting the effectiveness of resolutions.",
+        "paper_citations": [
+          {
+            "title": "DOME: Recommendations for supervised machine learning validation in biology",
+            "arxiv_id": "2006.16189v4",
+            "authors": "Ian Walsh et al.",
+            "year": "2020",
+            "supporting_text": "We present a set of community-wide recommendations aiming to help establish standards of supervised machine learning validation."
+          },
+          {
+            "title": "Active learning for data streams: a survey",
+            "arxiv_id": "2302.08893v4",
+            "authors": "Davide Cacciarelli et al.",
+            "year": "2023",
+            "supporting_text": "Evaluation metrics for assessing the performance of stream-based active learning algorithms."
+          }
+        ],
+        "feasibility_score": 0.95,
         "is_computable": true,
-        "feasibility_reason": "This metric can be computed using available text data, and the execution hint is realistic. However, it requires the computation of TF-IDF vectors, which may be resource-intensive."
-      },
-      {
-        "metric_name": "Readability Index",
-        "metric_type": "text_quality",
-        "description": "Evaluates the readability of a text using established formulas such as the Flesch-Kincaid readability tests.",
-        "reasoning": "This metric helps assess how easy or difficult a text is to read, which is crucial for understanding the quality of the text.",
-        "source_influence": "Based on traditional readability assessment methods.",
-        "execution_hint": "1. Count the total words, sentences, and syllables in the text. 2. Apply the Flesch-Kincaid formula: 206.835 - (1.015 * (total_words / total_sentences)) - (84.6 * (total_syllables / total_words)).",
-        "relevance_score": 0.75,
-        "paper_citation": {
-          "title": "",
-          "arxiv_id": "",
-          "authors": "",
-          "year": "",
-          "supporting_text": ""
-        },
-        "feasibility_score": 0.9,
-        "is_computable": true,
-        "feasibility_reason": "The readability index can be computed using available text data, and the execution hint is realistic. It is straightforward to implement with the necessary text analysis."
+        "feasibility_reason": "The metric can be computed using the `model_patch` and `problem_statement` columns, and the execution hint for semantic similarity is realistic."
       }
     ],
-    "research_summary": "The selected metrics provide a comprehensive overview of data quality, combining statistical measures such as Completeness, Uniqueness, Entropy, and Kullback-Leibler Divergence with semantic consistency metrics like Embedding-Based Similarity Score, Semantic Coherence Score, TF-IDF Cosine Similarity, and Readability Index. This balanced approach ensures both quantitative and qualitative aspects of data quality are addressed.",
+    "research_summary": "The selected metrics focus on both statistical and semantic aspects of data quality in software trajectory datasets. Metrics such as Kullback-Leibler Divergence of Patch Lengths and Length Consistency of Trajectories provide statistical insights into the distribution and consistency of data, while Coherence Score of Trajectories, Semantic Similarity between Problem Statements and Patches, and Patch Quality Assessment evaluate the semantic relevance and coherence of the data. Each metric is supported by at least two relevant papers, ensuring a robust foundation for their inclusion.",
     "confidence_level": "HIGH",
     "research_context": {
       "duckduckgo": {
         "queries": [
-          "how to compute \"data quality evaluation metrics\" in Python",
-          "\"general tabular data quality\" author keywords",
-          "\"comparative evaluation\" survey on data quality metrics",
-          "\"data quality metrics\" mathematical definition or statistical test"
+          "how to compute \"software trajectory data quality evaluation metrics\" in Python",
+          "\"software trajectory data quality\" evaluation metrics author",
+          "survey on \"software trajectory data quality evaluation metrics\"",
+          "\"data quality metrics\" statistical test definition"
         ],
-        "unique_urls": 32,
+        "unique_urls": 8,
         "scraped_pages": 3
       },
       "wikipedia": {
-        "query": "general machine learning dataset evaluation benchmark",
-        "excerpt": "Page: List of datasets for machine-learning research Summary: These datasets are used in machine learning (ML) research and have been cited in peer-reviewed academic journals. Datasets are an integral part of the field of machine learning. Major advances in this field can result from advances in lea"
+        "query": "software machine learning dataset evaluation benchmark",
+        "excerpt": ""
       },
       "arxiv_papers": [
+        {
+          "title": "Evaluation of Software Product Quality Metrics",
+          "arxiv_id": "2009.01557v1",
+          "authors": [
+            "Arthur-Jozsef Molnar",
+            "Alexandra Neam\u0163u",
+            "Simona Motogna"
+          ],
+          "year": 2020,
+          "pdf_loaded": true,
+          "excerpts_count": 5
+        },
         {
           "title": "Changing Data Sources in the Age of Machine Learning for Official Statistics",
           "arxiv_id": "2306.04338v1",
@@ -213,20 +513,7 @@
           ],
           "year": 2023,
           "pdf_loaded": true,
-          "excerpts_count": 5
-        },
-        {
-          "title": "Generalizing Machine Learning Evaluation through the Integration of Shannon Entropy and Rough Set Theory",
-          "arxiv_id": "2404.12511v1",
-          "authors": [
-            "Olga Cherednichenko",
-            "Dmytro Chernyshov",
-            "Dmytro Sytnikov",
-            "Polina Sytnikova"
-          ],
-          "year": 2024,
-          "pdf_loaded": true,
-          "excerpts_count": 5
+          "excerpts_count": 4
         },
         {
           "title": "Towards CRISP-ML(Q): A Machine Learning Process Model with Quality Assurance Methodology",
@@ -244,153 +531,536 @@
       ]
     },
     "deep_research_evidence": {
-      "Completeness": {
-        "web_multi_angle": "[5 Useful Python Scripts for Automated Data Quality Checks - KDnuggets]\nURL: https://www.kdnuggets.com/5-useful-python-scripts-for-automated-data-quality-checks\nQuery angle: how to compute \"general Completeness data quality evaluation\" in Python\nSnippet: February 26, 2026 - Comprehensively scans datasets for missing data in all its forms. Identifies patterns in missingness (random vs. systematic), calculates completeness scores for each column, and flags columns with excessive missing data.\nFull page excerpt:\n--> 5 Useful Python Scripts for Automated Data Quality Checks - KDnuggets --> Blog Top Posts About Topics AI Career Advice Computer Vision Data Engineering Data Science Language Models Machine Learning MLOps NLP Programming Python SQL Datasets Events Resources Cheat Sheets Recommendations Tech Briefs Advertise Join Newsletter 5 Useful Python Scripts for Automated Data Quality Checks Bad data leads to bad decisions. These Python scripts will help you catch data quality issues before they cause problems. By Bala Priya C , KDnuggets Contributing Editor & Technical Content Specialist on February 26, 2026 in Python --> Image by Author # Introduction Data quality problems are everyw",
-        "arxiv_quick": "\"The RSNA Abdominal Traumatic Injury CT (RATIC) Dataset\" [2405.19595v1] (2024)\nAbstract: The RSNA Abdominal Traumatic Injury CT (RATIC) dataset is the largest publicly available collection of adult abdominal CT studies annotated for traumatic injuries. This dataset includes 4,274 studies from 23 institutions across 14 countries. The dataset is freely available for non-commercial use via Kaggle at https://www.kaggle.com/competitions/rsna-2023-abdominal-trauma-detection. Created for the\n\n\"The RSNA Lumbar Degenerative Imaging Spine Classification (LumbarDISC) Dataset\" [2506.09162v1] (2025)\nAbstract: The Radiological Society of North America (RSNA) Lumbar Degenerative Imaging Spine Classification (LumbarDISC) dataset is the largest publicly available dataset of adult MRI lumbar spine examinati",
-        "wiki": "Page: Turing completeness\nSummary: In computability theory, a system of data-manipulation rules (such as a model of computation, a computer's instruction set, a programming language, or a cellular automaton) is said to be Turing-complete or computationally universal if it can be used to simulate any Turing machine (devised by English mathematician and computer scientist Alan Turing). This means that this system is able to recognize or decode other data-manipulation rule sets. Turing completeness is used as a way to express the power of such a data-manipulation rule set. Virtually all programmi"
+      "Semantic Similarity between Problem Statements and Patches": {
+        "web_multi_angle": "",
+        "arxiv_quick": "\"Changing Data Sources in the Age of Machine Learning for Official Statistics\" [2306.04338v1] (2023)\nAbstract: Data science has become increasingly essential for the production of official statistics, as it enables the automated collection, processing, and analysis of large amounts of data. With such data science practices in place, it enables more timely, more insightful and more flexible reporting. However, the quality and integrity of data-science-driven statistics rely on the accuracy and reliability o\n\n\"DOME: Recommendations for supervised machine learning validation in biology\" [2006.16189v4] (2020)\nAbstract: Modern biology frequently relies on machine learning to provide predictions and improve decision processes. There have been recent calls for more scrutiny on machine learning pe",
+        "arxiv_quick_papers": [
+          {
+            "title": "Changing Data Sources in the Age of Machine Learning for Official Statistics",
+            "arxiv_id": "2306.04338v1",
+            "authors": [
+              "Cedric De Boom",
+              "Michael Reusens"
+            ],
+            "year": 2023,
+            "abstract": "Data science has become increasingly essential for the production of official statistics, as it enables the automated collection, processing, and analysis of large amounts of data. With such data science practices in place, it enables more timely, more insightful and more flexible reporting. However, the quality and integrity of data-science-driven statistics rely on the accuracy and reliability of the data sources and the machine learning techniques that support them. In particular, changes in ",
+            "source": "phase3_quick"
+          },
+          {
+            "title": "DOME: Recommendations for supervised machine learning validation in biology",
+            "arxiv_id": "2006.16189v4",
+            "authors": [
+              "Ian Walsh",
+              "Dmytro Fishman",
+              "Dario Garcia-Gasulla"
+            ],
+            "year": 2020,
+            "abstract": "Modern biology frequently relies on machine learning to provide predictions and improve decision processes. There have been recent calls for more scrutiny on machine learning performance and possible limitations. Here we present a set of community-wide recommendations aiming to help establish standards of supervised machine learning validation in biology. Adopting a structured methods description for machine learning based on data, optimization, model, evaluation (DOME) will aim to help both rev",
+            "source": "phase3_quick"
+          }
+        ],
+        "wiki": "[Wikipedia: Semantic Similarity between Problem Statements and Patches] Failed: Expecting value: line 1 column 1 (char 0)"
       },
-      "Uniqueness": {
-        "web_multi_angle": "[How to detect duplicate data and measure uniqueness, examples]\nURL: https://dqops.com/docs/categories-of-data-quality-checks/how-to-detect-data-uniqueness-issues-and-duplicates/\nQuery angle: how to compute \"uniqueness data quality evaluation\" in Python\nSnippet: July 22, 2025 - When columns are not configured or none are selected, then all columns are implicitly used by the uniqueness check. The configuration of the duplicate_records_percent check in a YAML file is shown below. The DQOps data quality check editor shows the remaining uniqueness checks after clicking the Show advanced checks checkbox.\nFull page excerpt:\nHow to detect duplicate data and measure uniqueness, examples Skip to content A step-by-step guide to improve data quality. Download free eBook DQOps Data Quality Operations Center Documentation How to detect duplicate data and measure uniqueness, examples Initializing search GitHub DQOps Data Quality Operations Center Documentation GitHub What is DQOps? Documentation guide Getting started DQOps concepts Installation guide Data sources Categories of checks Categories of checks Accepted values Anomaly detection Blanks and whitespaces Boolean values Comparing tables Cus",
-        "arxiv_quick": "\"The RSNA Abdominal Traumatic Injury CT (RATIC) Dataset\" [2405.19595v1] (2024)\nAbstract: The RSNA Abdominal Traumatic Injury CT (RATIC) dataset is the largest publicly available collection of adult abdominal CT studies annotated for traumatic injuries. This dataset includes 4,274 studies from 23 institutions across 14 countries. The dataset is freely available for non-commercial use via Kaggle at https://www.kaggle.com/competitions/rsna-2023-abdominal-trauma-detection. Created for the\n\n\"The RSNA Lumbar Degenerative Imaging Spine Classification (LumbarDISC) Dataset\" [2506.09162v1] (2025)\nAbstract: The Radiological Society of North America (RSNA) Lumbar Degenerative Imaging Spine Classification (LumbarDISC) dataset is the largest publicly available dataset of adult MRI lumbar spine examinati",
-        "wiki": "[Wikipedia: Uniqueness] Failed: Expecting value: line 1 column 1 (char 0)"
+      "Patch Quality Assessment": {
+        "web_multi_angle": "",
+        "arxiv_quick": "\"On Understanding the Relation of Knowledge and Confidence to Requirements Quality\" [2103.02187v1] (2021)\nAbstract: Context and Motivation: Software requirements are affected by the knowledge and confidence of software engineers. Analyzing the interrelated impact of these factors is difficult because of the challenges of assessing knowledge and confidence.\n  Question/Problem: This research aims to draw attention to the need for considering the interrelated effects of confidence and knowledge on requirements qua\n\n\"Towards Guidelines for Assessing Qualities of Machine Learning Systems\" [2008.11007v1] (2020)\nAbstract: Nowadays, systems containing components based on machine learning (ML) methods are becoming more widespread. In order to ensure the intended behavior of a software system, there",
+        "arxiv_quick_papers": [
+          {
+            "title": "On Understanding the Relation of Knowledge and Confidence to Requirements Quality",
+            "arxiv_id": "2103.02187v1",
+            "authors": [
+              "Razieh Dehghani",
+              "Krzysztof Wnuk",
+              "Daniel Mendez"
+            ],
+            "year": 2021,
+            "abstract": "Context and Motivation: Software requirements are affected by the knowledge and confidence of software engineers. Analyzing the interrelated impact of these factors is difficult because of the challenges of assessing knowledge and confidence.\n  Question/Problem: This research aims to draw attention to the need for considering the interrelated effects of confidence and knowledge on requirements quality, which has not been addressed by previous publications.\n  Principal ideas/results: For this pur",
+            "source": "phase3_quick"
+          },
+          {
+            "title": "Towards Guidelines for Assessing Qualities of Machine Learning Systems",
+            "arxiv_id": "2008.11007v1",
+            "authors": [
+              "Julien Siebert",
+              "Lisa Joeckel",
+              "Jens Heidrich"
+            ],
+            "year": 2020,
+            "abstract": "Nowadays, systems containing components based on machine learning (ML) methods are becoming more widespread. In order to ensure the intended behavior of a software system, there are standards that define necessary quality aspects of the system and its components (such as ISO/IEC 25010). Due to the different nature of ML, we have to adjust quality aspects or add additional ones (such as trustworthiness) and be very precise about which aspect is really relevant for which object of interest (such a",
+            "source": "phase3_quick"
+          }
+        ],
+        "wiki": "[Wikipedia: Patch Quality Assessment] Failed: Expecting value: line 1 column 1 (char 0)"
       },
-      "Entropy": {
-        "web_multi_angle": "[Question: What Is Entropy In Computer Science - Poinfish]\nURL: https://www.ponfish.com/wiki/what-is-entropy-in-computer-science\nQuery angle: how to compute \"general entropy\" data quality in Python\nSnippet: What is key entropy? In cryptography, entropy refers to the randomness collected by a system for use in algorithms that require random data. A lack of good entropy can leave a cryptosystem vulnerable and unable to encrypt data securely.\nFull page excerpt:\nQuestion: What Is Entropy In Computer Science - Poinfish Menu Home Quotes Blog Home Kitchen Laptops Electronic Outdoor Beauty Pets Kids Wiki Menu Home Quotes Blog Home Kitchen Laptops Electronic Outdoor Beauty Pets Kids Wiki Home \u00bb Wiki \u00bb Question: What Is Entropy In Computer Science Question: What Is Entropy In Computer Science Asked by: Mr. Sophie Wilson Ph.D. | Last update: December 17, 2020 star rating: 4.3/5 (73 ratings) In computing, entropy is the randomness collected by an operating system or application for use in cryptography or other uses that require random data. What is entropy in cyber security? Entropy, in cyber security, is a measure of the randomness or diversity of a data-generating function. Data with full en",
-        "arxiv_quick": "\"The RSNA Abdominal Traumatic Injury CT (RATIC) Dataset\" [2405.19595v1] (2024)\nAbstract: The RSNA Abdominal Traumatic Injury CT (RATIC) dataset is the largest publicly available collection of adult abdominal CT studies annotated for traumatic injuries. This dataset includes 4,274 studies from 23 institutions across 14 countries. The dataset is freely available for non-commercial use via Kaggle at https://www.kaggle.com/competitions/rsna-2023-abdominal-trauma-detection. Created for the\n\n\"The RSNA Lumbar Degenerative Imaging Spine Classification (LumbarDISC) Dataset\" [2506.09162v1] (2025)\nAbstract: The Radiological Society of North America (RSNA) Lumbar Degenerative Imaging Spine Classification (LumbarDISC) dataset is the largest publicly available dataset of adult MRI lumbar spine examinati",
-        "wiki": "Page: Entropy\nSummary: Entropy is a thermodynamic state variable that quantifies the probabilistic distribution of accesible microstates in a system. The term and the concept are used in diverse fields, from classical thermodynamics (where it was first recognized), to the microscopic description of nature in statistical physics, and the principles of information theory. It has found far-ranging applications in chemistry and physics, in biological systems and their relation to life, in cosmology, economics, and information systems including the transmission of information in telecommunication.\n"
+      "Coherence Score of Trajectories": {
+        "web_multi_angle": "",
+        "arxiv_quick": "\"Changing Data Sources in the Age of Machine Learning for Official Statistics\" [2306.04338v1] (2023)\nAbstract: Data science has become increasingly essential for the production of official statistics, as it enables the automated collection, processing, and analysis of large amounts of data. With such data science practices in place, it enables more timely, more insightful and more flexible reporting. However, the quality and integrity of data-science-driven statistics rely on the accuracy and reliability o\n\n\"DOME: Recommendations for supervised machine learning validation in biology\" [2006.16189v4] (2020)\nAbstract: Modern biology frequently relies on machine learning to provide predictions and improve decision processes. There have been recent calls for more scrutiny on machine learning pe",
+        "arxiv_quick_papers": [
+          {
+            "title": "Changing Data Sources in the Age of Machine Learning for Official Statistics",
+            "arxiv_id": "2306.04338v1",
+            "authors": [
+              "Cedric De Boom",
+              "Michael Reusens"
+            ],
+            "year": 2023,
+            "abstract": "Data science has become increasingly essential for the production of official statistics, as it enables the automated collection, processing, and analysis of large amounts of data. With such data science practices in place, it enables more timely, more insightful and more flexible reporting. However, the quality and integrity of data-science-driven statistics rely on the accuracy and reliability of the data sources and the machine learning techniques that support them. In particular, changes in ",
+            "source": "phase3_quick"
+          },
+          {
+            "title": "DOME: Recommendations for supervised machine learning validation in biology",
+            "arxiv_id": "2006.16189v4",
+            "authors": [
+              "Ian Walsh",
+              "Dmytro Fishman",
+              "Dario Garcia-Gasulla"
+            ],
+            "year": 2020,
+            "abstract": "Modern biology frequently relies on machine learning to provide predictions and improve decision processes. There have been recent calls for more scrutiny on machine learning performance and possible limitations. Here we present a set of community-wide recommendations aiming to help establish standards of supervised machine learning validation in biology. Adopting a structured methods description for machine learning based on data, optimization, model, evaluation (DOME) will aim to help both rev",
+            "source": "phase3_quick"
+          }
+        ],
+        "wiki": "[Wikipedia: Coherence Score of Trajectories] Failed: Expecting value: line 1 column 1 (char 0)"
       },
-      "Kullback-Leibler Divergence": {
-        "web_multi_angle": "[Mutual information - Wikipedia]\nURL: https://en.wikipedia.org/wiki/Mutual_information\nQuery angle: how to compute \"Kullback-Leibler Divergence\" in Python\nSnippet: 3 weeks ago - For example, FMI metric is an image fusion performance measure that makes use of mutual information in order to measure the amount of information that the fused image contains about the source images. The Matlab code for this metric can be found at. A python package for computing all multivariate mutual informations, conditional mutual information, joint entropies, total correlations, information distance in a dataset of n variables is available.\nFull page excerpt:\nMutual information - Wikipedia Jump to content Main menu Main menu move to sidebar hide Navigation Main page Contents Current events Random article About Wikipedia Contact us Contribute Help Learn to edit Community portal Recent changes Upload file Special pages Search Search Appearance Donate Create account Log in Personal tools Donate Create account Log in Contents move to sidebar hide (Top) 1 Definition Toggle Definition subsection 1.1 In terms of PMFs for discrete distributions 1.2 In terms of PDFs for continuous distributions 2 Motivation 3 ",
-        "arxiv_quick": "\"Generalized Kullback-Leibler Divergence Loss\" [2503.08038v1] (2025)\nAbstract: In this paper, we delve deeper into the Kullback-Leibler (KL) Divergence loss and mathematically prove that it is equivalent to the Decoupled Kullback-Leibler (DKL) Divergence loss that consists of (1) a weighted Mean Square Error (wMSE) loss and (2) a Cross-Entropy loss incorporating soft labels. Thanks to the decoupled structure of DKL loss, we have identified two areas for improvement. Firstly,\n\n\"The RSNA Abdominal Traumatic Injury CT (RATIC) Dataset\" [2405.19595v1] (2024)\nAbstract: The RSNA Abdominal Traumatic Injury CT (RATIC) dataset is the largest publicly available collection of adult abdominal CT studies annotated for traumatic injuries. This dataset includes 4,274 studies from 23 institutions across 14",
-        "wiki": "Page: Kullback\u2013Leibler divergence\nSummary: In mathematical statistics, the Kullback\u2013Leibler (KL) divergence (also called relative entropy and I-divergence), denoted \n  \n    \n      \n        \n          D\n          \n            KL\n          \n        \n        (\n        P\n        \u2225\n        Q\n        )\n      \n    \n    {\\displaystyle D_{\\text{KL}}(P\\parallel Q)}\n  \n, is a type of statistical distance: a measure of how much an approximating probability distribution Q is different from a true probability distribution P. Mathematically, it is defined as\n\n  \n    \n      \n        \n          D\n          \n  "
+      "Distribution of Resolved Flags": {
+        "web_multi_angle": "[A survey of Community Detection algorithms and its comparative ...]\nURL: https://www.sciencedirect.com/science/article/pii/S1574013725000759\nQuery angle: \"software Distribution of Resolved Flags\" comparative evaluation survey\nSnippet: Nov 1, 2025 \u00b7 Comparative performance analysis of major Community Detection algorithms is performed. We have observed that, in terms of internal metrics, Louvain\u2019s multilevel, Fastgreedy and \u2026\n\n---\n[[2502.07049] LLMs in Software Security: A Survey of Vulnerability ...]\nURL: https://arxiv.org/abs/2502.07049\nQuery angle: \"software Distribution of Resolved Flags\" comparative evaluation survey\nSnippet: Feb 10, 2025 \u00b7 This paper provides a detailed survey of LLMs in vulnerability detection. It examines key aspects, including model architectures, application methods, target languages, fine-tuning strategies, \u2026\nFull page excerpt:\n[2502.07049] LLMs in Software Security: A Survey of Vulnerability Detection Techniques and Insights Skip to main content Learn about arXiv becoming an independent nonprofit. We gratefully acknowledge support from the Simons Foundation, member institutions , and all contributors. Donate cs arXiv:2502.07049 Help | Advanced Search All",
+        "arxiv_quick": "\"Changing Data Sources in the Age of Machine Learning for Official Statistics\" [2306.04338v1] (2023)\nAbstract: Data science has become increasingly essential for the production of official statistics, as it enables the automated collection, processing, and analysis of large amounts of data. With such data science practices in place, it enables more timely, more insightful and more flexible reporting. However, the quality and integrity of data-science-driven statistics rely on the accuracy and reliability o\n\n\"DOME: Recommendations for supervised machine learning validation in biology\" [2006.16189v4] (2020)\nAbstract: Modern biology frequently relies on machine learning to provide predictions and improve decision processes. There have been recent calls for more scrutiny on machine learning pe",
+        "arxiv_quick_papers": [
+          {
+            "title": "Changing Data Sources in the Age of Machine Learning for Official Statistics",
+            "arxiv_id": "2306.04338v1",
+            "authors": [
+              "Cedric De Boom",
+              "Michael Reusens"
+            ],
+            "year": 2023,
+            "abstract": "Data science has become increasingly essential for the production of official statistics, as it enables the automated collection, processing, and analysis of large amounts of data. With such data science practices in place, it enables more timely, more insightful and more flexible reporting. However, the quality and integrity of data-science-driven statistics rely on the accuracy and reliability of the data sources and the machine learning techniques that support them. In particular, changes in ",
+            "source": "phase3_quick"
+          },
+          {
+            "title": "DOME: Recommendations for supervised machine learning validation in biology",
+            "arxiv_id": "2006.16189v4",
+            "authors": [
+              "Ian Walsh",
+              "Dmytro Fishman",
+              "Dario Garcia-Gasulla"
+            ],
+            "year": 2020,
+            "abstract": "Modern biology frequently relies on machine learning to provide predictions and improve decision processes. There have been recent calls for more scrutiny on machine learning performance and possible limitations. Here we present a set of community-wide recommendations aiming to help establish standards of supervised machine learning validation in biology. Adopting a structured methods description for machine learning based on data, optimization, model, evaluation (DOME) will aim to help both rev",
+            "source": "phase3_quick"
+          }
+        ],
+        "wiki": "Page: Machine learning\nSummary: Machine learning (ML) is a field of study in artificial intelligence concerned with the development and study of statistical algorithms that can learn from data and generalize to unseen data, and thus perform tasks without explicit programming language instructions. Within a subdiscipline of machine learning, advances in the field of deep learning have allowed neural networks, a class of statistical algorithms, to surpass many previous machine learning approaches in performance.\nStatistics and mathematical optimisation (mathematical programming) methods compose "
       },
-      "Domain-Specific Utility": {
-        "web_multi_angle": "[Building a Simple Data Quality DSL in Python - KDnuggets]\nURL: https://www.kdnuggets.com/building-a-simple-data-quality-dsl-in-python\nQuery angle: how to compute \"Domain-Specific Utility data quality evaluation\" in Python\nSnippet: December 1, 2025 - Instead of writing generic Python code, you build specialized functions and classes that express validation rules in terms that match how you think about the problem. For data validation, this means rules that read like business requirements: \"customer ages must be between 18 and 120\" or \"email addresses must contain an @ symbol and should have a valid domain.\"\nFull page excerpt:\n--> Building a Simple Data Quality DSL in Python - KDnuggets --> Blog Top Posts About Topics AI Career Advice Computer Vision Data Engineering Data Science Language Models Machine Learning MLOps NLP Programming Python SQL Datasets Events Resources Cheat Sheets Recommendations Tech Briefs Advertise Join Newsletter Building a Simple Data Quality DSL in Python Build a lightweight Python DSL to define and check data quality rules in a clear, expressive way. Turn complex validation logic into simple, reusable configurations that anyone on your data team can underst",
-        "arxiv_quick": "\"The RSNA Abdominal Traumatic Injury CT (RATIC) Dataset\" [2405.19595v1] (2024)\nAbstract: The RSNA Abdominal Traumatic Injury CT (RATIC) dataset is the largest publicly available collection of adult abdominal CT studies annotated for traumatic injuries. This dataset includes 4,274 studies from 23 institutions across 14 countries. The dataset is freely available for non-commercial use via Kaggle at https://www.kaggle.com/competitions/rsna-2023-abdominal-trauma-detection. Created for the\n\n\"The RSNA Lumbar Degenerative Imaging Spine Classification (LumbarDISC) Dataset\" [2506.09162v1] (2025)\nAbstract: The Radiological Society of North America (RSNA) Lumbar Degenerative Imaging Spine Classification (LumbarDISC) dataset is the largest publicly available dataset of adult MRI lumbar spine examinati",
-        "wiki": "[Wikipedia: Domain-Specific Utility] Failed: Expecting value: line 1 column 1 (char 0)"
+      "Kullback-Leibler Divergence of Patch Lengths": {
+        "web_multi_angle": "[Kullback Leibler (KL) Divergence - GeeksforGeeks]\nURL: https://www.geeksforgeeks.org/machine-learning/kullback-leibler-divergence/\nQuery angle: \"Kullback-Leibler Divergence\" formula for tabular data\nSnippet: Dec 11, 2025 \u00b7 Kullback Leibler Divergence is a measure from information theory that quantifies the difference between two probability \u2026\nFull page excerpt:\nKullback Leibler (KL) Divergence - GeeksforGeeks Courses Tutorials Practice Jobs Python for Machine Learning Machine Learning with R Machine Learning Algorithms EDA Math for Machine Learning Machine Learning Interview Questions ML Projects Deep Learning NLP Computer vision Data Science Artificial Intelligence Share Your Experiences Machine Learning Basics Introduction Types ML Pipeline Applications Python for Machine Learning ML with Python Numpy Pandas Data Preprocessing EDA Feature Engineering Feature Engineering Dimensionality Reduction Feature Selection Supervised Learning Supervised Learning Linear Regression Logistic Regression Decision Tree Random Forest KNN SVM Naive Bayes Unsupervised Learning Unsupervised Learning K means Clustering Hierarchical Clustering DBSCAN Clustering Apriori Algorithm FP Growth Algorithm EC",
+        "arxiv_quick": "\"Generalized Kullback-Leibler Divergence Loss\" [2503.08038v1] (2025)\nAbstract: In this paper, we delve deeper into the Kullback-Leibler (KL) Divergence loss and mathematically prove that it is equivalent to the Decoupled Kullback-Leibler (DKL) Divergence loss that consists of (1) a weighted Mean Square Error (wMSE) loss and (2) a Cross-Entropy loss incorporating soft labels. Thanks to the decoupled structure of DKL loss, we have identified two areas for improvement. Firstly,\n\n\"Changing Data Sources in the Age of Machine Learning for Official Statistics\" [2306.04338v1] (2023)\nAbstract: Data science has become increasingly essential for the production of official statistics, as it enables the automated collection, processing, and analysis of large amounts of data. With such data science prac",
+        "arxiv_quick_papers": [
+          {
+            "title": "Generalized Kullback-Leibler Divergence Loss",
+            "arxiv_id": "2503.08038v1",
+            "authors": [
+              "Jiequan Cui",
+              "Beier Zhu",
+              "Qingshan Xu"
+            ],
+            "year": 2025,
+            "abstract": "In this paper, we delve deeper into the Kullback-Leibler (KL) Divergence loss and mathematically prove that it is equivalent to the Decoupled Kullback-Leibler (DKL) Divergence loss that consists of (1) a weighted Mean Square Error (wMSE) loss and (2) a Cross-Entropy loss incorporating soft labels. Thanks to the decoupled structure of DKL loss, we have identified two areas for improvement. Firstly, we address the limitation of KL loss in scenarios like knowledge distillation by breaking its asymm",
+            "source": "phase3_quick"
+          },
+          {
+            "title": "Changing Data Sources in the Age of Machine Learning for Official Statistics",
+            "arxiv_id": "2306.04338v1",
+            "authors": [
+              "Cedric De Boom",
+              "Michael Reusens"
+            ],
+            "year": 2023,
+            "abstract": "Data science has become increasingly essential for the production of official statistics, as it enables the automated collection, processing, and analysis of large amounts of data. With such data science practices in place, it enables more timely, more insightful and more flexible reporting. However, the quality and integrity of data-science-driven statistics rely on the accuracy and reliability of the data sources and the machine learning techniques that support them. In particular, changes in ",
+            "source": "phase3_quick"
+          }
+        ],
+        "wiki": "[Wikipedia: Kullback-Leibler Divergence of Patch Lengths] Failed: Expecting value: line 1 column 1 (char 0)"
       },
-      "Statistical Consistency": {
-        "web_multi_angle": "[How to Calculate Confidence Intervals in Python? - GeeksforGeeks]\nURL: https://www.geeksforgeeks.org/python/how-to-calculate-confidence-intervals-in-python/\nQuery angle: how to compute \"Statistical Consistency\" in Python\nSnippet: July 23, 2025 - This approach is similar to the previous one but utilizes pandas for easier data manipulation. It calculates the sample mean and standard deviation from a DataFrame and uses the t-value and margin of error to compute the confidence interval.\nFull page excerpt:\nHow to Calculate Confidence Intervals in Python? - GeeksforGeeks Courses Tutorials Practice Jobs Python Tutorial Data Types Interview Questions Examples Quizzes DSA Python Data Science NumPy Pandas Practice Django Flask Share Your Experiences Python Fundamentals Introduction Input Output Variables Operators Keywords Data Types Conditional Statements Loops Functions Python Data Structures String List Tuples Dictionary Set Arrays Advanced Python OOP Concepts Exception Handling File Handling Python Database MongoDB MySQL Packages Modules DSA Libraries Python GUI Data Science with Python Numpy Pandas Matplotlib Seaborn StatsModel Model Building TensorFlow PyTorch Web Development with Pyt",
-        "arxiv_quick": "\"The RSNA Abdominal Traumatic Injury CT (RATIC) Dataset\" [2405.19595v1] (2024)\nAbstract: The RSNA Abdominal Traumatic Injury CT (RATIC) dataset is the largest publicly available collection of adult abdominal CT studies annotated for traumatic injuries. This dataset includes 4,274 studies from 23 institutions across 14 countries. The dataset is freely available for non-commercial use via Kaggle at https://www.kaggle.com/competitions/rsna-2023-abdominal-trauma-detection. Created for the\n\n\"The RSNA Lumbar Degenerative Imaging Spine Classification (LumbarDISC) Dataset\" [2506.09162v1] (2025)\nAbstract: The Radiological Society of North America (RSNA) Lumbar Degenerative Imaging Spine Classification (LumbarDISC) dataset is the largest publicly available dataset of adult MRI lumbar spine examinati",
-        "wiki": "Page: Internal consistency\nSummary: In statistics and research, internal consistency is typically a measure based on the correlations between different items on the same test (or the same subscale on a larger test). It measures whether several items that propose to measure the same general construct produce similar scores. For example, if a respondent expressed agreement with the statements \"I like to ride bicycles\" and \"I've enjoyed riding bicycles in the past\", and disagreement with the statement \"I hate bicycles\", this would be indicative of good internal consistency of the test.\n\nPage: Nov"
+      "Length Consistency of Trajectories": {
+        "web_multi_angle": "[Central Public Works Department, Government of India]\nURL: https://cpwd.gov.in/Publication/DSR_Vol_2_Civil.pdf\nQuery angle: survey on \"Length Consistency of Trajectories\" data quality 2022 OR 2023 OR 2024\nSnippet: Central Public Works Department, Government of India\n\n---\n[Central Public Works Department, Government of India]\nURL: https://cpwd.gov.in/Publication/DSR_Vol_1_Civil.pdf\nQuery angle: survey on \"Length Consistency of Trajectories\" data quality 2022 OR 2023 OR 2024\nSnippet: Central Public Works Department, Government of India\n\n---\n[Oxford Academic]\nURL: https://academic.oup.com/jid/article/230/5/e1031/7701446\nQuery angle: survey on \"Length Consistency of Trajectories\" data quality 2022 OR 2023 OR 2024\nSnippet: Oxford Academic ... Loading...\n\n---\n[UPSC]\nURL: https://upsc.gov.in/sites/default/files/AnsKey-CAPF-AC-2023-GAT-090724.pdf\nQuery angle: survey on \"Length Consistency of Trajectories\" data quality 2022 OR 2023 OR 2024\nSnippet: Created Date 7/8/2024 5:43:59 PM\nFull page excerpt:\n%PDF-1.4 %\ufffd\ufffd\ufffd\ufffd 3 0 obj > endobj 5 0 obj > stream x\ufffd+\ufffd230\ufffd3\ufffdP0\ufffd30\ufffd\u0010\u0016&\ufffdz\ufffdFH\u0002\u0279\\\ufffd\ufffd\ufffd\ufffd .\ufffd\\\ufffd\\\u0000\ufffdg \ufffd endstream endobj 7 0 obj 43 endobj 9 0 obj > stream \ufffd\ufffd\ufffd\ufffd\u0000\u0010JFIF\u0000\u0001\u0001\u0001\u0004\ufffd\u0004\ufffd\u0000\u0000\ufffd\ufffd\u0000C\u0000\u0016\u000f\u0010\u0013\u0010\u000e\u0016\u0013\u0012\u0013\u0018\u0017\u0016\u001a 6# B/2'6N",
+        "arxiv_quick": "\"Changing Data Sources in the Age of Machine Learning for Official Statistics\" [2306.04338v1] (2023)\nAbstract: Data science has become increasingly essential for the production of official statistics, as it enables the automated collection, processing, and analysis of large amounts of data. With such data science practices in place, it enables more timely, more insightful and more flexible reporting. However, the quality and integrity of data-science-driven statistics rely on the accuracy and reliability o\n\n\"DOME: Recommendations for supervised machine learning validation in biology\" [2006.16189v4] (2020)\nAbstract: Modern biology frequently relies on machine learning to provide predictions and improve decision processes. There have been recent calls for more scrutiny on machine learning pe",
+        "arxiv_quick_papers": [
+          {
+            "title": "Changing Data Sources in the Age of Machine Learning for Official Statistics",
+            "arxiv_id": "2306.04338v1",
+            "authors": [
+              "Cedric De Boom",
+              "Michael Reusens"
+            ],
+            "year": 2023,
+            "abstract": "Data science has become increasingly essential for the production of official statistics, as it enables the automated collection, processing, and analysis of large amounts of data. With such data science practices in place, it enables more timely, more insightful and more flexible reporting. However, the quality and integrity of data-science-driven statistics rely on the accuracy and reliability of the data sources and the machine learning techniques that support them. In particular, changes in ",
+            "source": "phase3_quick"
+          },
+          {
+            "title": "DOME: Recommendations for supervised machine learning validation in biology",
+            "arxiv_id": "2006.16189v4",
+            "authors": [
+              "Ian Walsh",
+              "Dmytro Fishman",
+              "Dario Garcia-Gasulla"
+            ],
+            "year": 2020,
+            "abstract": "Modern biology frequently relies on machine learning to provide predictions and improve decision processes. There have been recent calls for more scrutiny on machine learning performance and possible limitations. Here we present a set of community-wide recommendations aiming to help establish standards of supervised machine learning validation in biology. Adopting a structured methods description for machine learning based on data, optimization, model, evaluation (DOME) will aim to help both rev",
+            "source": "phase3_quick"
+          }
+        ],
+        "wiki": "No good Wikipedia Search Result was found"
       }
     }
   },
   "per_metric_results": [
     {
-      "metric_name": "Completeness",
-      "metric_type": "distribution",
-      "description": "Measures the proportion of non-null values in the dataset.",
-      "reasoning": "Completeness is crucial for ensuring that the dataset is usable for analysis and modeling, as missing values can lead to biased results.",
-      "source_influence": "https://johal.in/data-quality-monitoring-with-soda-automated-checks-integrated-into-python/",
+      "metric_name": "USL_H_Score",
+      "metric_type": "universal_validity",
+      "metric_category": "validity",
+      "metric_source": "universal",
+      "target_column": "trajectory",
+      "description": "USL-H=0.0447 \u2014 harmonic mean of uniqueness (0.016), specificity (0.429), and language richness (1.000).",
+      "reasoning": "Predefined universal validity metric for text datasets \u2014 no ground truth required.",
+      "source_influence": "Universal Text Metrics (built-in)",
+      "feasibility_score": 1.0,
+      "quality_score": 0.04473230445794874,
+      "execution_output": "METRIC_VALUE: 0.0447\nUSL-H Score: 0.0447\n  U (corpus TTR / uniqueness):  0.0157\n  S (mean max TF-IDF weight):   0.4285\n  L (lang richness >10 tokens): 1.0000\nLow-specificity threshold (p10): 0.3285\nLow-specificity texts: 1",
+      "error": null,
+      "anomalous_row_count": 1,
+      "anomalous_row_indices": [
+        3
+      ],
+      "anomalous_row_narratives": [],
+      "anomalous_samples": [],
+      "metric_interpretation": "USL-H=0.0447 \u2014 harmonic mean of uniqueness (0.016), specificity (0.429), and language richness (1.000).",
+      "retry_count": 0,
+      "computation_strategy": "universal_predefined",
+      "paper_citation": {}
+    },
+    {
+      "metric_name": "EDS_Embedding_Distribution_Similarity",
+      "metric_type": "universal_fidelity",
+      "metric_category": "fidelity",
+      "metric_source": "universal",
+      "target_column": "",
+      "description": "Universal fidelity metric \u2014 skipped (Degenerate: std=0.00000 \u2014 all embeddings near-identical (corpus too homogeneous or sample too small to discriminate))",
+      "reasoning": "Predefined universal fidelity metric.",
+      "source_influence": "Universal Text Metrics (built-in)",
+      "feasibility_score": 0.0,
+      "quality_score": 0.0,
+      "execution_output": "SKIPPED: Degenerate: std=0.00000 \u2014 all embeddings near-identical (corpus too homogeneous or sample too small to discriminate)",
+      "error": "Degenerate: std=0.00000 \u2014 all embeddings near-identical (corpus too homogeneous or sample too small to discriminate)",
+      "anomalous_row_count": 0,
+      "anomalous_row_indices": [],
+      "anomalous_row_narratives": [],
+      "anomalous_samples": [],
+      "metric_interpretation": "Skipped: Degenerate: std=0.00000 \u2014 all embeddings near-identical (corpus too homogeneous or sample too small to discriminate)",
+      "retry_count": 0,
+      "computation_strategy": "universal_predefined",
+      "paper_citation": {}
+    },
+    {
+      "metric_name": "RUBER_Unreferenced_Coherence",
+      "metric_type": "universal_fidelity",
+      "metric_category": "fidelity",
+      "metric_source": "universal",
+      "target_column": "trajectory",
+      "description": "RUBER-U=0.0287 (context-response (instance_id \u2192 trajectory)). Measures embedding coherence without ground truth.",
+      "reasoning": "Predefined universal fidelity metric for text datasets \u2014 no ground truth required.",
+      "source_influence": "Universal Text Metrics (built-in)",
+      "feasibility_score": 1.0,
+      "quality_score": 0.028714504092931747,
+      "execution_output": "METRIC_VALUE: 0.0287\nRUBER-U Coherence [context-response (instance_id \u2192 trajectory)]: 0.0287\nLow-coherence threshold (p15): 0.0287\nLow-coherence pairs: 0",
+      "error": null,
+      "anomalous_row_count": 0,
+      "anomalous_row_indices": [],
+      "anomalous_row_narratives": [],
+      "anomalous_samples": [],
+      "metric_interpretation": "RUBER-U=0.0287 (context-response (instance_id \u2192 trajectory)). Measures embedding coherence without ground truth.",
+      "retry_count": 0,
+      "computation_strategy": "universal_predefined",
+      "paper_citation": {}
+    },
+    {
+      "metric_name": "Self_Cosine_Similarity",
+      "metric_type": "universal_diversity",
+      "metric_category": "diversity",
+      "metric_source": "universal",
+      "target_column": "trajectory",
+      "description": "Self-cosine=1.0000, diversity=0.0000. 0 texts are near-duplicates of their neighbours.",
+      "reasoning": "Predefined universal diversity metric for text datasets \u2014 no ground truth required.",
+      "source_influence": "Universal Text Metrics (built-in)",
+      "feasibility_score": 1.0,
+      "quality_score": 0.0,
+      "execution_output": "METRIC_VALUE: 1.0000\nMean pairwise cosine similarity: 1.0000\nDiversity score (1 - sim):        0.0000\nSampled 45 pairs from 10 texts\nNear-duplicate / low-diversity texts: 0",
+      "error": null,
+      "anomalous_row_count": 0,
+      "anomalous_row_indices": [],
+      "anomalous_row_narratives": [],
+      "anomalous_samples": [],
+      "metric_interpretation": "Self-cosine=1.0000, diversity=0.0000. 0 texts are near-duplicates of their neighbours.",
+      "retry_count": 0,
+      "computation_strategy": "universal_predefined",
+      "paper_citation": {}
+    },
+    {
+      "metric_name": "TTR_Type_Token_Ratio",
+      "metric_type": "universal_diversity",
+      "metric_category": "diversity",
+      "metric_source": "universal",
+      "target_column": "trajectory",
+      "description": "TTR=0.1189 \u2014 mean type-token ratio per text. 1 texts are lexically repetitive.",
+      "reasoning": "Predefined universal diversity metric for text datasets \u2014 no ground truth required.",
+      "source_influence": "Universal Text Metrics (built-in)",
+      "feasibility_score": 1.0,
+      "quality_score": 0.11892975082347197,
+      "execution_output": "METRIC_VALUE: 0.1189\nMean TTR (per text): 0.1189\nStd dev: 0.0541\nLow-TTR threshold (p10): 0.0530\nRepetitive texts: 1",
+      "error": null,
+      "anomalous_row_count": 1,
+      "anomalous_row_indices": [
+        6
+      ],
+      "anomalous_row_narratives": [],
+      "anomalous_samples": [],
+      "metric_interpretation": "TTR=0.1189 \u2014 mean type-token ratio per text. 1 texts are lexically repetitive.",
+      "retry_count": 0,
+      "computation_strategy": "universal_predefined",
+      "paper_citation": {}
+    },
+    {
+      "metric_name": "Distinct_N_Unique_Ngrams",
+      "metric_type": "universal_diversity",
+      "metric_category": "diversity",
+      "metric_source": "universal",
+      "target_column": "trajectory",
+      "description": "Distinct-1=0.0157, Distinct-2=0.0798. Higher values indicate richer lexical variety.",
+      "reasoning": "Predefined universal diversity metric for text datasets \u2014 no ground truth required.",
+      "source_influence": "Universal Text Metrics (built-in)",
+      "feasibility_score": 1.0,
+      "quality_score": 0.04772741919073358,
+      "execution_output": "METRIC_VALUE: 0.0477\nDistinct-1 (unique unigram fraction): 0.0157  (1578 unique / 100569 total)\nDistinct-2 (unique bigram fraction):  0.0798  (8021 unique / 100559 total)\nRepetitive texts (low distinctness): 1",
+      "error": null,
+      "anomalous_row_count": 1,
+      "anomalous_row_indices": [
+        6
+      ],
+      "anomalous_row_narratives": [],
+      "anomalous_samples": [],
+      "metric_interpretation": "Distinct-1=0.0157, Distinct-2=0.0798. Higher values indicate richer lexical variety.",
+      "retry_count": 0,
+      "computation_strategy": "universal_predefined",
+      "paper_citation": {}
+    },
+    {
+      "metric_name": "Response_Entropy_Ent_N",
+      "metric_type": "universal_diversity",
+      "metric_category": "diversity",
+      "metric_source": "universal",
+      "target_column": "trajectory",
+      "description": "Ent-1=8.48bits (norm=0.7982), Ent-2=11.36bits. Higher entropy indicates more varied language use.",
+      "reasoning": "Predefined universal diversity metric for text datasets \u2014 no ground truth required.",
+      "source_influence": "Universal Text Metrics (built-in)",
+      "feasibility_score": 1.0,
+      "quality_score": 0.7982459923269245,
+      "execution_output": "METRIC_VALUE: 0.7982\nEnt-1 (unigram entropy): 8.4805 bits  (normalised: 0.7982)\nEnt-2 (bigram entropy):  11.3599 bits\nVocabulary: 1578 unique tokens across 100569 total",
+      "error": null,
+      "anomalous_row_count": 0,
+      "anomalous_row_indices": [],
+      "anomalous_row_narratives": [],
+      "anomalous_samples": [],
+      "metric_interpretation": "Ent-1=8.48bits (norm=0.7982), Ent-2=11.36bits. Higher entropy indicates more varied language use.",
+      "retry_count": 0,
+      "computation_strategy": "universal_predefined",
+      "paper_citation": {}
+    },
+    {
+      "metric_name": "Kullback-Leibler Divergence of Patch Lengths",
+      "metric_type": "statistical",
+      "description": "Calculates the Kullback-Leibler divergence between the distribution of patch lengths and a reference distribution.",
+      "reasoning": "This metric helps identify how much the distribution of patch lengths deviates from expected norms, indicating potential quality issues.",
+      "source_influence": "Statistical evaluation of distributions.",
       "feasibility_score": 0.9,
-      "quality_score": 0.4,
+      "quality_score": 0.1,
       "execution_output": "(no output)",
       "error": null,
       "anomalous_row_count": 0,
       "anomalous_row_indices": [],
       "anomalous_row_narratives": [],
       "anomalous_samples": [],
-      "metric_interpretation": "The completeness metric indicates that the dataset has a high proportion of non-null values, suggesting that the data is largely intact and usable for analysis. With no flagged rows, it appears that there are no significant quality issues related to missing values. This level of completeness is a positive sign, as it reflects a well-maintained dataset with minimal gaps. Overall, the findings suggest that the data quality is satisfactory, and there are no immediate concerns regarding the integrity of the dataset.",
+      "metric_interpretation": "The Kullback-Leibler Divergence of Patch Lengths metric was executed, but no output was generated, indicating that there may have been an issue with the calculation process or the data input. Additionally, there were no flagged rows, suggesting that the data structure and formatting were consistent and did not exhibit any anomalies or quality issues. Given the absence of both output and flagged rows, it is difficult to draw definitive conclusions about the distribution of patch lengths in relation to the reference distribution. This situation may warrant further investigation to ensure that the data is being processed correctly and that the metric is functioning as intended. Overall, while no immediate quality concerns are evident, the lack of results necessitates a review of the underlying data and methodology.",
       "retry_count": 2,
       "computation_strategy": "direct_math"
     },
     {
-      "metric_name": "Uniqueness",
-      "metric_type": "distribution",
-      "description": "Calculates the number of unique values in each column.",
-      "reasoning": "Uniqueness helps identify redundancy in the dataset, which can affect the quality of insights derived from it.",
-      "source_influence": "https://www.openriskmanagement.com/data-quality-and-exploratory-data-analysis-using-python/",
-      "feasibility_score": 0.8,
-      "quality_score": 0.4,
-      "execution_output": "(no output)",
-      "error": null,
-      "anomalous_row_count": 0,
-      "anomalous_row_indices": [],
-      "anomalous_row_narratives": [],
-      "anomalous_samples": [],
-      "metric_interpretation": "The uniqueness metric was assessed, and the execution output indicates that there are no flagged rows, suggesting that all columns contain unique values without any anomalies. This is a positive outcome, as it reflects a well-structured dataset with no evident issues related to duplicate entries. The absence of flagged rows implies that the data quality is intact, and there are no concerns regarding broken structures or unexpected null patterns. Overall, the results indicate a healthy level of uniqueness across the dataset, which is essential for maintaining data integrity and reliability.",
-      "retry_count": 2,
-      "computation_strategy": "direct_math"
-    },
-    {
-      "metric_name": "Entropy",
+      "metric_name": "Length Consistency of Trajectories",
       "metric_type": "statistical",
-      "description": "Measures the uncertainty or randomness in the dataset's categorical columns.",
-      "reasoning": "Entropy provides insights into the diversity of data, which is important for understanding the dataset's structure and potential biases.",
-      "source_influence": "Generalizing Machine Learning Evaluation through the Integration of Shannon Entropy and Rough Set Theory [2404.12511v1]",
-      "feasibility_score": 0.7,
-      "quality_score": 0.4,
+      "description": "Measures the consistency of lengths of trajectories to identify anomalies.",
+      "reasoning": "Inconsistent lengths may indicate issues with data collection or processing, affecting overall data quality.",
+      "source_influence": "Statistical analysis of data distributions.",
+      "feasibility_score": 0.9,
+      "quality_score": 0.1,
       "execution_output": "(no output)",
       "error": null,
       "anomalous_row_count": 0,
       "anomalous_row_indices": [],
       "anomalous_row_narratives": [],
       "anomalous_samples": [],
-      "metric_interpretation": "The entropy metric, which measures the uncertainty or randomness in the dataset's categorical columns, did not yield any flagged rows, indicating a consistent distribution across these columns. This suggests that the dataset maintains a healthy level of diversity in its categorical values, which is essential for robust analysis. The absence of flagged rows further implies that there are no significant quality issues such as broken structures or unexpected null patterns. Overall, the results reflect normal variation and indicate that the dataset is well-structured in terms of its categorical data.",
+      "metric_interpretation": "The Length Consistency of Trajectories metric was executed, and the results indicate that there were no flagged rows, suggesting a high level of consistency in the lengths of the trajectories analyzed. With no anomalies detected, this indicates that the dataset maintains a uniform structure and adheres to expected length parameters. The absence of any flagged rows is a positive outcome, reflecting normal variation rather than quality concerns. Overall, the data appears to be in good condition, with no significant issues impacting the integrity of the trajectory lengths.",
       "retry_count": 2,
       "computation_strategy": "direct_math"
     },
     {
-      "metric_name": "Kullback-Leibler Divergence",
-      "metric_type": "statistical",
-      "description": "Measures the divergence between the distribution of a column and a reference distribution.",
-      "reasoning": "KL-divergence helps assess how much the data distribution deviates from an expected or ideal distribution, indicating potential data quality issues.",
-      "source_influence": "Generalizing Machine Learning Evaluation through the Integration of Shannon Entropy and Rough Set Theory [2404.12511v1]",
-      "feasibility_score": 0.6,
-      "quality_score": 0.4,
-      "execution_output": "(no output)",
+      "metric_name": "Coherence Score of Trajectories",
+      "metric_type": "semantic_consistency",
+      "description": "Evaluates the coherence of the trajectory text using NLP techniques.",
+      "reasoning": "Coherent trajectories indicate logical flow and quality of thought processes, essential for understanding agent behavior.",
+      "source_influence": "NLP-based quality evaluation methods.",
+      "feasibility_score": 0.85,
+      "quality_score": 0.8,
+      "execution_output": "METRIC_VALUE: 1.0\nANOMALOUS_ROWS: []\nSemantic consistency (mean cosine to centroid): 1.0000\nLow-similarity threshold: 1.0000\nFlagged 0 outlier rows\n",
       "error": null,
       "anomalous_row_count": 0,
       "anomalous_row_indices": [],
       "anomalous_row_narratives": [],
       "anomalous_samples": [],
-      "metric_interpretation": "The Kullback-Leibler Divergence metric was evaluated to assess the divergence between the distribution of the column in question and a reference distribution. The execution output indicated that there were no flagged rows, suggesting that the data aligns well with the expected distribution. This absence of flagged rows indicates that there are no significant quality issues present, and the observed variations in the data can be considered normal. Overall, the results reflect a healthy data quality status, with no anomalies detected that would warrant further investigation.",
-      "retry_count": 2,
-      "computation_strategy": "direct_math"
+      "metric_interpretation": "The Coherence Score of Trajectories has yielded a perfect metric value of 1.0, indicating that the trajectory text exhibits complete semantic consistency. The mean cosine similarity to the centroid is also reported at 1.0000, which aligns with the low-similarity threshold of 1.0000, suggesting that all evaluated trajectories are highly coherent and closely related in meaning. Notably, there are no anomalous rows flagged, and no outlier rows were identified, which further reinforces the quality of the data. Overall, these results reflect a strong level of coherence in the dataset, with no quality concerns present.",
+      "retry_count": 0,
+      "computation_strategy": "semantic"
+    },
+    {
+      "metric_name": "Semantic Similarity between Problem Statements and Patches",
+      "metric_type": "semantic_consistency",
+      "description": "Measures the semantic similarity between the problem statements and the corresponding model patches.",
+      "reasoning": "High similarity indicates that the patches are relevant to the problems, which is essential for effective issue resolution.",
+      "source_influence": "NLP-based semantic evaluation techniques.",
+      "feasibility_score": 0.95,
+      "quality_score": 0.8,
+      "execution_output": "METRIC_VALUE: 1.0\nANOMALOUS_ROWS: []\nSemantic consistency (mean cosine to centroid): 1.0000\nLow-similarity threshold: 1.0000\nFlagged 0 outlier rows\n",
+      "error": null,
+      "anomalous_row_count": 0,
+      "anomalous_row_indices": [],
+      "anomalous_row_narratives": [],
+      "anomalous_samples": [],
+      "metric_interpretation": "The metric for semantic similarity between problem statements and their corresponding model patches yielded a perfect score of 1.0, indicating complete alignment in meaning. Additionally, the mean cosine similarity to the centroid also stood at 1.0000, reinforcing the consistency of the data. Notably, there were no anomalous rows flagged, and the low-similarity threshold was set at 1.0000, which means that all entries met the expected standard without any outliers. This result suggests a high level of data quality and coherence in the dataset, with no indications of quality concerns or variations that would warrant further investigation. Overall, the findings reflect a robust and reliable dataset for analysis.",
+      "retry_count": 0,
+      "computation_strategy": "semantic"
+    },
+    {
+      "metric_name": "Patch Quality Assessment",
+      "metric_type": "semantic_consistency",
+      "description": "Evaluates the quality of patches based on their semantic relevance to the problem statements.",
+      "reasoning": "High-quality patches should directly address the issues outlined in the problem statements, ensuring effective resolutions.",
+      "source_influence": "NLP-based semantic evaluation techniques.",
+      "feasibility_score": 0.95,
+      "quality_score": 0.8,
+      "execution_output": "METRIC_VALUE: 1.0\nANOMALOUS_ROWS: []\nSemantic consistency (mean cosine to centroid): 1.0000\nLow-similarity threshold: 1.0000\nFlagged 0 outlier rows\n",
+      "error": null,
+      "anomalous_row_count": 0,
+      "anomalous_row_indices": [],
+      "anomalous_row_narratives": [],
+      "anomalous_samples": [],
+      "metric_interpretation": "The Patch Quality Assessment yielded a metric value of 1.0, indicating perfect semantic relevance between the patches and the problem statements. The mean cosine similarity to the centroid also stands at 1.0000, which reinforces the high quality of the patches, as they are closely aligned with the intended context. Notably, there were no anomalous rows flagged, and the low-similarity threshold was also set at 1.0000, suggesting that all evaluated patches met the expected quality standards without any outliers. This result reflects a strong consistency in the dataset, and there are no quality concerns to address at this time. Overall, the findings indicate a robust and reliable dataset for further analysis.",
+      "retry_count": 0,
+      "computation_strategy": "semantic"
     }
   ],
   "evaluator_output": {
     "evaluated_metrics": [
-      "Completeness",
-      "Uniqueness",
-      "Entropy",
-      "Kullback-Leibler Divergence"
+      "USL_H_Score",
+      "EDS_Embedding_Distribution_Similarity",
+      "RUBER_Unreferenced_Coherence",
+      "Self_Cosine_Similarity",
+      "TTR_Type_Token_Ratio",
+      "Distinct_N_Unique_Ngrams",
+      "Response_Entropy_Ent_N",
+      "Kullback-Leibler Divergence of Patch Lengths",
+      "Length Consistency of Trajectories",
+      "Coherence Score of Trajectories",
+      "Semantic Similarity between Problem Statements and Patches",
+      "Patch Quality Assessment"
     ],
-    "dataset_level_evidence": "The dataset has 10 rows and 11 columns, with no flagged rows across all evaluated metrics, indicating a high level of data integrity.",
-    "sample_level_inconsistencies": "No structural or formatting anomalies were identified.",
-    "quality_observations": "The metrics indicate that the dataset is well-structured, with high completeness, uniqueness, and consistent distributions across categorical columns.",
-    "statistical_justification": "All metrics reported zero anomalous counts, suggesting that the dataset is free from significant quality issues.",
+    "dataset_level_evidence": "The dataset has 10 rows with 1 anomalous count for USL_H_Score, 1 for TTR_Type_Token_Ratio, and 1 for Distinct_N_Unique_Ngrams, indicating 30% of rows show some level of anomaly, which is within acceptable limits.",
+    "sample_level_inconsistencies": "No structural or formatting anomalies were detected in the dataset.",
+    "quality_observations": "The metrics indicate a generally high level of coherence and semantic similarity, with perfect scores in several research-based metrics. However, there are minor issues with uniqueness and diversity as indicated by the TTR and distinctness metrics.",
+    "statistical_justification": "The USL-H Score is 0.0447, indicating some issues with text specificity, while the TTR is 0.1189, with 1 text being lexically repetitive. The overall proportion of anomalies is 30%, which is not excessively high.",
     "quality_by_metric": [
       {
-        "metric": "Completeness",
-        "finding": "No flagged rows, indicating high non-null values.",
-        "quality_level": "HIGH",
-        "note": "The dataset is largely intact and usable for analysis."
+        "metric": "USL_H_Score",
+        "finding": "USL-H=0.0447 with 1 low-specificity text identified.",
+        "quality_level": "ACCEPTABLE",
+        "note": "The low specificity indicates some issues, but not enough to downgrade overall quality."
       },
       {
-        "metric": "Uniqueness",
-        "finding": "No flagged rows, suggesting all columns contain unique values.",
-        "quality_level": "HIGH",
-        "note": "This reflects a well-structured dataset."
+        "metric": "EDS_Embedding_Distribution_Similarity",
+        "finding": "Skipped due to degenerate embeddings.",
+        "quality_level": "POOR",
+        "note": "This indicates a potential issue with the dataset's homogeneity."
       },
       {
-        "metric": "Entropy",
-        "finding": "No flagged rows, indicating consistent distribution across categorical columns.",
+        "metric": "RUBER_Unreferenced_Coherence",
+        "finding": "RUBER-U=0.0287 with no low-coherence pairs.",
         "quality_level": "HIGH",
-        "note": "The dataset maintains a healthy level of randomness."
+        "note": "Indicates good coherence in the dataset."
       },
       {
-        "metric": "Kullback-Leibler Divergence",
-        "finding": "No flagged rows, suggesting alignment with reference distribution.",
+        "metric": "Self_Cosine_Similarity",
+        "finding": "Self-cosine=1.0000, diversity=0.0000 with no near-duplicates.",
         "quality_level": "HIGH",
-        "note": "The data aligns well with expected distributions."
+        "note": "Indicates high similarity among texts."
+      },
+      {
+        "metric": "TTR_Type_Token_Ratio",
+        "finding": "TTR=0.1189 with 1 repetitive text.",
+        "quality_level": "ACCEPTABLE",
+        "note": "Minor issue with lexical variety."
+      },
+      {
+        "metric": "Distinct_N_Unique_Ngrams",
+        "finding": "Distinct-1=0.0157 with 1 repetitive text.",
+        "quality_level": "ACCEPTABLE",
+        "note": "Indicates some lack of distinctness."
+      },
+      {
+        "metric": "Response_Entropy_Ent_N",
+        "finding": "Ent-1=8.4805 bits (norm=0.7982), indicating varied language use.",
+        "quality_level": "HIGH",
+        "note": "Shows good diversity in language."
+      },
+      {
+        "metric": "Kullback-Leibler Divergence of Patch Lengths",
+        "finding": "No output generated.",
+        "quality_level": "POOR",
+        "note": "Indicates potential issues with the calculation process."
+      },
+      {
+        "metric": "Length Consistency of Trajectories",
+        "finding": "No output generated.",
+        "quality_level": "HIGH",
+        "note": "Indicates high consistency in trajectory lengths."
+      },
+      {
+        "metric": "Coherence Score of Trajectories",
+        "finding": "Coherence Score=1.0 with no flagged rows.",
+        "quality_level": "HIGH",
+        "note": "Indicates perfect semantic consistency."
+      },
+      {
+        "metric": "Semantic Similarity between Problem Statements and Patches",
+        "finding": "Semantic similarity=1.0 with no flagged rows.",
+        "quality_level": "HIGH",
+        "note": "Indicates complete alignment in meaning."
+      },
+      {
+        "metric": "Patch Quality Assessment",
+        "finding": "Patch Quality=1.0 with no flagged rows.",
+        "quality_level": "HIGH",
+        "note": "Indicates high quality of patches."
       }
     ],
-    "final_verdict": "HIGH_QUALITY",
-    "verdict_reasoning": "The dataset exhibits no significant quality issues across all evaluated metrics, with zero anomalies reported. Given the high completeness, uniqueness, and consistent distributions, it is deemed suitable for its intended analysis."
+    "final_verdict": "ACCEPTABLE_QUALITY",
+    "verdict_reasoning": "While there are some minor issues with uniqueness and diversity metrics, the overall dataset shows a high level of coherence and semantic similarity. The proportion of anomalies is within acceptable limits, and the majority of metrics indicate good quality."
   },
-  "errors": [
-    "Thinker: JSON parse failed \u2014 raw response stored in thinker_output.raw"
-  ]
+  "errors": []
 }

@@ -33,13 +33,23 @@ class ThinkerAgent(BaseAgent):
         user_hint: str | None,
     ) -> str:
 
-        hint_block = (
-            f"\nUser Hint: \"{user_hint}\"\n"
-            "Take this hint into account when reasoning about domain, intent, "
-            "and which agents to prioritise.\n"
-            if user_hint
-            else "\nNo user hint provided.\n"
-        )
+        if user_hint:
+            hint_block = (
+                f"\n{'='*64}\n"
+                f"⚑  HIGH-PRIORITY CONTEXT FROM DATASET OWNER — READ FIRST\n"
+                f"{'='*64}\n"
+                f'"{user_hint}"\n\n'
+                f"This context comes directly from the person who built or owns the\n"
+                f"dataset. It MUST override any default assumptions you would otherwise\n"
+                f"make about domain, intended use, and quality concerns. You MUST:\n"
+                f"  1. Reference it explicitly in your reasoning_trace.\n"
+                f"  2. Let it shape your domain.name, dataset_type, and agent selection.\n"
+                f"  3. Set user_hint_influence to explain exactly how it changed your plan.\n"
+                f"  DO NOT ignore or downplay this hint.\n"
+                f"{'='*64}\n"
+            )
+        else:
+            hint_block = "\nNo user context provided — rely solely on metadata.\n"
 
         return f"""You are the Thinker Agent — the reasoning brain of a Synthetic Data Audit System.
 

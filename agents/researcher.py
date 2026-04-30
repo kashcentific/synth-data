@@ -10,7 +10,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from typing import Any, Dict, List, Tuple
 
 from base import BaseAgent
-from langchain_community.utilities import DuckDuckGoSearchAPIWrapper
+from duckduckgo_search import DDGS                                   # direct — avoids backend rotation errors
 from langchain_community.tools.wikipedia.tool import WikipediaQueryRun
 from langchain_community.utilities.wikipedia import WikipediaAPIWrapper
 from langchain_community.document_loaders import PyPDFLoader
@@ -47,13 +47,7 @@ class ResearchAgent(BaseAgent):
 
         print("\n[RESEARCHER] Initializing research tools...")
 
-        try:
-            print("[RESEARCHER]   * DuckDuckGo (multi-angle): ", end="", flush=True)
-            self.ddg_wrapper = DuckDuckGoSearchAPIWrapper(max_results=8)
-            print("OK")
-        except Exception as e:
-            print(f"FAILED: {e}")
-            self.ddg_wrapper = None
+        print("[RESEARCHER]   * DuckDuckGo (DDGS direct, multi-angle): OK")
 
         try:
             print("[RESEARCHER]   * Wikipedia: ", end="", flush=True)
@@ -141,8 +135,8 @@ Return ONLY a JSON array of exactly 4 query strings, no commentary:
 
     def _multi_angle_duckduckgo(self, queries: List[str]) -> Tuple[str, List[Dict]]:
         """
-        Run all angle-queries, deduplicate by URL, then scrape the top 3 unique
-        URLs so we get actual page text instead of 2-line SEO snippets.
+        Run all angle-queries via DDGS (direct, no LangChain wrapper), deduplicate
+        by URL, then scrape the top 3 unique URLs for full page text.
         Returns (formatted_text_for_prompt, structured_result_list).
         """
         seen_urls: set = set()
@@ -150,20 +144,22 @@ Return ONLY a JSON array of exactly 4 query strings, no commentary:
 
         for query in queries:
             try:
-                results = self.ddg_wrapper.results(query, max_results=8)
-                for r in results:
-                    url = r.get("link", "")
+                with DDGS() as ddgs:
+                    raw = ddgs.text(query, max_results=8) or []
+                for r in raw:
+                    # DDGS returns: {"title", "href", "body"}
+                    url = r.get("href", "")
                     if url and url not in seen_urls:
                         seen_urls.add(url)
                         structured.append({
-                            "title":       r.get("title", ""),
-                            "snippet":     r.get("snippet", ""),
-                            "url":         url,
-                            "angle_query": query,
+                            "title":        r.get("title", ""),
+                            "snippet":      r.get("body", ""),
+                            "url":          url,
+                            "angle_query":  query,
                             "full_content": "",
                         })
             except Exception as exc:
-                print(f"[RESEARCHER]      DDG query error ({query[:40]}): {exc}")
+                print(f"[RESEARCHER]      DDG error ({query[:50]}): {type(exc).__name__}")
 
         print(f"[RESEARCHER]      DDG: {len(structured)} unique URLs across {len(queries)} queries")
 
@@ -233,7 +229,9 @@ Return ONLY a JSON array of exactly 4 query strings, no commentary:
             "score", "benchmark", "dataset", "statistical", "semantic",
         }
 
-        print(f"\n[RESEARCHER]   ArXiv deep search: \"{query}\" (top_k={top_k})")
+        print(f"\n[RESEARCHER] ── ArXiv ────────────────────────────────────────")
+        print(f"[RESEARCHER]   Query  : \"{query}\"")
+        print(f"[RESEARCHER]   top_k  : {top_k}  (full PDF download + chunking)")
 
         try:
             client = arxiv_lib.Client()
@@ -243,20 +241,30 @@ Return ONLY a JSON array of exactly 4 query strings, no commentary:
                 sort_by=arxiv_lib.SortCriterion.Relevance,
             )
 
-            for paper in client.results(search):
+            results_iter = list(client.results(search))
+            if not results_iter:
+                print("[RESEARCHER]   ArXiv returned 0 results for this query.")
+                return papers
+
+            print(f"[RESEARCHER]   Found {len(results_iter)} papers:")
+            for i, paper in enumerate(results_iter, 1):
+                arxiv_id = paper.get_short_id() if hasattr(paper, "get_short_id") else paper.entry_id.split("/")[-1]
+                print(f"[RESEARCHER]   [{i}] {paper.title[:70]}")
+                print(f"[RESEARCHER]       ID: {arxiv_id}  | Year: {paper.published.year if paper.published else '?'}")
+                print(f"[RESEARCHER]       Abstract: {paper.summary[:200].replace(chr(10),' ')}...")
+
                 paper_data: Dict = {
                     "title":             paper.title,
                     "authors":           [a.name for a in paper.authors[:4]],
                     "year":              paper.published.year if paper.published else "?",
-                    "arxiv_id":          paper.get_short_id(),
+                    "arxiv_id":          arxiv_id,
                     "abstract":          paper.summary[:600],
                     "pdf_url":           paper.pdf_url,
                     "relevant_excerpts": [],
                     "pdf_loaded":        False,
                 }
 
-                print(f"[RESEARCHER]   Downloading: {paper.title[:65]}...")
-
+                print(f"[RESEARCHER]       Downloading PDF...", end="", flush=True)
                 try:
                     resp = requests.get(
                         paper.pdf_url, timeout=40,
@@ -269,14 +277,10 @@ Return ONLY a JSON array of exactly 4 query strings, no commentary:
                         tmp_path = tmp.name
 
                     loader = PyPDFLoader(tmp_path)
-                    pages  = loader.load()
-
-                    # Cap at 20 pages to keep things fast
-                    pages = pages[:20]
+                    pages  = loader.load()[:20]
 
                     splitter = RecursiveCharacterTextSplitter(
-                        chunk_size=800,
-                        chunk_overlap=100,
+                        chunk_size=800, chunk_overlap=100,
                         separators=["\n\n", "\n", ". ", " "],
                     )
                     chunks = splitter.split_documents(pages)
@@ -295,15 +299,16 @@ Return ONLY a JSON array of exactly 4 query strings, no commentary:
                     paper_data["pdf_loaded"]        = True
                     os.unlink(tmp_path)
 
-                    print(
-                        f"[RESEARCHER]   OK — {len(pages)} pages, "
-                        f"{len(chunks)} chunks, {len(relevant_chunks)} relevant"
-                    )
+                    print(f" {len(pages)}pp, {len(relevant_chunks)} relevant chunks extracted")
 
                 except Exception as exc:
-                    print(f"[RESEARCHER]   PDF load failed: {exc}")
+                    print(f" FAILED ({type(exc).__name__}) — abstract only")
 
                 papers.append(paper_data)
+
+            pdf_ok = sum(1 for p in papers if p["pdf_loaded"])
+            print(f"[RESEARCHER]   ArXiv done: {pdf_ok}/{len(papers)} PDFs loaded, "
+                  f"{sum(len(p['relevant_excerpts']) for p in papers)} total relevant chunks")
 
         except Exception as exc:
             print(f"[RESEARCHER]   ArXiv search failed: {exc}")
@@ -444,9 +449,12 @@ External Research Context (web search + Wikipedia + full ArXiv PDFs):
 
 {'Available ArXiv papers (cite these by title + ID):' + chr(10) + paper_names if paper_names else ''}
 
-CITATION REQUIREMENT:
-For every metric that is supported by one of the ArXiv papers above, include a "paper_citation" field
-with the EXACT sentence or phrase from the paper excerpt that supports using this metric.
+HARD CITATION REQUIREMENT — READ CAREFULLY:
+Every metric MUST have at least 2 entries in "paper_citations".
+Each citation must reference a REAL paper from the ArXiv list above (use its exact title and arxiv_id).
+Include the EXACT sentence or phrase from the paper excerpt that justifies this metric.
+If you cannot find 2 supporting papers for a metric from the evidence above, DO NOT include that metric.
+A metric with 0 or 1 citations will be automatically discarded by the pipeline.
 
 Return ONLY valid JSON — no markdown:
 
@@ -459,17 +467,67 @@ Return ONLY valid JSON — no markdown:
       "reasoning": "<why this metric matters for data quality of this specific dataset>",
       "source_influence": "<which tool/URL/paper influenced this metric>",
       "execution_hint": "<concrete Python/pandas/scipy steps with actual column names>",
-      "paper_citation": {{
-        "title": "<paper title or empty string if not from a paper>",
-        "arxiv_id": "<arxiv id or empty>",
-        "authors": "<first author et al. or empty>",
-        "year": "<year or empty>",
-        "supporting_text": "<exact quote from the paper excerpt that mentions this metric, or empty>"
-      }}
+      "paper_citations": [
+        {{
+          "title": "<exact paper title from the list above>",
+          "arxiv_id": "<arxiv id, e.g. 2301.12345>",
+          "authors": "<First Author et al.>",
+          "year": "<year>",
+          "supporting_text": "<exact sentence from the paper excerpt supporting this metric>"
+        }},
+        {{
+          "title": "<second paper title>",
+          "arxiv_id": "<second arxiv id>",
+          "authors": "<authors>",
+          "year": "<year>",
+          "supporting_text": "<exact sentence from this paper>"
+        }}
+      ]
     }}
   ],
   "research_summary": "<2-3 sentence summary citing the most relevant findings and papers>"
 }}"""
+
+    # ------------------------------------------------------------------
+    # Citation gate — enforce minimum 2 paper citations per metric
+    # ------------------------------------------------------------------
+
+    _CITATION_SCHEMA = {
+        "title": "", "arxiv_id": "", "authors": "", "year": "", "supporting_text": ""
+    }
+
+    def _filter_by_citations(self, metrics: list, min_citations: int = 2) -> list:
+        """
+        Drop any metric that cannot show at least `min_citations` distinct paper
+        citations.  Also normalises the field name: merges a legacy single
+        paper_citation into paper_citations if needed.
+        """
+        kept, dropped = [], []
+        for m in metrics:
+            cites = m.get("paper_citations", [])
+
+            # Back-compat: single paper_citation field
+            if not cites:
+                single = m.get("paper_citation", {})
+                if single.get("arxiv_id") or single.get("title"):
+                    cites = [single]
+
+            # Keep only citations that have at least an ID or a title
+            valid = [c for c in cites
+                     if isinstance(c, dict) and (c.get("arxiv_id") or c.get("title"))]
+
+            if len(valid) >= min_citations:
+                m["paper_citations"] = valid
+                m.pop("paper_citation", None)   # remove legacy field
+                kept.append(m)
+            else:
+                dropped.append(m.get("metric_name", "?"))
+
+        if dropped:
+            print(f"[RESEARCHER]   ✗ Dropped {len(dropped)} under-cited metrics "
+                  f"(need ≥{min_citations} papers): {dropped}")
+        print(f"[RESEARCHER]   ✓ {len(kept)} metrics passed the 2-paper citation gate")
+        return kept
 
     # ------------------------------------------------------------------
     # Relevance scoring
@@ -527,38 +585,55 @@ Return ONLY valid JSON array:
             queries = self._generate_search_queries(domain, "tabular", topic)
             web_text, _ = self._multi_angle_duckduckgo(queries)
 
-            # Quick ArXiv (top 2 papers, no PDF download — abstract only for speed)
-            arxiv_text = ""
+            # Quick ArXiv (top 2 papers, abstract only — no PDF download for speed)
+            # Returns both a text blob AND structured paper records so the
+            # final consolidation prompt can offer them as citable sources.
+            arxiv_text   = ""
+            quick_papers: List[Dict] = []
             try:
                 client = arxiv_lib.Client()
                 search = arxiv_lib.Search(
-                    query=f"{metric_name} evaluation {domain} dataset",
+                    query=f"{metric_name} data quality evaluation {domain} NLP machine learning",
                     max_results=2,
                     sort_by=arxiv_lib.SortCriterion.Relevance,
                 )
-                found = []
+                found_text = []
                 for p in client.results(search):
-                    found.append(
-                        f'"{p.title}" [{p.get_short_id()}] ({p.published.year if p.published else "?"})\n'
+                    pid = p.get_short_id() if hasattr(p, "get_short_id") else p.entry_id.split("/")[-1]
+                    print(f"[RESEARCHER]      ArXiv: \"{p.title[:60]}\" [{pid}]")
+                    found_text.append(
+                        f'"{p.title}" [{pid}] ({p.published.year if p.published else "?"})\n'
                         f'Abstract: {p.summary[:400]}'
                     )
-                arxiv_text = "\n\n".join(found)
+                    quick_papers.append({
+                        "title":    p.title,
+                        "arxiv_id": pid,
+                        "authors":  [a.name for a in p.authors[:3]],
+                        "year":     p.published.year if p.published else "?",
+                        "abstract": p.summary[:500],
+                        "source":   "phase3_quick",
+                    })
+                arxiv_text = "\n\n".join(found_text)
+                if not found_text:
+                    print(f"[RESEARCHER]      ArXiv: no papers found")
             except Exception as exc:
-                print(f"[RESEARCHER]      ArXiv quick search failed: {exc}")
+                print(f"[RESEARCHER]      ArXiv quick search failed: {type(exc).__name__}")
 
-            # Wikipedia targeted
+            # Wikipedia — always anchor to "data quality NLP" to avoid off-topic pages
             wiki_result = ""
             if self.wikipedia:
+                wiki_query = f"{metric_name} data quality NLP machine learning evaluation"
                 wiki_result, _ = self._safe_run(
                     self.wikipedia,
-                    f"{domain} {metric_name}",
+                    wiki_query,
                     f"Wikipedia: {metric_name}",
                 )
 
             evidence[metric_name] = {
-                "web_multi_angle": web_text[:1200],
-                "arxiv_quick":     arxiv_text[:800],
-                "wiki":            wiki_result[:600],
+                "web_multi_angle":  web_text[:1200],
+                "arxiv_quick":      arxiv_text[:800],
+                "arxiv_quick_papers": quick_papers,   # structured, citable
+                "wiki":             wiki_result[:600],
             }
 
         return evidence
@@ -712,7 +787,8 @@ Rules:
 - Mathematical metrics: include scipy/numpy formulas in execution_hint
 - Semantic metrics: include TF-IDF cosine or sentence-transformers approach in execution_hint
 - Each metric must be clearly different from the existing ones above
-- If any evidence above comes from a specific paper, cite it in paper_citation
+- Each metric MUST have at least 2 entries in paper_citations — cite specific papers from the research evidence
+- If you cannot find 2 supporting papers for a metric, DO NOT include that metric
 
 Return ONLY valid JSON array (no markdown):
 [
@@ -724,9 +800,10 @@ Return ONLY valid JSON array (no markdown):
     "source_influence": "...",
     "execution_hint": "<concrete Python steps>",
     "relevance_score": 0.80,
-    "paper_citation": {{
-      "title": "", "arxiv_id": "", "authors": "", "year": "", "supporting_text": ""
-    }}
+    "paper_citations": [
+      {{"title": "...", "arxiv_id": "...", "authors": "...", "year": "...", "supporting_text": "..."}},
+      {{"title": "...", "arxiv_id": "...", "authors": "...", "year": "...", "supporting_text": "..."}}
+    ]
   }}
 ]"""
 
@@ -822,7 +899,10 @@ New research context:
 {new_context[:1500]}
 
 Output a FINAL set of 8-12 metrics with balanced coverage.
-Preserve any paper_citation fields from the input metrics.
+Carry forward any paper_citations lists from the input metrics.
+
+HARD CITATION REQUIREMENT: every metric must have at least 2 entries in paper_citations.
+Omit any metric you cannot back with 2 real papers from the evidence above.
 
 Return ONLY valid JSON (no markdown):
 {{
@@ -836,9 +916,10 @@ Return ONLY valid JSON (no markdown):
       "execution_hint": "...",
       "relevance_score": 0.85,
       "supporting_evidence": "...",
-      "paper_citation": {{
-        "title": "", "arxiv_id": "", "authors": "", "year": "", "supporting_text": ""
-      }}
+      "paper_citations": [
+        {{"title": "...", "arxiv_id": "...", "authors": "...", "year": "...", "supporting_text": "..."}},
+        {{"title": "...", "arxiv_id": "...", "authors": "...", "year": "...", "supporting_text": "..."}}
+      ]
     }}
   ],
   "research_summary": "...",
@@ -853,6 +934,10 @@ Return ONLY valid JSON (no markdown):
 
             result["research_context"]       = existing_output.get("research_context", {})
             result["deep_research_evidence"] = existing_output.get("deep_research_evidence", {})
+
+            # Citation gate: drop metrics with < 2 paper citations
+            raw_retry = result.get("final_metrics", [])
+            result["final_metrics"] = self._filter_by_citations(raw_retry, min_citations=2)
 
             final_metrics = result.get("final_metrics", [])
             new_coverage  = self._assess_metric_coverage(final_metrics)
@@ -911,7 +996,10 @@ Return ONLY valid JSON (no markdown):
         print(f"[RESEARCHER] Ranked metrics by relevance:")
         for i, m in enumerate(ranked_metrics[:8], 1):
             score = m.get("relevance_score", 0)
-            cited = "📄" if m.get("paper_citation", {}).get("arxiv_id") else "  "
+            cites = m.get("paper_citations", [])
+            if not cites and m.get("paper_citation", {}).get("arxiv_id"):
+                cites = [m["paper_citation"]]
+            cited = f"📄x{len(cites)}" if len(cites) >= 2 else ("📄x1" if cites else "   ")
             print(f"[RESEARCHER]   {cited} {i}. {m.get('metric_name')} (relevance: {score:.2f})")
 
         # ── Phase 3: Multi-angle deep evidence for top metrics ─────────
@@ -925,6 +1013,25 @@ Return ONLY valid JSON (no markdown):
         arxiv_papers  = context_data.get("arxiv_papers", [])
         paper_summary = self._format_arxiv_papers(arxiv_papers)
 
+        # Build a unified pool of all citable papers (Phase 1 full-PDFs + Phase 3 quick)
+        phase3_quick_papers: List[Dict] = []
+        for ev in deep_evidence.values():
+            phase3_quick_papers.extend(ev.get("arxiv_quick_papers", []))
+        # Deduplicate by arxiv_id
+        seen_ids: set = set()
+        all_citable: List[Dict] = []
+        for p in arxiv_papers + phase3_quick_papers:
+            pid = p.get("arxiv_id", "")
+            if pid and pid not in seen_ids:
+                seen_ids.add(pid)
+                all_citable.append(p)
+
+        all_paper_names = "\n".join(
+            f'  Paper {i}: "{p["title"]}" [{p["arxiv_id"]}]  '
+            f'({", ".join(p.get("authors", [])[:2])} {p.get("year", "")})'
+            for i, p in enumerate(all_citable, 1)
+        )
+
         final_prompt = f"""You are the Research Agent finalizing metric selection for a DATA QUALITY pipeline.
 
 Dataset Domain: {domain}
@@ -937,17 +1044,26 @@ REQUIRED COVERAGE:
 - At least 3 mathematical/statistical metrics (entropy, KL-divergence, distribution tests, etc.)
 - At least 3 semantic/text-quality metrics (semantic coherence, embedding similarity, readability, etc.)
 
-Top-ranked metrics with paper citations:
+HARD CITATION REQUIREMENT — TWO-PAPER MINIMUM:
+Every metric in "final_metrics" MUST have at least 2 entries in "paper_citations".
+Each citation must reference a REAL paper from the list below (use its exact title and arxiv_id).
+Include the EXACT sentence or phrase from the paper excerpt that justifies the metric.
+If you cannot find 2 supporting papers for a metric, OMIT that metric entirely.
+Metrics with 0 or 1 citations are automatically discarded.
+
+All citable papers ({len(all_citable)} total — Phase 1 full PDFs + Phase 3 quick search):
+{all_paper_names}
+
+Top-ranked metrics (carry their existing citations forward, add more if possible):
 {json.dumps(top_metrics, indent=2)}
 
 Multi-angle web research evidence (by metric):
 {json.dumps(deep_evidence, indent=2)}
 
-Full ArXiv paper context (use these for final citation attribution):
+Full ArXiv paper excerpts (use exact quotes for supporting_text):
 {paper_summary[:3000]}
 
-Output a FINAL structured set of 10-12 MOST RELIABLE data quality metrics with balanced coverage.
-For every metric supported by a paper above, include the exact supporting quote in paper_citation.supporting_text.
+Output a FINAL set of 10-12 data quality metrics. Only include metrics you can back with ≥2 papers.
 
 Return ONLY valid JSON (no markdown):
 {{
@@ -957,20 +1073,29 @@ Return ONLY valid JSON (no markdown):
       "metric_type": "distribution|label_noise|semantic_consistency|text_quality|domain_specific|utility|statistical|other",
       "description": "...",
       "reasoning": "...",
-      "source_influence": "<cite specific URL, page, or paper title>",
+      "source_influence": "<cite specific paper title or URL>",
       "execution_hint": "...",
       "relevance_score": 0.85,
       "supporting_evidence": "...",
-      "paper_citation": {{
-        "title": "<exact paper title or empty>",
-        "arxiv_id": "<e.g. 2301.12345 or empty>",
-        "authors": "<First Author et al. or empty>",
-        "year": "<year or empty>",
-        "supporting_text": "<exact sentence from the paper excerpt above, or empty>"
-      }}
+      "paper_citations": [
+        {{
+          "title": "<exact paper title>",
+          "arxiv_id": "<arxiv id>",
+          "authors": "<First Author et al.>",
+          "year": "<year>",
+          "supporting_text": "<exact sentence from the paper excerpt>"
+        }},
+        {{
+          "title": "<second paper title>",
+          "arxiv_id": "<second arxiv id>",
+          "authors": "<authors>",
+          "year": "<year>",
+          "supporting_text": "<exact sentence>"
+        }}
+      ]
     }}
   ],
-  "research_summary": "<comprehensive summary citing paper titles and URLs>",
+  "research_summary": "<comprehensive summary citing paper titles>",
   "confidence_level": "<HIGH|MEDIUM|LOW>"
 }}"""
 
@@ -988,15 +1113,15 @@ Return ONLY valid JSON (no markdown):
         result["research_context"]       = context_data["sources"]
         result["deep_research_evidence"] = deep_evidence
 
-        final_metrics = result.get("final_metrics", [])
+        # ── Citation gate: drop anything with < 2 paper citations ──────
+        raw_metrics   = result.get("final_metrics", [])
+        final_metrics = self._filter_by_citations(raw_metrics, min_citations=2)
+        result["final_metrics"] = final_metrics
+
         n          = len(final_metrics)
         confidence = result.get("confidence_level", "UNKNOWN")
-
-        cited_count = sum(
-            1 for m in final_metrics
-            if m.get("paper_citation", {}).get("arxiv_id")
-        )
-        print(f"\n[RESEARCHER] FINALIZED: {n} metrics, {cited_count} with paper citations, {confidence} confidence")
+        fully_cited = sum(1 for m in final_metrics if len(m.get("paper_citations", [])) >= 2)
+        print(f"\n[RESEARCHER] FINALIZED: {n} metrics, {fully_cited} with ≥2 paper citations, {confidence} confidence")
 
         coverage     = self._assess_metric_coverage(final_metrics)
         should_retry = coverage["needs_retry"]

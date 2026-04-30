@@ -11,7 +11,7 @@
   Raw columns: ['instance_id', 'model_name', 'target', 'trajectory', 'exit_status', 'generated_patch', 'eval_logs']
   [OK] Flattened to 10 rows x 11 columns.
   Columns            : ['instance_id', 'problem_statement', 'trajectory', 'model_patch', 'resolved', 'repo', 'model', 'problem_length', 'trajectory_length', 'patch_length', 'num_steps']
-  Resolve rate       : nan%  (0 / 0 known)
+  Resolve rate       : 0.0%  (0 / 10 known)
   Avg problem length : 0 chars
   Avg trajectory len : 74567 chars
   Avg patch length   : 1174 chars
@@ -24,6 +24,31 @@
 [METADATA] Processing dataset...
 [METADATA] 10 rows × 11 cols | 0 duplicate rows | 0.0% null overall
 
+[UNIVERSAL] Computing universal text metrics (pre-LLM)...
+[UNIVERSAL] Text columns: ['instance_id', 'trajectory', 'model_patch', 'model']
+
+[UNIVERSAL] Loading text metric models (lazy)...
+[UNIVERSAL]   * SentenceTransformer (all-MiniLM-L6-v2): OK
+[UNIVERSAL] Primary column for universal metrics: 'trajectory'
+[UNIVERSAL] Sample size: 10 texts
+
+[UNIVERSAL] ── VALIDITY ──────────────────────────────────
+[UNIVERSAL]   USL_H_Score                                        score = 0.0447
+
+[UNIVERSAL] ── FIDELITY ──────────────────────────────────
+[UNIVERSAL]   EDS_Embedding_Distribution_Similarity              SKIP  — Degenerate: std=0.00000 — all embeddings near-identical (corpus too homogeneous 
+[UNIVERSAL]   RUBER_Unreferenced_Coherence                       score = 0.0287
+
+[UNIVERSAL] ── DIVERSITY ─────────────────────────────────
+[UNIVERSAL]   Self_Cosine_Similarity                             score = 1.0000
+[UNIVERSAL]   TTR_Type_Token_Ratio                               score = 0.1189
+[UNIVERSAL]   Distinct_N_Unique_Ngrams                           score = 0.0477
+[UNIVERSAL]   Response_Entropy_Ent_N                             score = 0.7982
+
+[UNIVERSAL] Done — 6 computed, 1 skipped.
+
+[UNIVERSAL] 6 computed, 1 skipped.
+
 [THINKER] Reasoning about dataset domain and quality profile...
 
 ======================================================================
@@ -34,10 +59,10 @@
 [THINKER] User hint provided: "nebius/SWE-agent-trajectories — real SWE-agent runs on GitHub software engineering issues. Each row is one agent attempt: a problem_statement (the GitHub issue), trajectory (the full sequence of agent thoughts/actions/observations), model_patch (the code diff the agent produced), and resolved (1=fixed, 0=failed). Key quality concerns: semantic consistency between problem and patch, trajectory coherence and completeness, patch quality and length distribution, label noise in the resolved flag, and whether trajectory text is well-formed vs. truncated or repeated."
 
 [THINKER] 📋 Column Analysis:
-[THINKER]   • instance_id (unknown)
-[THINKER]   • problem_statement (unknown)
-[THINKER]   • trajectory (unknown)
-[THINKER]   • model_patch (unknown)
+[THINKER]   • instance_id (text)
+[THINKER]   • problem_statement (text)
+[THINKER]   • trajectory (text)
+[THINKER]   • model_patch (text)
 [THINKER]   • resolved (numerical)
 [THINKER]   ... and 6 more columns
 
@@ -45,47 +70,168 @@
 
 [THINKING] 🤔 Agent is reasoning...
 
+{
+  "dataset_type": "trajectory",
 
-[BASE] Streaming failed, falling back to invoke: Error code: 400 - {'error': {'message': "This endpoint's maximum context length is 128000 tokens. However, you requested about 197943 tokens (197943 of text input). Please reduce the length of either one, or use the context-compression plugin to compress your prompt automatically.", 'code': 400, 'metadata': {'provider_name': None}}, 'user_id': 'user_34Pc7t29IvZMi3mY9VBx2J9YsBW'}
-[BASE] ✗ LLM call failed: Error code: 400 - {'error': {'message': "This endpoint's maximum context length is 128000 tokens. However, you requested about 197943 tokens (197943 of text input). Please reduce the length of either one, or use the context-compression plugin to compress your prompt automatically.", 'code': 400, 'metadata': {'provider_name': None}}, 'user_id': 'user_34Pc7t29IvZMi3mY9VBx2J9YsBW'}
+  "domain": {
+    "name": "software",
+    "confidence": 0.9,
+    "reasoning": "The dataset consists of agent runs on GitHub software engineering issues, which indicates a focus on software development and issue resolution."
+  },
+
+  "column_profiles": [
+    {
+      "column_name": "instance_id",
+      "inferred_dtype": "text",
+      "semantic_role": "identifier",
+      "notes": "Unique identifier for each agent attempt."
+    },
+    {
+      "column_name": "problem_statement",
+      "inferred_dtype": "text",
+      "semantic_role": "text_content",
+      "notes": "Currently empty; needs investigation for potential issues."
+    },
+    {
+      "column_name": "trajectory",
+      "inferred_dtype": "text",
+      "semantic_role": "text_content",
+      "notes": "Long text; needs checks for coherence and completeness."
+    },
+    {
+      "column_name": "model_patch",
+      "inferred_dtype": "text",
+      "semantic_role": "code",
+      "notes": "Contains code diffs; quality and semantic consistency with problem statement need evaluation."
+    },
+    {
+      "column_name": "resolved",
+      "inferred_dtype": "numerical",
+      "semantic_role": "label",
+      "notes": "All values are 0; potential label noise or data issue."
+    },
+    {
+      "column_name": "repo",
+      "inferred_dtype": "text",
+      "semantic_role": "metadata",
+      "notes": "Currently empty; needs investigation."
+    },
+    {
+      "column_name": "model",
+      "inferred_dtype": "text",
+      "semantic_role": "metadata",
+      "notes": "Indicates the model used; consistent across rows."
+    },
+    {
+      "column_name": "problem_length",
+      "inferred_dtype": "numerical",
+      "semantic_role": "feature",
+      "notes": "All values are 0; needs investigation."
+    },
+    {
+      "column_name": "trajectory_length",
+      "inferred_dtype": "numerical",
+      "semantic_role": "feature",
+      "notes": "Varied lengths; check for coherence and completeness."
+    },
+    {
+      "column_name": "patch_length",
+      "inferred_dtype": "numerical",
+      "semantic_role": "feature",
+      "notes": "Varied lengths; check for quality and relevance."
+    },
+    {
+      "column_name": "num_steps",
+      "inferred_dtype": "numerical",
+      "semantic_role": "feature",
+      "notes": "Varied counts; check for coherence in trajectory."
+    }
+  ],
+
+  "surface_quality_hints": [
+    "Empty 'problem_statement' column raises concerns about data completeness.",
+    "All 'resolved' flags are 0, indicating potential label noise.",
+    "High variability in 'trajectory_length' and 'patch_length' suggests diverse agent behaviors."
+  ],
+
+  "governance_warnings": [
+    "Column 'repo' is empty; could indicate missing metadata."
+  ],
+
+  "reference_dataset": {
+    "seems_needed": true,
+    "reasoning": "A reference dataset could help evaluate the quality of the patches and their alignment with the problem statements."
+  },
+
+  "recommended_agents": {
+    "governance": { "run": true, "reason": "Always on — privacy is non-negotiable." },
+    "math": { "run": true, "reason": "To analyze distributions and variances in numerical columns." },
+    "semantic": { "run": true, "reason": "To check for semantic consistency between problem statements and patches." },
+    "utility": { "run": true, "reason": "To assess the utility of the generated patches in resolving issues." }
+  },
+
+  "execution_notes": [
+    "Math agent should focus on analyzing the distribution of 'num_steps' and 'patch_length'.",
+    "Semantic agent should check for alignment between 'trajectory' and 'model_patch'.",
+    "Investigate the empty 'problem_statement' and 'repo' columns for potential data collection issues."
+  ],
+
+  "user_hint_influence": "The user hint emphasized the importance of semantic consistency, trajectory coherence, and patch quality, which shaped the focus areas for the audit plan.",
+  
+  "reasoning_trace": "The dataset consists of agent runs related to software engineering issues, which led to the identification of the software domain. The metadata indicated several columns with potential quality issues, particularly the empty 'problem_statement' and 'resolved' flags. The need for a reference dataset was identified to evaluate the quality of the patches. The user hint highlighted specific quality concerns, which influenced the selection of recommended agents and execution notes."
+}
+
+
+[THINKER] ✓ Analysis complete
 
 [RESEARCHER] Gathering external knowledge and proposing metrics...
 
 ======================================================================
 [RESEARCHER] AGENTIC RESEARCH PHASE — Multi-Angle DDG + Deep ArXiv PDF
 ======================================================================
-[RESEARCHER] Domain: 'general' | Type: 'tabular'
+[RESEARCHER] Domain: 'software' | Type: 'trajectory'
 
 [RESEARCHER] Phase 1: Multi-angle DuckDuckGo + Deep ArXiv PDF loading...
 
 [RESEARCHER]   Generating diverse DuckDuckGo search angles...
-[RESEARCHER]     Angle 1: how to compute "data quality evaluation metrics" in Python
-[RESEARCHER]     Angle 2: "general tabular data quality" author keywords
-[RESEARCHER]     Angle 3: "comparative evaluation" survey on data quality metrics
-[RESEARCHER]     Angle 4: "data quality metrics" mathematical definition or statistical test
+[RESEARCHER]     Angle 1: how to compute "software trajectory data quality evaluation metrics" in Python
+[RESEARCHER]     Angle 2: "software trajectory data quality" evaluation metrics author
+[RESEARCHER]     Angle 3: survey on "software trajectory data quality evaluation metrics" 2022 OR 2023 OR 2024
+[RESEARCHER]     Angle 4: "data quality evaluation metrics" formula or statistical test
 
 [RESEARCHER]   Running multi-angle DuckDuckGo search + URL scraping...
-[RESEARCHER]      DDG: 32 unique URLs across 4 queries
-[RESEARCHER]      Scraped: https://www.marktechpost.com/2026/04/29/a-coding-implementat (3000 chars)
-[RESEARCHER]      Scraped: https://machinelearningplus.com/gen-ai/llm-evaluation-guide/ (3000 chars)
-[RESEARCHER]      Scraped: https://www.geeksforgeeks.org/machine-learning/evaluation-me (3000 chars)
+[RESEARCHER]      DDG: 0 unique URLs across 4 queries
 
 [RESEARCHER]   Wikipedia
-[RESEARCHER]      Query : "general machine learning dataset evaluation benchmark"
-[RESEARCHER]      OK: 2969 chars
+[RESEARCHER]      Query : "software machine learning dataset evaluation benchmark"
+[RESEARCHER]      OK: 3233 chars
 [RESEARCHER]      Preview : 'Page: List of datasets for machine-learning research Summary: These datasets are used in machine learning (ML) research and have been cited in peer-reviewed academic journals. Datasets are an integral part of the field of machine learning. Major advances in this field can result from advances in lea'
 
-[RESEARCHER]   ArXiv deep search: "synthetic data evaluation metrics general machine learning fidelity quality" (top_k=5)
-[RESEARCHER]   Downloading: Changing Data Sources in the Age of Machine Learning for Official...
-[RESEARCHER]   OK — 8 pages, 55 chunks, 12 relevant
-[RESEARCHER]   Downloading: DOME: Recommendations for supervised machine learning validation ...
-[RESEARCHER]   OK — 20 pages, 91 chunks, 18 relevant
-[RESEARCHER]   Downloading: Active learning for data streams: a survey...
-[RESEARCHER]   OK — 20 pages, 121 chunks, 7 relevant
-[RESEARCHER]   Downloading: Generalizing Machine Learning Evaluation through the Integration ...
-[RESEARCHER]   OK — 11 pages, 58 chunks, 27 relevant
-[RESEARCHER]   Downloading: Towards CRISP-ML(Q): A Machine Learning Process Model with Qualit...
-[RESEARCHER]   OK — 20 pages, 118 chunks, 17 relevant
+[RESEARCHER] ── ArXiv ────────────────────────────────────────
+[RESEARCHER]   Query  : "synthetic data evaluation metrics software machine learning fidelity quality"
+[RESEARCHER]   top_k  : 5  (full PDF download + chunking)
+[RESEARCHER]   Found 5 papers:
+[RESEARCHER]   [1] Evaluation of Software Product Quality Metrics
+[RESEARCHER]       ID: 2009.01557v1  | Year: 2020
+[RESEARCHER]       Abstract: Computing devices and associated software govern everyday life, and form the backbone of safety critical systems in banking, healthcare, automotive and other fields. Increasing system complexity, quic...
+[RESEARCHER]       Downloading PDF... 20pp, 44 relevant chunks extracted
+[RESEARCHER]   [2] Changing Data Sources in the Age of Machine Learning for Official Stat
+[RESEARCHER]       ID: 2306.04338v1  | Year: 2023
+[RESEARCHER]       Abstract: Data science has become increasingly essential for the production of official statistics, as it enables the automated collection, processing, and analysis of large amounts of data. With such data scie...
+[RESEARCHER]       Downloading PDF... 8pp, 11 relevant chunks extracted
+[RESEARCHER]   [3] DOME: Recommendations for supervised machine learning validation in bi
+[RESEARCHER]       ID: 2006.16189v4  | Year: 2020
+[RESEARCHER]       Abstract: Modern biology frequently relies on machine learning to provide predictions and improve decision processes. There have been recent calls for more scrutiny on machine learning performance and possible ...
+[RESEARCHER]       Downloading PDF... 20pp, 22 relevant chunks extracted
+[RESEARCHER]   [4] Active learning for data streams: a survey
+[RESEARCHER]       ID: 2302.08893v4  | Year: 2023
+[RESEARCHER]       Abstract: Online active learning is a paradigm in machine learning that aims to select the most informative data points to label from a data stream. The problem of minimizing the cost associated with collecting...
+[RESEARCHER]       Downloading PDF... 20pp, 4 relevant chunks extracted
+[RESEARCHER]   [5] Towards CRISP-ML(Q): A Machine Learning Process Model with Quality Ass
+[RESEARCHER]       ID: 2003.05155v2  | Year: 2020
+[RESEARCHER]       Abstract: Machine learning is an established and frequently used technique in industry and academia but a standard process model to improve success and efficiency of machine learning applications is still missi...
+[RESEARCHER]       Downloading PDF... 20pp, 20 relevant chunks extracted
+[RESEARCHER]   ArXiv done: 5/5 PDFs loaded, 24 total relevant chunks
 
 [RESEARCHER] Phase 1b: Generating 15 initial metric proposals with paper citations...
 
@@ -94,1090 +240,112 @@
 {
   "proposed_metrics": [
     {
-      "metric_name": "Completeness",
-      "metric_type": "distribution",
-      "description": "Measures the proportion of non-null values in the dataset.",
-      "reasoning": "Completeness is crucial for ensuring that the dataset is usable for analysis and modeling, as missing values can lead to biased results.",
-      "source_influence": "https://johal.in/data-quality-monitoring-with-soda-automated-checks-integrated-into-python-workflows/",
-      "execution_hint": "df.notnull().sum() / len(df) * 100",
-      "paper_citation": {
-        "title": "",
-        "arxiv_id": "",
-        "authors": "",
-        "year": "",
-        "supporting_text": ""
-      }
-    },
-    {
-      "metric_name": "Uniqueness",
-      "metric_type": "distribution",
-      "description": "Calculates the number of unique values in each column.",
-      "reasoning": "Uniqueness helps identify redundancy in the dataset, which can affect the quality of insights derived from it.",
-      "source_influence": "https://www.openriskmanagement.com/data-quality-and-exploratory-data-analysis-using-python/",
-      "execution_hint": "df.nunique()",
-      "paper_citation": {
-        "title": "",
-        "arxiv_id": "",
-        "authors": "",
-        "year": "",
-        "supporting_text": ""
-      }
-    },
-    {
-      "metric_name": "Entropy",
+      "metric_name": "Entropy of Trajectory Lengths",
       "metric_type": "statistical",
-      "description": "Measures the uncertainty or randomness in the dataset's categorical columns.",
-      "reasoning": "Entropy provides insights into the diversity of data, which is important for understanding the dataset's structure and potential biases.",
-      "source_influence": "Generalizing Machine Learning Evaluation through the Integration of Shannon Entropy and Rough Set Theory [2404.12511v1]",
-      "execution_hint": "from scipy.stats import entropy; entropy(df['column_name'].value_counts())",
-      "paper_citation": {
-        "title": "Generalizing Machine Learning Evaluation through the Integration of Shannon Entropy and Rough Set Theory",
-        "arxiv_id": "2404.12511v1",
-        "authors": "Olga Cherednichenko et al.",
-        "year": "2024",
-        "supporting_text": "Shannon entropy, a cornerstone in information theory, quantifies the uncertainty or the informational content within a system."
-      }
+      "description": "Measures the entropy of the distribution of trajectory lengths to assess variability.",
+      "reasoning": "High entropy indicates diverse agent behaviors, which is crucial for understanding the complexity of the dataset.",
+      "source_influence": "Inspired by the need to analyze distributions in software metrics.",
+      "execution_hint": "Use scipy.stats.entropy to calculate entropy on the 'trajectory_length' column.",
+      "paper_citations": [
+        {
+          "title": "Evaluation of Software Product Quality Metrics",
+          "arxiv_id": "2009.01557v1",
+          "authors": "Arthur-Jozsef Molnar et al.",
+          "year": "2020",
+          "supporting_text": "We identify metric dependencies and check their consistency across applications and their versions."
+        },
+        {
+          "title": "Changing Data Sources in the Age of Machine Learning for Official Statistics",
+          "arxiv_id": "2306.04338v1",
+          "authors": "Cedric De Boom et al.",
+          "year": "2023",
+          "supporting_text": "The quality and integrity of data-science-driven statistics rely on the accuracy and reliability of the data."
+        }
+      ]
     },
     {
-      "metric_name": "Kullback-Leibler Divergence",
+      "metric_name": "Kullback-Leibler Divergence of Patch Lengths",
       "metric_type": "statistical",
-      "description": "Measures the divergence between the distribution of a column and a reference distribution.",
-      "reasoning": "KL-divergence helps assess how much the data distribution deviates from an expected or ideal distribution, indicating potential data quality issues.",
-      "source_influence": "Generalizing Machine Learning Evaluation through the Integration of Shannon Entropy and Rough Set Theory [2404.12511v1]",
-      "execution_hint": "from scipy.stats import entropy; kl_divergence = entropy(df['column_name'].value_counts(), qk=reference_distribution)",
-      "paper_citation": {
-        "title": "Generalizing Machine Learning Evaluation through the Integration of Shannon Entropy and Rough Set Theory",
-        "arxiv_id": "2404.12511v1",
-        "authors": "Olga Cherednichenko et al.",
-        "year": "2024",
-        "supporting_text": "The integration of entropy and rough set theory proposes a more holistic approach, considering not just the outcome but the informational dynamics and structural intricacies of the data being processed."
-      }
+      "description": "Calculates the Kullback-Leibler divergence between the distribution of patch lengths and a reference distribution.",
+      "reasoning": "This metric helps identify how much the distribution of patch lengths deviates from expected norms, indicating potential quality issues.",
+      "source_influence": "Based on the need for statistical measures to evaluate software metrics.",
+      "execution_hint": "Use scipy.stats.entropy to compute KL divergence between 'patch_length' and a reference distribution.",
+      "paper_citations": [
+        {
+          "title": "DOME: Recommendations for supervised machine learning validation in biology",
+          "arxiv_id": "2006.16189v4",
+          "authors": "Ian Walsh et al.",
+          "year": "2020",
+          "supporting_text": "We propose a set of community-wide recommendations aiming to help establish standards of supervised machine learning validation."
+        },
+        {
+          "title": "Towards CRISP-ML(Q): A Machine Learning Process Model with Quality Assurance Methodology",
+          "arxiv_id": "2003.05155v2",
+          "authors": "Stefan Studer et al.",
+          "year": "2020",
+          "supporting_text": "Data and software quality among others as the key challenges in the machine learning life cycle."
+        }
+      ]
     },
     {
-      "metric_name": "Statistical Consistency",
-      "metric_type": "statistical",
-      "description": "Evaluates the consistency of numerical columns by checking for outliers and variance.",
-      "reasoning": "Statistical consistency ensures that the data behaves as expected, which is vital for reliable analysis and modeling.",
-      "source_influence": "https://www.geeksforgeeks.org/machine-learning/evaluation-metrics-for-classification-model-in-python/",
-      "execution_hint": "df.describe() to check for outliers and variance.",
-      "paper_citation": {
-        "title": "",
-        "arxiv_id": "",
-        "authors": "",
-        "year": "",
-        "supporting_text": ""
-      }
-    },
-    {
-      "metric_name": "Semantic Coherence",
+      "metric_name": "Semantic Coherence of Trajectories",
       "metric_type": "semantic_consistency",
-      "description": "Measures the coherence of text data in the 'problem_statement' column using NLP techniques.",
-      "reasoning": "Semantic coherence is important for ensuring that the text data is meaningful and relevant, which affects the quality of insights derived from it.",
-      "source_influence": "How to Evaluate LLMs - Metrics, Benchmarks & Python Code - machinelearningplus",
-      "execution_hint": "Use a pre-trained language model to compute coherence scores for df['problem_statement'].",
-      "paper_citation": {
-        "title": "",
-        "arxiv_id": "",
-        "authors": "",
-        "year": "",
-        "supporting_text": ""
-      }
+      "description": "Evaluates the semantic coherence of the 'trajectory' text content using NLP techniques.",
+      "reasoning": "Ensures that the generated trajectories are logically consistent and relevant to the problem statements.",
+      "source_influence": "Influenced by the need for semantic consistency in software metrics.",
+      "execution_hint": "Use a pre-trained transformer model to compute coherence scores for the 'trajectory' column.",
+      "paper_citations": [
+        {
+          "title": "Evaluation of Software Product Quality Metrics",
+          "arxiv_id": "2009.01557v1",
+          "authors": "Arthur-Jozsef Molnar et al.",
+          "year": "2020",
+          "supporting_text": "The latest software quality models have undergone standardization processes."
+        },
+        {
+          "title": "Active learning for data streams: a survey",
+          "arxiv_id": "2302.08893v4",
+          "authors": "Davide Cacciarelli et al.",
+          "year": "2023",
+          "supporting_text": "Evaluation metrics for assessing the performance of stream-based active learning algorithms."
+        }
+      ]
     },
     {
-      "metric_name": "Embedding Similarity",
-      "metric_type": "semantic_consistency",
-      "description": "Calculates the cosine similarity between embeddings of text entries in the 'problem_statement' column.",
-      "reasoning": "Embedding similarity helps assess the semantic similarity between different entries, which is crucial for identifying duplicates or related issues.",
-      "source_influence": "How to Evaluate LLMs - Metrics, Benchmarks & Python Code - machinelearningplus",
-      "execution_hint": "from sklearn.metrics.pairwise import cosine_similarity; cosine_similarity(embeddings)",
-      "paper_citation": {
-        "title": "",
-        "arxiv_id": "",
-        "authors": "",
-        "year": "",
-        "supporting_text": ""
-      }
-    },
-    {
-      "metric_name": "Text Readability",
+      "metric_name": "Readability Score of Problem Statements",
       "metric_type": "text_quality",
-      "description": "Assesses the readability of text in the 'problem_statement' column using readability scores.",
-      "reasoning": "Readability is important for ensuring that the text is understandable, which affects the usability of the dataset.",
-      "source_influence": "https://machinelearningplus.com/gen-ai/llm-evaluation-guide/",
-      "execution_hint": "Use a readability library to compute scores for df['problem_statement'].",
-      "paper_citation": {
-        "title": "",
-        "arxiv_id": "",
-        "authors": "",
-        "year": "",
-        "supporting_text": ""
-      }
+      "description": "Calculates the readability score of the 'problem_statement' text to assess clarity.",
+      "reasoning": "A clear problem statement is essential for understanding the context and relevance of the generated patches.",
+      "source_influence": "Based on the importance of clear communication in software metrics.",
+      "execution_hint": "Use the Flesch-Kincaid readability test on the 'problem_statement' column.",
+      "paper_citations": [
+        {
+          "title": "Changing Data Sources in the Age of Machine Learning for Official Statistics",
+          "arxiv_id": "2306.04338v1",
+          "authors": "Cedric De Boom et al.",
+          "year": "2023",
+          "supporting_text": "The quality and integrity of data-science-driven statistics rely on the accuracy and reliability of the data."
+        },
+        {
+          "title": "Towards CRISP-ML(Q): A Machine Learning Process Model with Quality Assurance Methodology",
+          "arxiv_id": "2003.05155v2",
+          "authors": "Stefan Studer et al.",
+          "year": "2020",
+          "supporting_text": "Data and software quality among others as the key challenges in the machine learning life cycle."
+        }
+      ]
     },
     {
-      "metric_name": "Domain-Specific Utility",
-      "metric_type": "utility",
-      "description": "Evaluates the relevance of the dataset for specific applications or domains.",
-      "reasoning": "Utility ensures that the dataset is not only high quality but also applicable to the intended use cases.",
-      "source_influence": "Towards CRISP-ML(Q): A Machine Learning Process Model with Quality Assurance Methodology [2003.05155v2]",
-      "execution_hint": "Assess the dataset against domain-specific criteria or benchmarks.",
-      "paper_citation": {
-        "title": "Towards CRISP-ML(Q): A Machine Learning Process Model with Quality Assurance Methodology",
-        "arxiv_id": "2003.05155v2",
-        "authors": "Stefan Studer et al.",
-        "year": "2020",
-        "supporting_text": "We propose a process model that we call CRoss-Industry Standard Process model for the development of Machine Learning applications with focus on technical tasks for quality."
-      }
-    },
-    {
-      "metric_name": "Data Distribution Consistency",
-      "metric_type": "statistical",
-      "description": "Checks for consistency in the distribution of numerical columns across different segments of the dataset.",
-      "reasoning": "Inconsistent distributions can indicate data quality issues, such as sampling bias or data entry errors.",
-      "source_influence": "Active learning for data streams: a survey [2302.08893v4]",
-      "execution_hint": "Use statistical tests (e.g., Kolmogorov-Smirnov test) to compare distributions.",
-      "paper_citation": {
-        "title": "Active learning for data streams: a survey",
-        "arxiv_id": "2302.08893v4",
-        "authors": "Davide Cacciarelli et al.",
-        "year": "2023",
-        "supporting_text": "What are appropriate evaluation metrics for assessing the performance of stream-based active learning algorithms?"
-      }
-    },
-    {
-      "metric_name": "Outlier Detection",
-      "metric_type": "statistical",
-      "description": "Identifies outliers in numerical columns using statistical methods.",
-      "reasoning": "Outliers can skew analysis and indicate data quality issues, making their detection essential.",
-      "source_influence": "Evaluation Metrics For Classification Model in Python - GeeksforGeeks",
-      "execution_hint": "Use IQR or Z-score methods to identify outliers in df[['resolved', 'problem_length', 'trajectory_length', 'patch_length', 'num_steps']].",
-      "paper_citation": {
-        "title": "",
-        "arxiv_id": "",
-        "authors": "",
-        "year": "",
-        "supporting_text": ""
-      }
-    },
-    {
-      "metric_name": "Data Redundancy",
-      "metric_type": "utility",
-      "description": "Measures the level of redundancy in the dataset by checking for duplicate rows.",
-      "reasoning": "High redundancy can indicate poor data quality and can affect the performance of machine learning models.",
-      "source_influence": "Data Quality Monitoring with Soda: Automated Checks Integrated into Python Workflows",
-      "execution_hint": "df.duplicated().sum()",
-      "paper_citation": {
-        "title": "",
-        "arxiv_id": "",
-        "authors": "",
-        "year": "",
-        "supporting_text": ""
-      }
-    }
-  ],
-  "research_summary": "The proposed metrics focus on various aspects of data quality, including completeness, uniqueness, and statistical consistency, which are essential for ensuring the dataset's usability. Metrics such as entropy and KL-divergence provide insights into the distribution and diversity of the data, while semantic coherence and embedding similarity assess the quality of text data. These metrics are influenced by recent research, including works on machine learning evaluation and data quality assurance methodologies."
-}
-
-
-[RESEARCHER] Generated 12 initial metrics
-
-[RESEARCHER] Phase 2: Evaluating metric relevance...
-[RESEARCHER] Ranked metrics by relevance:
-[RESEARCHER]      1. Completeness (relevance: 0.90)
-[RESEARCHER]      2. Uniqueness (relevance: 0.70)
-[RESEARCHER]   📄 3. Entropy (relevance: 0.60)
-[RESEARCHER]   📄 4. Kullback-Leibler Divergence (relevance: 0.50)
-[RESEARCHER]   📄 5. Domain-Specific Utility (relevance: 0.50)
-[RESEARCHER]      6. Statistical Consistency (relevance: 0.40)
-[RESEARCHER]   📄 7. Data Distribution Consistency (relevance: 0.40)
-[RESEARCHER]      8. Semantic Coherence (relevance: 0.30)
-
-[RESEARCHER] Phase 3: Multi-angle research on top 6 metrics...
-
-[RESEARCHER] Phase 3: Deep-diving into top metrics (multi-angle DDG)...
-[RESEARCHER]   -> Researching 'Completeness'...
-[RESEARCHER]      DDG: 26 unique URLs across 4 queries
-[RESEARCHER]      Scraped: https://www.kdnuggets.com/5-useful-python-scripts-for-automa (3000 chars)
-[RESEARCHER]      Scraped: https://www.montecarlodata.com/blog-what-is-data-completenes (3000 chars)
-[RESEARCHER]      Scraped: https://www.kdnuggets.com/building-a-simple-data-quality-dsl (3000 chars)
-
-[RESEARCHER]   Wikipedia: Completeness
-[RESEARCHER]      Query : "general Completeness"
-[RESEARCHER]      OK: 4000 chars
-[RESEARCHER]      Preview : "Page: Turing completeness Summary: In computability theory, a system of data-manipulation rules (such as a model of computation, a computer's instruction set, a programming language, or a cellular automaton) is said to be Turing-complete or computationally universal if it can be used to simulate any"
-[RESEARCHER]   -> Researching 'Uniqueness'...
-[RESEARCHER]      DDG: 30 unique URLs across 4 queries
-[RESEARCHER]      Scraped: https://dqops.com/docs/categories-of-data-quality-checks/how (3000 chars)
-[RESEARCHER]      Scraped: https://www.kdnuggets.com/5-useful-python-scripts-for-advanc (3000 chars)
-[RESEARCHER]      Scraped: https://dqops.com/docs/dqo-concepts/definition-of-data-quali (3000 chars)
-
-[RESEARCHER]   Wikipedia: Uniqueness
-[RESEARCHER]      Query : "general Uniqueness"
-[RESEARCHER]      ERROR: Expecting value: line 1 column 1 (char 0)
-[RESEARCHER]   -> Researching 'Entropy'...
-[RESEARCHER]      DDG: 27 unique URLs across 4 queries
-[RESEARCHER]      Scraped: https://www.ponfish.com/wiki/what-is-entropy-in-computer-sci (3000 chars)
-[RESEARCHER]      Scraped: https://github.com/reisanar/datasets (3000 chars)
-[RESEARCHER]      Scraped: https://engineeringcheatsheet.com/thermodynamics-entropy-and (3000 chars)
-
-[RESEARCHER]   Wikipedia: Entropy
-[RESEARCHER]      Query : "general Entropy"
-[RESEARCHER]      OK: 4000 chars
-[RESEARCHER]      Preview : 'Page: Entropy Summary: Entropy is a thermodynamic state variable that quantifies the probabilistic distribution of accesible microstates in a system. The term and the concept are used in diverse fields, from classical thermodynamics (where it was first recognized), to the microscopic description of'
-[RESEARCHER]   -> Researching 'Kullback-Leibler Divergence'...
-[RESEARCHER]      DDG: 23 unique URLs across 4 queries
-[RESEARCHER]      Scraped: https://en.wikipedia.org/wiki/Mutual_information (3000 chars)
-[RESEARCHER]      Scraped: https://translate.google.com/translate?client=srp&hl=es&sl=e (3000 chars)
-[RESEARCHER]      Scraped: https://thedatacopywriter.substack.com/p/an-intuitive-explan (3000 chars)
-
-[RESEARCHER]   Wikipedia: Kullback-Leibler Divergence
-[RESEARCHER]      Query : "general Kullback-Leibler Divergence"
-[RESEARCHER]      OK: 4000 chars
-[RESEARCHER]      Preview : 'Page: Kullback–Leibler divergence Summary: In mathematical statistics, the Kullback–Leibler (KL) divergence (also called relative entropy and I-divergence), denoted                                    D                        KL                             (         P         ∥         Q         )'
-[RESEARCHER]   -> Researching 'Domain-Specific Utility'...
-[RESEARCHER]      DDG: 31 unique URLs across 4 queries
-[RESEARCHER]      Scraped: https://www.kdnuggets.com/building-a-simple-data-quality-dsl (3000 chars)
-[RESEARCHER]      Scraped: https://www.kdnuggets.com/5-useful-python-scripts-for-automa (3000 chars)
-[RESEARCHER]      Scraped: https://www.startdataengineering.com/post/data-quality-with- (3000 chars)
-
-[RESEARCHER]   Wikipedia: Domain-Specific Utility
-[RESEARCHER]      Query : "general Domain-Specific Utility"
-[RESEARCHER]      ERROR: Expecting value: line 1 column 1 (char 0)
-[RESEARCHER]   -> Researching 'Statistical Consistency'...
-[RESEARCHER]      DDG: 31 unique URLs across 4 queries
-[RESEARCHER]      Scraped: https://www.geeksforgeeks.org/python/how-to-calculate-confid (3000 chars)
-[RESEARCHER]      Scraped: https://statistics.arabpsychology.com/calculate-percentiles- (3000 chars)
-[RESEARCHER]      Scraped: https://www.geeksforgeeks.org/python/scipy-statistical-signi (3000 chars)
-
-[RESEARCHER]   Wikipedia: Statistical Consistency
-[RESEARCHER]      Query : "general Statistical Consistency"
-[RESEARCHER]      OK: 1824 chars
-[RESEARCHER]      Preview : 'Page: Internal consistency Summary: In statistics and research, internal consistency is typically a measure based on the correlations between different items on the same test (or the same subscale on a larger test). It measures whether several items that propose to measure the same general construct'
-
-[RESEARCHER] Phase 4: Consolidating evidence and finalizing metrics...
-
-[THINKING] 🤔 Agent is reasoning...
-
-{
-  "final_metrics": [
-    {
-      "metric_name": "Completeness",
-      "metric_type": "distribution",
-      "description": "Measures the proportion of non-null values in the dataset.",
-      "reasoning": "Completeness is crucial for ensuring that the dataset is usable for analysis and modeling, as missing values can lead to biased results.",
-      "source_influence": "https://johal.in/data-quality-monitoring-with-soda-automated-checks-integrated-into-python/",
-      "execution_hint": "df.notnull().sum() / len(df) * 100",
-      "relevance_score": 0.9,
-      "supporting_evidence": "Completeness is crucial for ensuring that the dataset is usable for analysis and modeling, as missing values can lead to biased results.",
-      "paper_citation": {
-        "title": "",
-        "arxiv_id": "",
-        "authors": "",
-        "year": "",
-        "supporting_text": ""
-      }
-    },
-    {
-      "metric_name": "Uniqueness",
-      "metric_type": "distribution",
-      "description": "Calculates the number of unique values in each column.",
-      "reasoning": "Uniqueness helps identify redundancy in the dataset, which can affect the quality of insights derived from it.",
-      "source_influence": "https://www.openriskmanagement.com/data-quality-and-exploratory-data-analysis-using-python/",
-      "execution_hint": "df.nunique()",
-      "relevance_score": 0.7,
-      "supporting_evidence": "Uniqueness helps identify redundancy in the dataset, which can affect the quality of insights derived from it.",
-      "paper_citation": {
-        "title": "",
-        "arxiv_id": "",
-        "authors": "",
-        "year": "",
-        "supporting_text": ""
-      }
-    },
-    {
-      "metric_name": "Entropy",
-      "metric_type": "statistical",
-      "description": "Measures the uncertainty or randomness in the dataset's categorical columns.",
-      "reasoning": "Entropy provides insights into the diversity of data, which is important for understanding the dataset's structure and potential biases.",
-      "source_influence": "Generalizing Machine Learning Evaluation through the Integration of Shannon Entropy and Rough Set Theory [2404.12511v1]",
-      "execution_hint": "from scipy.stats import entropy; entropy(df['column_name'].value_counts())",
-      "relevance_score": 0.6,
-      "supporting_evidence": "Shannon entropy, a cornerstone in information theory, quantifies the uncertainty or the informational content within a system.",
-      "paper_citation": {
-        "title": "Generalizing Machine Learning Evaluation through the Integration of Shannon Entropy and Rough Set Theory",
-        "arxiv_id": "2404.12511v1",
-        "authors": "Olga Cherednichenko et al.",
-        "year": "2024",
-        "supporting_text": "Shannon entropy, a cornerstone in information theory, quantifies the uncertainty or the informational content within a system."
-      }
-    },
-    {
-      "metric_name": "Kullback-Leibler Divergence",
-      "metric_type": "statistical",
-      "description": "Measures the divergence between the distribution of a column and a reference distribution.",
-      "reasoning": "KL-divergence helps assess how much the data distribution deviates from an expected or ideal distribution, indicating potential data quality issues.",
-      "source_influence": "Generalizing Machine Learning Evaluation through the Integration of Shannon Entropy and Rough Set Theory [2404.12511v1]",
-      "execution_hint": "from scipy.stats import entropy; kl_divergence = entropy(df['column_name'].value_counts(), qk=reference_distribution)",
-      "relevance_score": 0.5,
-      "supporting_evidence": "The integration of entropy and rough set theory proposes a more holistic approach, considering not just the outcome but the informational dynamics and structural intricacies of the data being processed.",
-      "paper_citation": {
-        "title": "Generalizing Machine Learning Evaluation through the Integration of Shannon Entropy and Rough Set Theory",
-        "arxiv_id": "2404.12511v1",
-        "authors": "Olga Cherednichenko et al.",
-        "year": "2024",
-        "supporting_text": "The integration of entropy and rough set theory proposes a more holistic approach, considering not just the outcome but the informational dynamics and structural intricacies of the data being processed."
-      }
-    },
-    {
-      "metric_name": "Statistical Consistency",
-      "metric_type": "statistical",
-      "description": "Evaluates the consistency of numerical columns by checking for outliers and variance.",
-      "reasoning": "Statistical consistency ensures that the data behaves as expected, which is vital for reliable analysis and modeling.",
-      "source_influence": "https://www.geeksforgeeks.org/machine-learning/evaluation-metrics-for-classification-model-in-python/",
-      "execution_hint": "df.describe() to check for outliers and variance.",
-      "relevance_score": 0.4,
-      "supporting_evidence": "Statistical consistency ensures that the data behaves as expected, which is vital for reliable analysis and modeling.",
-      "paper_citation": {
-        "title": "",
-        "arxiv_id": "",
-        "authors": "",
-        "year": "",
-        "supporting_text": ""
-      }
-    },
-    {
-      "metric_name": "Domain-Specific Utility",
-      "metric_type": "utility",
-      "description": "Evaluates the relevance of the dataset for specific applications or domains.",
-      "reasoning": "Utility ensures that the dataset is not only high quality but also applicable to the intended use cases.",
-      "source_influence": "Towards CRISP-ML(Q): A Machine Learning Process Model with Quality Assurance Methodology [2003.05155v2]",
-      "execution_hint": "Assess the dataset against domain-specific criteria or benchmarks.",
-      "relevance_score": 0.5,
-      "supporting_evidence": "We propose a process model that we call CRoss-Industry Standard Process model for the development of Machine Learning applications with focus on technical tasks for quality.",
-      "paper_citation": {
-        "title": "Towards CRISP-ML(Q): A Machine Learning Process Model with Quality Assurance Methodology",
-        "arxiv_id": "2003.05155v2",
-        "authors": "Stefan Studer et al.",
-        "year": "2020",
-        "supporting_text": "We propose a process model that we call CRoss-Industry Standard Process model for the development of Machine Learning applications with focus on technical tasks for quality."
-      }
-    }
-  ],
-  "research_summary": "The selected metrics for the data quality pipeline include Completeness, Uniqueness, Entropy, Kullback-Leibler Divergence, Statistical Consistency, and Domain-Specific Utility. These metrics are supported by various sources, including papers on data quality monitoring and machine learning evaluation. Completeness and Uniqueness are essential for assessing the presence of data, while Entropy and Kullback-Leibler Divergence provide insights into data distribution and diversity. Statistical Consistency ensures that the data behaves as expected, and Domain-Specific Utility evaluates the relevance of the dataset for specific applications.",
-  "confidence_level": "HIGH"
-}
-
-
-[RESEARCHER] FINALIZED: 6 metrics, 3 with paper citations, HIGH confidence
-[RESEARCHER] Coverage: 5 math + 1 semantic = 6 total
-[RESEARCHER]   GAP: Only 1 semantic/text metrics (need >= 2)
-[RESEARCHER]   Coverage gaps — graph will route back for retry
-
-[GRAPH] Researcher coverage gap detected (iteration 1) — routing back to researcher
-
-[RESEARCHER] Gathering external knowledge and proposing metrics...
-
-======================================================================
-[RESEARCHER] RETRY ITERATION 1 — Targeted Gap-Filling
-======================================================================
-[RESEARCHER] Domain: 'general' | Type: 'tabular'
-[RESEARCHER] Existing metrics: 6
-[RESEARCHER] Coverage: 5 math + 1 semantic = 6 total
-[RESEARCHER]   GAP: Only 1 semantic/text metrics (need >= 2)
-
-[RESEARCHER] Iteration 1: Targeted search for missing types: ['semantic_textual']
-[RESEARCHER]      DDG: 32 unique URLs across 4 queries
-[RESEARCHER]      Scraped: https://en.wikipedia.org/wiki/Latent_semantic_analysis (3000 chars)
-[RESEARCHER]      Scraped: https://www.geeksforgeeks.org/nlp/different-techniques-for-s (3000 chars)
-[RESEARCHER]      Scraped: https://spotintelligence.com/2022/12/19/text-similarity-pyth (3000 chars)
-[RESEARCHER]      DDG: 30 unique URLs across 4 queries
-[RESEARCHER]      Scraped: https://enjoymachinelearning.com/blog/finding-semantic-simil (3000 chars)
-[RESEARCHER]      Scraped: https://iq.opengenus.org/different-techniques-for-sentence-s (3000 chars)
-[RESEARCHER]      Scraped: https://blog.finxter.com/5-best-ways-to-check-if-two-sentenc (3000 chars)
-
-[RESEARCHER]   Wiki [Sem iter=1]
-[RESEARCHER]      Query : "semantic similarity NLP text quality metrics"
-[RESEARCHER]      ERROR: Expecting value: line 1 column 1 (char 0)
-
-[THINKING] 🤔 Agent is reasoning...
-
-[
-  {
-    "metric_name": "Semantic Coherence Score",
-    "metric_type": "semantic_consistency",
-    "description": "Measures the coherence of a text by evaluating the semantic similarity between consecutive sentences using sentence embeddings.",
-    "reasoning": "This metric assesses how well the sentences in a text relate to each other semantically, filling the gap in evaluating the overall coherence of the text.",
-    "source_influence": "Inspired by the use of BERT embeddings for semantic similarity.",
-    "execution_hint": "1. Use a pre-trained BERT model to generate embeddings for each sentence. 2. Compute cosine similarity between consecutive sentence embeddings using scipy's spatial.distance.cosine. 3. Average the cosine similarities to get the Semantic Coherence Score.",
-    "relevance_score": 0.85,
-    "paper_citation": {
-      "title": "Text Similarity Implementation using BERT Embedding in Python",
-      "arxiv_id": "",
-      "authors": "Ahmed Mellit",
-      "year": "2021",
-      "supporting_text": "This paper discusses the use of BERT for generating sentence embeddings and measuring semantic similarity."
-    }
-  },
-  {
-    "metric_name": "TF-IDF Cosine Similarity",
-    "metric_type": "semantic_consistency",
-    "description": "Calculates the cosine similarity between TF-IDF vectors of two texts to evaluate their semantic similarity.",
-    "reasoning": "This metric provides a quantitative measure of how similar two pieces of text are based on their term frequency and inverse document frequency, addressing the need for a statistical measure of semantic similarity.",
-    "source_influence": "Based on traditional TF-IDF methods for text analysis.",
-    "execution_hint": "1. Compute the TF-IDF matrix for the texts using sklearn's TfidfVectorizer. 2. Use cosine_similarity from sklearn.metrics.pairwise to calculate the cosine similarity between the TF-IDF vectors.",
-    "relevance_score": 0.80,
-    "paper_citation": {
-      "title": "",
-      "arxiv_id": "",
-      "authors": "",
-      "year": "",
-      "supporting_text": ""
-    }
-  },
-  {
-    "metric_name": "Readability Index",
-    "metric_type": "text_quality",
-    "description": "Evaluates the readability of a text using established formulas such as the Flesch-Kincaid readability tests.",
-    "reasoning": "This metric helps assess how easy or difficult a text is to read, which is crucial for understanding the quality of the text.",
-    "source_influence": "Based on traditional readability assessment methods.",
-    "execution_hint": "1. Count the total words, sentences, and syllables in the text. 2. Apply the Flesch-Kincaid formula: 206.835 - (1.015 * (total_words / total_sentences)) - (84.6 * (total_syllables / total_words)).",
-    "relevance_score": 0.75,
-    "paper_citation": {
-      "title": "",
-      "arxiv_id": "",
-      "authors": "",
-      "year": "",
-      "supporting_text": ""
-    }
-  },
-  {
-    "metric_name": "Embedding-Based Similarity Score",
-    "metric_type": "semantic_consistency",
-    "description": "Measures the similarity between two texts by comparing their embeddings generated from a transformer model.",
-    "reasoning": "This metric leverages modern NLP techniques to quantify the semantic similarity between texts, addressing the need for advanced embedding-based evaluations.",
-    "source_influence": "Inspired by the use of sentence-transformers for semantic similarity.",
-    "execution_hint": "1. Use a pre-trained sentence-transformer model to generate embeddings for the texts. 2. Compute cosine similarity between the two embeddings using numpy or scipy.",
-    "relevance_score": 0.90,
-    "paper_citation": {
-      "title": "Finding Semantic Similarity Between Sentences In Python",
-      "arxiv_id": "",
-      "authors": "",
-      "year": "",
-      "supporting_text": "This article discusses methods for calculating semantic similarity using embeddings."
-    }
-  }
-]
-
-[RESEARCHER]   Generated 4 new metrics for missing types
-
-[RESEARCHER] Consolidating 10 metrics (existing + 4 new)...
-
-[THINKING] 🤔 Agent is reasoning...
-
-{
-  "final_metrics": [
-    {
-      "metric_name": "Completeness",
-      "metric_type": "distribution",
-      "description": "Measures the proportion of non-null values in the dataset.",
-      "reasoning": "Completeness is crucial for ensuring that the dataset is usable for analysis and modeling, as missing values can lead to biased results.",
-      "source_influence": "https://johal.in/data-quality-monitoring-with-soda-automated-checks-integrated-into-python/",
-      "execution_hint": "df.notnull().sum() / len(df) * 100",
-      "relevance_score": 0.9,
-      "supporting_evidence": "Completeness is crucial for ensuring that the dataset is usable for analysis and modeling, as missing values can lead to biased results.",
-      "paper_citation": {
-        "title": "",
-        "arxiv_id": "",
-        "authors": "",
-        "year": "",
-        "supporting_text": ""
-      }
-    },
-    {
-      "metric_name": "Uniqueness",
-      "metric_type": "distribution",
-      "description": "Calculates the number of unique values in each column.",
-      "reasoning": "Uniqueness helps identify redundancy in the dataset, which can affect the quality of insights derived from it.",
-      "source_influence": "https://www.openriskmanagement.com/data-quality-and-exploratory-data-analysis-using-python/",
-      "execution_hint": "df.nunique()",
-      "relevance_score": 0.7,
-      "supporting_evidence": "Uniqueness helps identify redundancy in the dataset, which can affect the quality of insights derived from it.",
-      "paper_citation": {
-        "title": "",
-        "arxiv_id": "",
-        "authors": "",
-        "year": "",
-        "supporting_text": ""
-      }
-    },
-    {
-      "metric_name": "Entropy",
-      "metric_type": "statistical",
-      "description": "Measures the uncertainty or randomness in the dataset's categorical columns.",
-      "reasoning": "Entropy provides insights into the diversity of data, which is important for understanding the dataset's structure and potential biases.",
-      "source_influence": "Generalizing Machine Learning Evaluation through the Integration of Shannon Entropy and Rough Set Theory [2404.12511v1]",
-      "execution_hint": "from scipy.stats import entropy; entropy(df['column_name'].value_counts())",
-      "relevance_score": 0.6,
-      "supporting_evidence": "Shannon entropy, a cornerstone in information theory, quantifies the uncertainty or the informational content within a system.",
-      "paper_citation": {
-        "title": "Generalizing Machine Learning Evaluation through the Integration of Shannon Entropy and Rough Set Theory",
-        "arxiv_id": "2404.12511v1",
-        "authors": "Olga Cherednichenko et al.",
-        "year": "2024",
-        "supporting_text": "Shannon entropy, a cornerstone in information theory, quantifies the uncertainty or the informational content within a system."
-      }
-    },
-    {
-      "metric_name": "Kullback-Leibler Divergence",
-      "metric_type": "statistical",
-      "description": "Measures the divergence between the distribution of a column and a reference distribution.",
-      "reasoning": "KL-divergence helps assess how much the data distribution deviates from an expected or ideal distribution, indicating potential data quality issues.",
-      "source_influence": "Generalizing Machine Learning Evaluation through the Integration of Shannon Entropy and Rough Set Theory [2404.12511v1]",
-      "execution_hint": "from scipy.stats import entropy; kl_divergence = entropy(df['column_name'].value_counts(), qk=reference_distribution)",
-      "relevance_score": 0.5,
-      "supporting_evidence": "The integration of entropy and rough set theory proposes a more holistic approach, considering not just the outcome but the informational dynamics and structural intricacies of the data being processed.",
-      "paper_citation": {
-        "title": "Generalizing Machine Learning Evaluation through the Integration of Shannon Entropy and Rough Set Theory",
-        "arxiv_id": "2404.12511v1",
-        "authors": "Olga Cherednichenko et al.",
-        "year": "2024",
-        "supporting_text": "The integration of entropy and rough set theory proposes a more holistic approach, considering not just the outcome but the informational dynamics and structural intricacies of the data being processed."
-      }
-    },
-    {
-      "metric_name": "Embedding-Based Similarity Score",
-      "metric_type": "semantic_consistency",
-      "description": "Measures the similarity between two texts by comparing their embeddings generated from a transformer model.",
-      "reasoning": "This metric leverages modern NLP techniques to quantify the semantic similarity between texts, addressing the need for advanced embedding-based evaluations.",
-      "source_influence": "Inspired by the use of sentence-transformers for semantic similarity.",
-      "execution_hint": "1. Use a pre-trained sentence-transformer model to generate embeddings for the texts. 2. Compute cosine similarity between the two embeddings using numpy or scipy.",
-      "relevance_score": 0.9,
-      "paper_citation": {
-        "title": "Finding Semantic Similarity Between Sentences In Python",
-        "arxiv_id": "",
-        "authors": "",
-        "year": "",
-        "supporting_text": "This article discusses methods for calculating semantic similarity using embeddings."
-      }
-    },
-    {
-      "metric_name": "Semantic Coherence Score",
-      "metric_type": "semantic_consistency",
-      "description": "Measures the coherence of a text by evaluating the semantic similarity between consecutive sentences using sentence embeddings.",
-      "reasoning": "This metric assesses how well the sentences in a text relate to each other semantically, filling the gap in evaluating the overall coherence of the text.",
-      "source_influence": "Inspired by the use of BERT embeddings for semantic similarity.",
-      "execution_hint": "1. Use a pre-trained BERT model to generate embeddings for each sentence. 2. Compute cosine similarity between consecutive sentence embeddings using scipy's spatial.distance.cosine. 3. Average the cosine similarities to get the Semantic Coherence Score.",
-      "relevance_score": 0.85,
-      "paper_citation": {
-        "title": "Text Similarity Implementation using BERT Embedding in Python",
-        "arxiv_id": "",
-        "authors": "Ahmed Mellit",
-        "year": "2021",
-        "supporting_text": "This paper discusses the use of BERT for generating sentence embeddings and measuring semantic similarity."
-      }
-    },
-    {
-      "metric_name": "TF-IDF Cosine Similarity",
-      "metric_type": "semantic_consistency",
-      "description": "Calculates the cosine similarity between TF-IDF vectors of two texts to evaluate their semantic similarity.",
-      "reasoning": "This metric provides a quantitative measure of how similar two pieces of text are based on their term frequency and inverse document frequency, addressing the need for a statistical measure of semantic similarity.",
-      "source_influence": "Based on traditional TF-IDF methods for text analysis.",
-      "execution_hint": "1. Compute the TF-IDF matrix for the texts using sklearn's TfidfVectorizer. 2. Use cosine_similarity from sklearn.metrics.pairwise to calculate the cosine similarity between the TF-IDF vectors.",
-      "relevance_score": 0.8,
-      "paper_citation": {
-        "title": "",
-        "arxiv_id": "",
-        "authors": "",
-        "year": "",
-        "supporting_text": ""
-      }
-    },
-    {
-      "metric_name": "Readability Index",
-      "metric_type": "text_quality",
-      "description": "Evaluates the readability of a text using established formulas such as the Flesch-Kincaid readability tests.",
-      "reasoning": "This metric helps assess how easy or difficult a text is to read, which is crucial for understanding the quality of the text.",
-      "source_influence": "Based on traditional readability assessment methods.",
-      "execution_hint": "1. Count the total words, sentences, and syllables in the text. 2. Apply the Flesch-Kincaid formula: 206.835 - (1.015 * (total_words / total_sentences)) - (84.6 * (total_syllables / total_words)).",
-      "relevance_score": 0.75,
-      "paper_citation": {
-        "title": "",
-        "arxiv_id": "",
-        "authors": "",
-        "year": "",
-        "supporting_text": ""
-      }
-    }
-  ],
-  "research_summary": "The selected metrics provide a comprehensive overview of data quality, combining statistical measures such as Completeness, Uniqueness, Entropy, and Kullback-Leibler Divergence with semantic consistency metrics like Embedding-Based Similarity Score, Semantic Coherence Score, TF-IDF Cosine Similarity, and Readability Index. This balanced approach ensures both quantitative and qualitative aspects of data quality are addressed.",
-  "confidence_level": "HIGH"
-}
-
-[RESEARCHER] Coverage: 4 math + 4 semantic = 8 total
-[RESEARCHER]   Coverage OK — both types present
-
-[RESEARCHER] RETRY 1 COMPLETE: 8 metrics, HIGH confidence
-
-[GRAPH] Researcher output accepted (iteration 2) — routing to evaluator
-
-[EVALUATOR] Initiating dynamic metric computation engine...
-
-======================================================================
-[EVALUATOR] AGENTIC EVALUATION PHASE — Non-Deterministic Strategy Dispatch
-======================================================================
-[EVALUATOR] Dataset shape: 10 rows x 11 columns
-[EVALUATOR] Identifier columns: ['instance_id', 'num_steps']
-
-[EVALUATOR] Phase 1 (REASON): Evaluating metric feasibility...
-[EVALUATOR] 8 / 8 metrics are feasible
-
-[EVALUATOR] Metric 1/8: 'Completeness'
-[EVALUATOR]   Feasibility: 0.90 | The completeness metric can be computed using the available 
-[EVALUATOR]   Strategy: direct_math — metric maps to known scipy/numpy operations
-
-[EVALUATOR]   ACT [direct_math]: Generating code...
-
-[THINKING] 🤔 Agent is reasoning...
-
-
-[BASE] Streaming failed, falling back to invoke: Error code: 400 - {'error': {'message': "This endpoint's maximum context length is 128000 tokens. However, you requested about 200724 tokens (200724 of text input). Please reduce the length of either one, or use the context-compression plugin to compress your prompt automatically.", 'code': 400, 'metadata': {'provider_name': None}}, 'user_id': 'user_34Pc7t29IvZMi3mY9VBx2J9YsBW'}
-[BASE] ✗ LLM call failed: Error code: 400 - {'error': {'message': "This endpoint's maximum context length is 128000 tokens. However, you requested about 200724 tokens (200724 of text input). Please reduce the length of either one, or use the context-compression plugin to compress your prompt automatically.", 'code': 400, 'metadata': {'provider_name': None}}, 'user_id': 'user_34Pc7t29IvZMi3mY9VBx2J9YsBW'}
-[EVALUATOR]   OBSERVE: quality check...
-[EVALUATOR]   Quality score: 0.40
-[EVALUATOR]   Issues: No output produced
-[EVALUATOR]   ITERATE: retrying...
-
-[EVALUATOR]   ACT [direct_math]: Retry 1...
-
-[THINKING] 🤔 Agent is reasoning...
-
-
-[BASE] Streaming failed, falling back to invoke: Error code: 400 - {'error': {'message': "This endpoint's maximum context length is 128000 tokens. However, you requested about 200752 tokens (200752 of text input). Please reduce the length of either one, or use the context-compression plugin to compress your prompt automatically.", 'code': 400, 'metadata': {'provider_name': None}}, 'user_id': 'user_34Pc7t29IvZMi3mY9VBx2J9YsBW'}
-[BASE] ✗ LLM call failed: Error code: 400 - {'error': {'message': "This endpoint's maximum context length is 128000 tokens. However, you requested about 200752 tokens (200752 of text input). Please reduce the length of either one, or use the context-compression plugin to compress your prompt automatically.", 'code': 400, 'metadata': {'provider_name': None}}, 'user_id': 'user_34Pc7t29IvZMi3mY9VBx2J9YsBW'}
-[EVALUATOR]   OBSERVE: quality check...
-[EVALUATOR]   Quality score: 0.40
-[EVALUATOR]   Issues: No output produced
-[EVALUATOR]   ITERATE: retrying...
-
-[EVALUATOR]   ACT [direct_math]: Retry 2...
-
-[THINKING] 🤔 Agent is reasoning...
-
-
-[BASE] Streaming failed, falling back to invoke: Error code: 400 - {'error': {'message': "This endpoint's maximum context length is 128000 tokens. However, you requested about 200752 tokens (200752 of text input). Please reduce the length of either one, or use the context-compression plugin to compress your prompt automatically.", 'code': 400, 'metadata': {'provider_name': None}}, 'user_id': 'user_34Pc7t29IvZMi3mY9VBx2J9YsBW'}
-[BASE] ✗ LLM call failed: Error code: 400 - {'error': {'message': "This endpoint's maximum context length is 128000 tokens. However, you requested about 200752 tokens (200752 of text input). Please reduce the length of either one, or use the context-compression plugin to compress your prompt automatically.", 'code': 400, 'metadata': {'provider_name': None}}, 'user_id': 'user_34Pc7t29IvZMi3mY9VBx2J9YsBW'}
-[EVALUATOR]   OBSERVE: quality check...
-[EVALUATOR]   Quality score: 0.40
-[EVALUATOR]   Issues: No output produced
-[EVALUATOR]   Result acceptable (quality: 0.40)
-[EVALUATOR]   Found 0 anomalous rows
-[EVALUATOR]   Interpreting result...
-
-[THINKING] 🤔 Agent is reasoning...
-
-The completeness metric indicates that the dataset has a high proportion of non-null values, suggesting that the data is largely intact and usable for analysis. With no flagged rows, it appears that there are no significant quality issues related to missing values. This level of completeness is a positive sign, as it reflects a well-maintained dataset with minimal gaps. Overall, the findings suggest that the data quality is satisfactory, and there are no immediate concerns regarding the integrity of the dataset.
-
-[EVALUATOR]   The completeness metric indicates that the dataset has a high proportion of non-null values, suggest...
-
-[EVALUATOR] Metric 2/8: 'Uniqueness'
-[EVALUATOR]   Feasibility: 0.80 | Uniqueness can be calculated using the available columns, an
-[EVALUATOR]   Strategy: direct_math — metric maps to known scipy/numpy operations
-
-[EVALUATOR]   ACT [direct_math]: Generating code...
-
-[THINKING] 🤔 Agent is reasoning...
-
-
-[BASE] Streaming failed, falling back to invoke: Error code: 400 - {'error': {'message': "This endpoint's maximum context length is 128000 tokens. However, you requested about 200717 tokens (200717 of text input). Please reduce the length of either one, or use the context-compression plugin to compress your prompt automatically.", 'code': 400, 'metadata': {'provider_name': None}}, 'user_id': 'user_34Pc7t29IvZMi3mY9VBx2J9YsBW'}
-[BASE] ✗ LLM call failed: Error code: 400 - {'error': {'message': "This endpoint's maximum context length is 128000 tokens. However, you requested about 200717 tokens (200717 of text input). Please reduce the length of either one, or use the context-compression plugin to compress your prompt automatically.", 'code': 400, 'metadata': {'provider_name': None}}, 'user_id': 'user_34Pc7t29IvZMi3mY9VBx2J9YsBW'}
-[EVALUATOR]   OBSERVE: quality check...
-[EVALUATOR]   Quality score: 0.40
-[EVALUATOR]   Issues: No output produced
-[EVALUATOR]   ITERATE: retrying...
-
-[EVALUATOR]   ACT [direct_math]: Retry 1...
-
-[THINKING] 🤔 Agent is reasoning...
-
-
-[BASE] Streaming failed, falling back to invoke: Error code: 400 - {'error': {'message': "This endpoint's maximum context length is 128000 tokens. However, you requested about 200745 tokens (200745 of text input). Please reduce the length of either one, or use the context-compression plugin to compress your prompt automatically.", 'code': 400, 'metadata': {'provider_name': None}}, 'user_id': 'user_34Pc7t29IvZMi3mY9VBx2J9YsBW'}
-[BASE] ✗ LLM call failed: Error code: 400 - {'error': {'message': "This endpoint's maximum context length is 128000 tokens. However, you requested about 200745 tokens (200745 of text input). Please reduce the length of either one, or use the context-compression plugin to compress your prompt automatically.", 'code': 400, 'metadata': {'provider_name': None}}, 'user_id': 'user_34Pc7t29IvZMi3mY9VBx2J9YsBW'}
-[EVALUATOR]   OBSERVE: quality check...
-[EVALUATOR]   Quality score: 0.40
-[EVALUATOR]   Issues: No output produced
-[EVALUATOR]   ITERATE: retrying...
-
-[EVALUATOR]   ACT [direct_math]: Retry 2...
-
-[THINKING] 🤔 Agent is reasoning...
-
-
-[BASE] Streaming failed, falling back to invoke: Error code: 400 - {'error': {'message': "This endpoint's maximum context length is 128000 tokens. However, you requested about 200745 tokens (200745 of text input). Please reduce the length of either one, or use the context-compression plugin to compress your prompt automatically.", 'code': 400, 'metadata': {'provider_name': None}}, 'user_id': 'user_34Pc7t29IvZMi3mY9VBx2J9YsBW'}
-[BASE] ✗ LLM call failed: Error code: 400 - {'error': {'message': "This endpoint's maximum context length is 128000 tokens. However, you requested about 200745 tokens (200745 of text input). Please reduce the length of either one, or use the context-compression plugin to compress your prompt automatically.", 'code': 400, 'metadata': {'provider_name': None}}, 'user_id': 'user_34Pc7t29IvZMi3mY9VBx2J9YsBW'}
-[EVALUATOR]   OBSERVE: quality check...
-[EVALUATOR]   Quality score: 0.40
-[EVALUATOR]   Issues: No output produced
-[EVALUATOR]   Result acceptable (quality: 0.40)
-[EVALUATOR]   Found 0 anomalous rows
-[EVALUATOR]   Interpreting result...
-
-[THINKING] 🤔 Agent is reasoning...
-
-The uniqueness metric was assessed, and the execution output indicates that there are no flagged rows, suggesting that all columns contain unique values without any anomalies. This is a positive outcome, as it reflects a well-structured dataset with no evident issues related to duplicate entries. The absence of flagged rows implies that the data quality is intact, and there are no concerns regarding broken structures or unexpected null patterns. Overall, the results indicate a healthy level of uniqueness across the dataset, which is essential for maintaining data integrity and reliability.
-
-[EVALUATOR]   The uniqueness metric was assessed, and the execution output indicates that there are no flagged row...
-
-[EVALUATOR] Metric 3/8: 'Entropy'
-[EVALUATOR]   Feasibility: 0.70 | Entropy can be computed for categorical columns, and the exe
-[EVALUATOR]   Strategy: direct_math — metric maps to known scipy/numpy operations
-
-[EVALUATOR]   ACT [direct_math]: Generating code...
-
-[THINKING] 🤔 Agent is reasoning...
-
-
-[BASE] Streaming failed, falling back to invoke: Error code: 400 - {'error': {'message': "This endpoint's maximum context length is 128000 tokens. However, you requested about 200738 tokens (200738 of text input). Please reduce the length of either one, or use the context-compression plugin to compress your prompt automatically.", 'code': 400, 'metadata': {'provider_name': None}}, 'user_id': 'user_34Pc7t29IvZMi3mY9VBx2J9YsBW'}
-[BASE] ✗ LLM call failed: Error code: 400 - {'error': {'message': "This endpoint's maximum context length is 128000 tokens. However, you requested about 200738 tokens (200738 of text input). Please reduce the length of either one, or use the context-compression plugin to compress your prompt automatically.", 'code': 400, 'metadata': {'provider_name': None}}, 'user_id': 'user_34Pc7t29IvZMi3mY9VBx2J9YsBW'}
-[EVALUATOR]   OBSERVE: quality check...
-[EVALUATOR]   Quality score: 0.40
-[EVALUATOR]   Issues: No output produced
-[EVALUATOR]   ITERATE: retrying...
-
-[EVALUATOR]   ACT [direct_math]: Retry 1...
-
-[THINKING] 🤔 Agent is reasoning...
-
-
-[BASE] Streaming failed, falling back to invoke: Error code: 400 - {'error': {'message': "This endpoint's maximum context length is 128000 tokens. However, you requested about 200766 tokens (200766 of text input). Please reduce the length of either one, or use the context-compression plugin to compress your prompt automatically.", 'code': 400, 'metadata': {'provider_name': None}}, 'user_id': 'user_34Pc7t29IvZMi3mY9VBx2J9YsBW'}
-[BASE] ✗ LLM call failed: Error code: 400 - {'error': {'message': "This endpoint's maximum context length is 128000 tokens. However, you requested about 200766 tokens (200766 of text input). Please reduce the length of either one, or use the context-compression plugin to compress your prompt automatically.", 'code': 400, 'metadata': {'provider_name': None}}, 'user_id': 'user_34Pc7t29IvZMi3mY9VBx2J9YsBW'}
-[EVALUATOR]   OBSERVE: quality check...
-[EVALUATOR]   Quality score: 0.40
-[EVALUATOR]   Issues: No output produced
-[EVALUATOR]   ITERATE: retrying...
-
-[EVALUATOR]   ACT [direct_math]: Retry 2...
-
-[THINKING] 🤔 Agent is reasoning...
-
-
-[BASE] Streaming failed, falling back to invoke: Error code: 400 - {'error': {'message': "This endpoint's maximum context length is 128000 tokens. However, you requested about 200766 tokens (200766 of text input). Please reduce the length of either one, or use the context-compression plugin to compress your prompt automatically.", 'code': 400, 'metadata': {'provider_name': None}}, 'user_id': 'user_34Pc7t29IvZMi3mY9VBx2J9YsBW'}
-[BASE] ✗ LLM call failed: Error code: 400 - {'error': {'message': "This endpoint's maximum context length is 128000 tokens. However, you requested about 200766 tokens (200766 of text input). Please reduce the length of either one, or use the context-compression plugin to compress your prompt automatically.", 'code': 400, 'metadata': {'provider_name': None}}, 'user_id': 'user_34Pc7t29IvZMi3mY9VBx2J9YsBW'}
-[EVALUATOR]   OBSERVE: quality check...
-[EVALUATOR]   Quality score: 0.40
-[EVALUATOR]   Issues: No output produced
-[EVALUATOR]   Result acceptable (quality: 0.40)
-[EVALUATOR]   Found 0 anomalous rows
-[EVALUATOR]   Interpreting result...
-
-[THINKING] 🤔 Agent is reasoning...
-
-The entropy metric, which measures the uncertainty or randomness in the dataset's categorical columns, did not yield any flagged rows, indicating a consistent distribution across these columns. This suggests that the dataset maintains a healthy level of diversity in its categorical values, which is essential for robust analysis. The absence of flagged rows further implies that there are no significant quality issues such as broken structures or unexpected null patterns. Overall, the results reflect normal variation and indicate that the dataset is well-structured in terms of its categorical data.
-
-[EVALUATOR]   The entropy metric, which measures the uncertainty or randomness in the dataset's categorical column...
-
-[EVALUATOR] Metric 4/8: 'Kullback-Leibler Divergence'
-[EVALUATOR]   Feasibility: 0.60 | KL Divergence can be computed if a reference distribution is
-[EVALUATOR]   Strategy: direct_math — metric maps to known scipy/numpy operations
-
-[EVALUATOR]   ACT [direct_math]: Generating code...
-
-[THINKING] 🤔 Agent is reasoning...
-
-
-[BASE] Streaming failed, falling back to invoke: Error code: 400 - {'error': {'message': "This endpoint's maximum context length is 128000 tokens. However, you requested about 200757 tokens (200757 of text input). Please reduce the length of either one, or use the context-compression plugin to compress your prompt automatically.", 'code': 400, 'metadata': {'provider_name': None}}, 'user_id': 'user_34Pc7t29IvZMi3mY9VBx2J9YsBW'}
-[BASE] ✗ LLM call failed: Error code: 400 - {'error': {'message': "This endpoint's maximum context length is 128000 tokens. However, you requested about 200757 tokens (200757 of text input). Please reduce the length of either one, or use the context-compression plugin to compress your prompt automatically.", 'code': 400, 'metadata': {'provider_name': None}}, 'user_id': 'user_34Pc7t29IvZMi3mY9VBx2J9YsBW'}
-[EVALUATOR]   OBSERVE: quality check...
-[EVALUATOR]   Quality score: 0.40
-[EVALUATOR]   Issues: No output produced
-[EVALUATOR]   ITERATE: retrying...
-
-[EVALUATOR]   ACT [direct_math]: Retry 1...
-
-[THINKING] 🤔 Agent is reasoning...
-
-
-[BASE] Streaming failed, falling back to invoke: Error code: 400 - {'error': {'message': "This endpoint's maximum context length is 128000 tokens. However, you requested about 200785 tokens (200785 of text input). Please reduce the length of either one, or use the context-compression plugin to compress your prompt automatically.", 'code': 400, 'metadata': {'provider_name': None}}, 'user_id': 'user_34Pc7t29IvZMi3mY9VBx2J9YsBW'}
-[BASE] ✗ LLM call failed: Error code: 400 - {'error': {'message': "This endpoint's maximum context length is 128000 tokens. However, you requested about 200785 tokens (200785 of text input). Please reduce the length of either one, or use the context-compression plugin to compress your prompt automatically.", 'code': 400, 'metadata': {'provider_name': None}}, 'user_id': 'user_34Pc7t29IvZMi3mY9VBx2J9YsBW'}
-[EVALUATOR]   OBSERVE: quality check...
-[EVALUATOR]   Quality score: 0.40
-[EVALUATOR]   Issues: No output produced
-[EVALUATOR]   ITERATE: retrying...
-
-[EVALUATOR]   ACT [direct_math]: Retry 2...
-
-[THINKING] 🤔 Agent is reasoning...
-
-
-[BASE] Streaming failed, falling back to invoke: Error code: 400 - {'error': {'message': "This endpoint's maximum context length is 128000 tokens. However, you requested about 200785 tokens (200785 of text input). Please reduce the length of either one, or use the context-compression plugin to compress your prompt automatically.", 'code': 400, 'metadata': {'provider_name': None}}, 'user_id': 'user_34Pc7t29IvZMi3mY9VBx2J9YsBW'}
-[BASE] ✗ LLM call failed: Error code: 400 - {'error': {'message': "This endpoint's maximum context length is 128000 tokens. However, you requested about 200785 tokens (200785 of text input). Please reduce the length of either one, or use the context-compression plugin to compress your prompt automatically.", 'code': 400, 'metadata': {'provider_name': None}}, 'user_id': 'user_34Pc7t29IvZMi3mY9VBx2J9YsBW'}
-[EVALUATOR]   OBSERVE: quality check...
-[EVALUATOR]   Quality score: 0.40
-[EVALUATOR]   Issues: No output produced
-[EVALUATOR]   Result acceptable (quality: 0.40)
-[EVALUATOR]   Found 0 anomalous rows
-[EVALUATOR]   Interpreting result...
-
-[THINKING] 🤔 Agent is reasoning...
-
-The Kullback-Leibler Divergence metric was evaluated to assess the divergence between the distribution of the column in question and a reference distribution. The execution output indicated that there were no flagged rows, suggesting that the data aligns well with the expected distribution. This absence of flagged rows indicates that there are no significant quality issues present, and the observed variations in the data can be considered normal. Overall, the results reflect a healthy data quality status, with no anomalies detected that would warrant further investigation.
-
-[EVALUATOR]   The Kullback-Leibler Divergence metric was evaluated to assess the divergence between the distributi...
-
-[EVALUATOR] Metric 5/8: 'Embedding-Based Similarity Score'
-[EVALUATOR]   Feasibility: 0.85 | This metric can be computed using available text data, and t
-[EVALUATOR]   Strategy: semantic — metric description mentions semantic/NLP concepts
-[EVALUATOR]   Running semantic computation...
-[EVALUATOR]   Semantic quality: 0.30
-[EVALUATOR]   Semantic metric failed — skipping
-
-[EVALUATOR] Metric 6/8: 'Semantic Coherence Score'
-[EVALUATOR]   Feasibility: 0.80 | The metric can be computed using available text data, and th
-[EVALUATOR]   Strategy: semantic — metric description mentions semantic/NLP concepts
-[EVALUATOR]   Running semantic computation...
-[EVALUATOR]   Semantic quality: 0.30
-[EVALUATOR]   Semantic metric failed — skipping
-
-[EVALUATOR] Metric 7/8: 'TF-IDF Cosine Similarity'
-[EVALUATOR]   Feasibility: 0.75 | This metric can be computed using available text data, and t
-[EVALUATOR]   Strategy: semantic — metric description mentions semantic/NLP concepts
-[EVALUATOR]   Running semantic computation...
-[EVALUATOR]   Semantic quality: 0.30
-[EVALUATOR]   Semantic metric failed — skipping
-
-[EVALUATOR] Metric 8/8: 'Readability Index'
-[EVALUATOR]   Feasibility: 0.90 | The readability index can be computed using available text d
-[EVALUATOR]   Strategy: semantic — metric description mentions semantic/NLP concepts
-[EVALUATOR]   Running semantic computation...
-[EVALUATOR]   Semantic quality: 0.30
-[EVALUATOR]   Semantic metric failed — skipping
-
-[EVALUATOR] Phase 3 (CONSOLIDATE): Building final evidence-backed report...
-[EVALUATOR]   Consolidating 4 metric results...
-
-[THINKING] 🤔 Agent is reasoning...
-
-{
-  "evaluated_metrics": ["Completeness", "Uniqueness", "Entropy", "Kullback-Leibler Divergence"],
-  "dataset_level_evidence": "The dataset has 10 rows and 11 columns, with no flagged rows across all evaluated metrics, indicating a high level of data integrity.",
-  "sample_level_inconsistencies": "No structural or formatting anomalies were identified.",
-  "quality_observations": "The metrics indicate that the dataset is well-structured, with high completeness, uniqueness, and consistent distributions across categorical columns.",
-  "statistical_justification": "All metrics reported zero anomalous counts, suggesting that the dataset is free from significant quality issues.",
-  "quality_by_metric": [
-    {
-      "metric": "Completeness",
-      "finding": "No flagged rows, indicating high non-null values.",
-      "quality_level": "HIGH",
-      "note": "The dataset is largely intact and usable for analysis."
-    },
-    {
-      "metric": "Uniqueness",
-      "finding": "No flagged rows, suggesting all columns contain unique values.",
-      "quality_level": "HIGH",
-      "note": "This reflects a well-structured dataset."
-    },
-    {
-      "metric": "Entropy",
-      "finding": "No flagged rows, indicating consistent distribution across categorical columns.",
-      "quality_level": "HIGH",
-      "note": "The dataset maintains a healthy level of randomness."
-    },
-    {
-      "metric": "Kullback-Leibler Divergence",
-      "finding": "No flagged rows, suggesting alignment with reference distribution.",
-      "quality_level": "HIGH",
-      "note": "The data aligns well with expected distributions."
-    }
-  ],
-  "final_verdict": "HIGH_QUALITY",
-  "verdict_reasoning": "The dataset exhibits no significant quality issues across all evaluated metrics, with zero anomalies reported. Given the high completeness, uniqueness, and consistent distributions, it is deemed suitable for its intended analysis."
-}
-
-
-[EVALUATOR] FINAL VERDICT: HIGH_QUALITY
-[EVALUATOR]   Average quality: 0.40/1.0
-
-══════════════════════════════════════════════════════════════════════
-  ① THINKER — DATASET UNDERSTANDING
-══════════════════════════════════════════════════════════════════════
-
-  Dataset Type : ?
-  Domain       : ? (confidence 0%)
-  Domain Why   : 
-
-  ┌─ Column Profiles
-
-  ┌─ Reference Dataset Assessment
-  │  Needed : ?
-  │  Why    : 
-
-  ┌─ Recommended Downstream Agents
-
-══════════════════════════════════════════════════════════════════════
-  ② RESEARCHER — EXTERNAL RESEARCH & METRIC PROPOSALS
-══════════════════════════════════════════════════════════════════════
-
-  ┌─ Research Tool Results
-  │
-  │  🌐 DuckDuckGo (multi-angle)
-  │    Angle 1: how to compute "data quality evaluation metrics" in Python
-  │    Angle 2: "general tabular data quality" author keywords
-  │    Angle 3: "comparative evaluation" survey on data quality metrics
-  │    Angle 4: "data quality metrics" mathematical definition or statistical test
-  │    Unique URLs : 32   Scraped pages: 3
-  │
-  │  📖 Wikipedia
-  │    Query : "general machine learning dataset evaluation benchmark"
-  │    Found : Page: List of datasets for machine-learning research Summary: These datasets are used in machine learning (ML) research and have been cited in peer-reviewed academic journals. Datasets are an integral
-  │
-  │  📄 ArXiv Deep PDF Research (5 papers)
-  │    [✓ PDF] "Changing Data Sources in the Age of Machine Learning for Official Statistics" [2306.04338v1] (2023) — 5 relevant chunks
-  │    [✓ PDF] "DOME: Recommendations for supervised machine learning validation in biology" [2006.16189v4] (2020) — 5 relevant chunks
-  │    [✓ PDF] "Active learning for data streams: a survey" [2302.08893v4] (2023) — 5 relevant chunks
-  │    [✓ PDF] "Generalizing Machine Learning Evaluation through the Integration of Shannon Entropy and Rough Set Theory" [2404.12511v1] (2024) — 5 relevant chunks
-  │    [✓ PDF] "Towards CRISP-ML(Q): A Machine Learning Process Model with Quality Assurance Methodology" [2003.05155v2] (2020) — 5 relevant chunks
-
-  ┌─ Research Summary
-  │  The selected metrics provide a comprehensive overview of data quality, combining statistical measures such as Completeness, Uniqueness, Entropy, and Kullback-Leibler Divergence with semantic consistency metrics like Embedding-Based Similarity Score, Semantic Coherence Score, TF-IDF Cosine Similarity, and Readability Index. This balanced approach ensures both quantitative and qualitative aspects of data quality are addressed.
-
-  ┌─ Metrics (8 total, 2 paper-cited)
-
-  │   1. Completeness [distribution]
-  │      Description    : Measures the proportion of non-null values in the dataset.
-  │      Reasoning      : Completeness is crucial for ensuring that the dataset is usable for analysis and modeling, as missing values can lead to biased results.
-  │      Source         : https://johal.in/data-quality-monitoring-with-soda-automated-checks-integrated-into-python/
-  │      Execution Hint : df.notnull().sum() / len(df) * 100
-
-  │   2. Uniqueness [distribution]
-  │      Description    : Calculates the number of unique values in each column.
-  │      Reasoning      : Uniqueness helps identify redundancy in the dataset, which can affect the quality of insights derived from it.
-  │      Source         : https://www.openriskmanagement.com/data-quality-and-exploratory-data-analysis-using-python/
-  │      Execution Hint : df.nunique()
-
-  │   3. Entropy [statistical] 📄 2404.12511v1
-  │      Description    : Measures the uncertainty or randomness in the dataset's categorical columns.
-  │      Reasoning      : Entropy provides insights into the diversity of data, which is important for understanding the dataset's structure and potential biases.
-  │      Source         : Generalizing Machine Learning Evaluation through the Integration of Shannon Entropy and Rough Set Theory [2404.12511v1]
-  │      Execution Hint : from scipy.stats import entropy; entropy(df['column_name'].value_counts())
-  │      Paper quote    : "Shannon entropy, a cornerstone in information theory, quantifies the uncertainty or the informational content within a system."
-  │                       — Olga Cherednichenko et al. (2024)
-
-  │   4. Kullback-Leibler Divergence [statistical] 📄 2404.12511v1
-  │      Description    : Measures the divergence between the distribution of a column and a reference distribution.
-  │      Reasoning      : KL-divergence helps assess how much the data distribution deviates from an expected or ideal distribution, indicating potential data quality issues.
-  │      Source         : Generalizing Machine Learning Evaluation through the Integration of Shannon Entropy and Rough Set Theory [2404.12511v1]
-  │      Execution Hint : from scipy.stats import entropy; kl_divergence = entropy(df['column_name'].value_counts(), qk=reference_distribution)
-  │      Paper quote    : "The integration of entropy and rough set theory proposes a more holistic approach, considering not just the outcome but the informational dynamics and structural intricacies of the"
-  │                       — Olga Cherednichenko et al. (2024)
-
-  │   5. Embedding-Based Similarity Score [semantic_consistency]
-  │      Description    : Measures the similarity between two texts by comparing their embeddings generated from a transformer model.
-  │      Reasoning      : This metric leverages modern NLP techniques to quantify the semantic similarity between texts, addressing the need for advanced embedding-based evaluations.
-  │      Source         : Inspired by the use of sentence-transformers for semantic similarity.
-  │      Execution Hint : 1. Use a pre-trained sentence-transformer model to generate embeddings for the texts. 2. Compute cosine similarity between the two embeddings using numpy or scipy.
-  │      Paper quote    : "This article discusses methods for calculating semantic similarity using embeddings."
-  │                       —  ()
-
-  │   6. Semantic Coherence Score [semantic_consistency]
-  │      Description    : Measures the coherence of a text by evaluating the semantic similarity between consecutive sentences using sentence embeddings.
-  │      Reasoning      : This metric assesses how well the sentences in a text relate to each other semantically, filling the gap in evaluating the overall coherence of the text.
-  │      Source         : Inspired by the use of BERT embeddings for semantic similarity.
-  │      Execution Hint : 1. Use a pre-trained BERT model to generate embeddings for each sentence. 2. Compute cosine similarity between consecutive sentence embeddings using scipy's spatial.distance.cosine. 3. Average the cosine similarities to get the Semantic Coherence Score.
-  │      Paper quote    : "This paper discusses the use of BERT for generating sentence embeddings and measuring semantic similarity."
-  │                       — Ahmed Mellit (2021)
-
-  │   7. TF-IDF Cosine Similarity [semantic_consistency]
-  │      Description    : Calculates the cosine similarity between TF-IDF vectors of two texts to evaluate their semantic similarity.
-  │      Reasoning      : This metric provides a quantitative measure of how similar two pieces of text are based on their term frequency and inverse document frequency, addressing the need for a statistical measure of semantic similarity.
-  │      Source         : Based on traditional TF-IDF methods for text analysis.
-  │      Execution Hint : 1. Compute the TF-IDF matrix for the texts using sklearn's TfidfVectorizer. 2. Use cosine_similarity from sklearn.metrics.pairwise to calculate the cosine similarity between the TF-IDF vectors.
-
-  │   8. Readability Index [text_quality]
-  │      Description    : Evaluates the readability of a text using established formulas such as the Flesch-Kincaid readability tests.
-  │      Reasoning      : This metric helps assess how easy or difficult a text is to read, which is crucial for understanding the quality of the text.
-  │      Source         : Based on traditional readability assessment methods.
-  │      Execution Hint : 1. Count the total words, sentences, and syllables in the text. 2. Apply the Flesch-Kincaid formula: 206.835 - (1.015 * (total_words / total_sentences)) - (84.6 * (total_syllables / total_words)).
-
-══════════════════════════════════════════════════════════════════════
-  ③ EVALUATOR — METRIC COMPUTATION & FINDINGS
-══════════════════════════════════════════════════════════════════════
-
-  ┌─ [1] Completeness  [✓ COMPUTED]
-  │  Research source : https://johal.in/data-quality-monitoring-with-soda-automated-checks-integrated-into-python/
-  │  Execution output:
-  │    (no output)
-  │  Anomalous rows : 0
-  │  Interpretation:
-  │    The completeness metric indicates that the dataset has a high proportion of non-null values, suggesting that the data is largely intact and usable for analysis. With no flagged rows, it appears that there are no significant quality issues related to missing values. This level of completeness is a positive sign, as it reflects a well-maintained dataset with minimal gaps. Overall, the findings suggest that the data quality is satisfactory, and there are no immediate concerns regarding the integrity of the dataset.
-  └──────────────────────────────────────────────────────────────────
-
-  ┌─ [2] Uniqueness  [✓ COMPUTED]
-  │  Research source : https://www.openriskmanagement.com/data-quality-and-exploratory-data-analysis-using-python/
-  │  Execution output:
-  │    (no output)
-  │  Anomalous rows : 0
-  │  Interpretation:
-  │    The uniqueness metric was assessed, and the execution output indicates that there are no flagged rows, suggesting that all columns contain unique values without any anomalies. This is a positive outcome, as it reflects a well-structured dataset with no evident issues related to duplicate entries. The absence of flagged rows implies that the data quality is intact, and there are no concerns regarding broken structures or unexpected null patterns. Overall, the results indicate a healthy level of uniqueness across the dataset, which is essential for maintaining data integrity and reliability.
-  └──────────────────────────────────────────────────────────────────
-
-  ┌─ [3] Entropy  [✓ COMPUTED]
-  │  Research source : Generalizing Machine Learning Evaluation through the Integration of Shannon Entropy and Rough Set Theory [2404.12511v1]
-  │  Execution output:
-  │    (no output)
-  │  Anomalous rows : 0
-  │  Interpretation:
-  │    The entropy metric, which measures the uncertainty or randomness in the dataset's categorical columns, did not yield any flagged rows, indicating a consistent distribution across these columns. This suggests that the dataset maintains a healthy level of diversity in its categorical values, which is essential for robust analysis. The absence of flagged rows further implies that there are no significant quality issues such as broken structures or unexpected null patterns. Overall, the results reflect normal variation and indicate that the dataset is well-structured in terms of its categorical data.
-  └──────────────────────────────────────────────────────────────────
-
-  ┌─ [4] Kullback-Leibler Divergence  [✓ COMPUTED]
-  │  Research source : Generalizing Machine Learning Evaluation through the Integration of Shannon Entropy and Rough Set Theory [2404.12511v1]
-  │  Execution output:
-  │    (no output)
-  │  Anomalous rows : 0
-  │  Interpretation:
-  │    The Kullback-Leibler Divergence metric was evaluated to assess the divergence between the distribution of the column in question and a reference distribution. The execution output indicated that there were no flagged rows, suggesting that the data aligns well with the expected distribution. This absence of flagged rows indicates that there are no significant quality issues present, and the observed variations in the data can be considered normal. Overall, the results reflect a healthy data quality status, with no anomalies detected that would warrant further investigation.
-  └──────────────────────────────────────────────────────────────────
-
-══════════════════════════════════════════════════════════════════════
-  ③ EVALUATOR — FINAL VERDICT
-══════════════════════════════════════════════════════════════════════
-
-  ✅  DATA QUALITY VERDICT: HIGH_QUALITY
-
-  Reasoning:
-    The dataset exhibits no significant quality issues across all evaluated metrics, with zero anomalies reported. Given the high completeness, uniqueness, and consistent distributions, it is deemed suitable for its intended analysis.
-
-  Dataset-level Evidence:
-    The dataset has 10 rows and 11 columns, with no flagged rows across all evaluated metrics, indicating a high level of data integrity.
-
-  Quality Observations:
-    The metrics indicate that the dataset is well-structured, with high completeness, uniqueness, and consistent distributions across categorical columns.
-
-  Statistical Justification:
-    All metrics reported zero anomalous counts, suggesting that the dataset is free from significant quality issues.
-
-  ┌─ Quality by Metric
-  │  🔴 [HIGH      ] Completeness
-  │             Finding : No flagged rows, indicating high non-null values.
-  │             Note    : The dataset is largely intact and usable for analysis.
-  │  🔴 [HIGH      ] Uniqueness
-  │             Finding : No flagged rows, suggesting all columns contain unique values.
-  │             Note    : This reflects a well-structured dataset.
-  │  🔴 [HIGH      ] Entropy
-  │             Finding : No flagged rows, indicating consistent distribution across categorical columns.
-  │             Note    : The dataset maintains a healthy level of randomness.
-  │  🔴 [HIGH      ] Kullback-Leibler Divergence
-  │             Finding : No flagged rows, suggesting alignment with reference distribution.
-  │             Note    : The data aligns well with expected distributions.
-
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  PIPELINE ERRORS
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  [ERR] Thinker: JSON parse failed — raw response stored in thinker_output.raw
-
-══════════════════════════════════════════════════════════════════════
-  REPORT
-══════════════════════════════════════════════════════════════════════
-
-  [OK] Structured report saved  → C:\Users\User\Desktop\data-quality-main\benchmarking_results.json
-  [OK] Pipeline graph saved        -> C:\Users\User\Desktop\data-quality-main\benchmarking_results_pipeline_graph.png
-
-  [OK] Workflow log saved       → C:\Users\User\Desktop\data-quality-main\benchmarking_workflow.log
+      "metric_name": "Consistency of Resolved Labels",
+      "metric_type": "label_noise",
+      "description": "Checks for consistency in the 'resolved' labels across the dataset.",
+      "reasoning": "All values being 0 raises concerns about label noise, which can affect model training and evaluation.",
+      "source_influence": "Influenced by the need for reliable labels in machine learning datasets.",
+      "execution_hint": "Use pandas to check the unique values in the 'resolved' column.",
+      "paper_citations": [
+        {
+          "title": "DOME: Recommendations for supervised machine learning validation in biology",
+          "arxiv_id": "2006.16189v4",
+          "authors": "Ian Walsh et al.",
+          "year": "2020",
+          "supporting_text": "Data

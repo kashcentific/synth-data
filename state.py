@@ -17,6 +17,9 @@ class ThinkerState(TypedDict, total=False):
     # --- Metadata extraction output ----------------------------
     raw_metadata: Dict[str, Any]      # deterministic column statistics
 
+    # --- Universal metrics (computed immediately after metadata) ---
+    universal_metric_results: List[Dict[str, Any]]  # always first in pipeline
+
     # --- Agent outputs -----------------------------------------
     thinker_output: Dict[str, Any]    # domain/type/column profiles/agents
     researcher_output: Dict[str, Any] # proposed metrics + research context

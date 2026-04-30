@@ -78,7 +78,7 @@ def _display_thinker(out: dict):
         print("\n[!] No thinker output.")
         return
 
-    _section("① THINKER — DATASET UNDERSTANDING", "═")
+    _section("② THINKER — DATASET UNDERSTANDING", "═")
 
     domain = out.get("domain", {})
     print(f"\n  Dataset Type : {out.get('dataset_type', '?')}")
@@ -136,7 +136,7 @@ def _display_researcher(out: dict):
         print("\n[!] No researcher output.")
         return
 
-    _section("② RESEARCHER — EXTERNAL RESEARCH & METRIC PROPOSALS", "═")
+    _section("③ RESEARCHER — EXTERNAL RESEARCH & METRIC PROPOSALS", "═")
 
     # Show what each tool actually returned
     context = out.get("research_context", {})
@@ -162,18 +162,21 @@ def _display_researcher(out: dict):
             if excerpt:
                 print(f"  │    Found : {excerpt[:200]}")
 
-        # ArXiv papers with PDF citation info
+        # ArXiv papers — shown whether PDF loaded or abstract-only
+        print(f"  │")
         arxiv_papers = context.get("arxiv_papers", [])
-        if arxiv_papers:
-            print(f"  │")
-            print(f"  │  📄 ArXiv Deep PDF Research ({len(arxiv_papers)} papers)")
-            for p in arxiv_papers:
-                loaded = "✓ PDF" if p.get("pdf_loaded") else "✗ abstract only"
-                print(
-                    f"  │    [{loaded}] \"{p.get('title', '?')}\" "
-                    f"[{p.get('arxiv_id', '')}] ({p.get('year', '?')}) — "
-                    f"{p.get('excerpts_count', 0)} relevant chunks"
-                )
+        pdf_ok   = sum(1 for p in arxiv_papers if p.get("pdf_loaded"))
+        abs_only = len(arxiv_papers) - pdf_ok
+        print(f"  │  [ArXiv] Deep Research — {len(arxiv_papers)} papers "
+              f"({pdf_ok} full PDF, {abs_only} abstract-only)")
+        if not arxiv_papers:
+            print(f"  │    (no papers returned — check ArXiv query or network)")
+        for i, p in enumerate(arxiv_papers, 1):
+            loaded = "PDF  " if p.get("pdf_loaded") else "abst."
+            chunks = p.get("excerpts_count", 0)
+            print(f"  │    [{i}][{loaded}] \"{p.get('title', '?')[:60]}\"")
+            print(f"  │           ID: {p.get('arxiv_id', '?')}  Year: {p.get('year', '?')}  "
+                  f"Relevant chunks: {chunks}")
 
     # Research summary
     summary = out.get("research_summary", "")
@@ -182,15 +185,26 @@ def _display_researcher(out: dict):
         print(f"  │  {summary}")
 
     # Proposed metrics with source traceability
-    metrics = out.get("proposed_metrics", [])
     # Final metrics (populated after consolidation)
     metrics = out.get("final_metrics", out.get("proposed_metrics", []))
     if metrics:
-        cited = sum(1 for m in metrics if m.get("paper_citation", {}).get("arxiv_id"))
-        _sub(f"Metrics ({len(metrics)} total, {cited} paper-cited)")
+        def _cite_count(m):
+            c = m.get("paper_citations", [])
+            if not isinstance(c, list):
+                c = [m.get("paper_citation", {})] if m.get("paper_citation") else []
+            return len([x for x in c if isinstance(x, dict) and (x.get("arxiv_id") or x.get("title"))])
+        cited = sum(1 for m in metrics if _cite_count(m) >= 2)
+        _sub(f"Metrics ({len(metrics)} total, {cited} with ≥2 paper citations)")
         for i, m in enumerate(metrics, 1):
-            cite = m.get("paper_citation", {})
-            cite_tag = f" 📄 {cite.get('arxiv_id')}" if cite.get("arxiv_id") else ""
+            # Normalise: support both paper_citations list and legacy paper_citation dict
+            cites = m.get("paper_citations", [])
+            if not cites:
+                single = m.get("paper_citation", {})
+                if single.get("arxiv_id") or single.get("title"):
+                    cites = [single]
+
+            cite_ids = ", ".join(c.get("arxiv_id", "") for c in cites if c.get("arxiv_id"))
+            cite_tag = f" 📄 [{cite_ids}]" if cite_ids else ""
             print(f"\n  │  {i:>2}. {m.get('metric_name')} [{m.get('metric_type')}]{cite_tag}")
             print(f"  │      Description    : {m.get('description', '')}")
             print(f"  │      Reasoning      : {m.get('reasoning', '')}")
@@ -198,13 +212,52 @@ def _display_researcher(out: dict):
             if src_inf:
                 print(f"  │      Source         : {src_inf}")
             print(f"  │      Execution Hint : {m.get('execution_hint', '')}")
-            if cite.get("supporting_text"):
-                print(f"  │      Paper quote    : \"{cite['supporting_text'][:180]}\"")
-                print(f"  │                       — {cite.get('authors', '')} ({cite.get('year', '')})")
+            for ci, cite in enumerate(cites, 1):
+                if cite.get("supporting_text") or cite.get("title"):
+                    print(f"  │      Paper {ci}        : \"{cite.get('title', '')}\" [{cite.get('arxiv_id', '')}]")
+                    if cite.get("supporting_text"):
+                        print(f"  │        Quote        : \"{cite['supporting_text'][:160]}\"")
+                        print(f"  │                       — {cite.get('authors', '')} ({cite.get('year', '')})")
 
 
 # ──────────────────────────────────────────────────────────────────────
-# Display: evaluator
+# Display: universal text metrics (dedicated section)
+# ──────────────────────────────────────────────────────────────────────
+
+def _display_universal_metrics(universal: list):
+    if not universal:
+        return
+
+    _section("① UNIVERSAL TEXT METRICS — Validity · Fidelity · Diversity · Safety", "═")
+
+    categories = ["validity", "fidelity", "diversity", "safety"]
+    cat_icons  = {"validity": "V", "fidelity": "F", "diversity": "D", "safety": "S"}
+
+    for cat in categories:
+        group = [r for r in universal if r.get("metric_category") == cat]
+        if not group:
+            continue
+        print(f"\n  [{cat_icons.get(cat, cat[0].upper())}] {cat.upper()}")
+        for r in group:
+            err = r.get("error")
+            val_line = ""
+            for line in (r.get("execution_output") or "").splitlines():
+                if line.startswith("METRIC_VALUE:"):
+                    val_line = line.replace("METRIC_VALUE:", "").strip()
+                    break
+            if err:
+                status = f"SKIPPED — {err}"
+            elif val_line:
+                status = f"score = {val_line}"
+            else:
+                status = "OK"
+            print(f"  │  {r['metric_name']:<48} {status}")
+            if not err and r.get("anomalous_row_count", 0) > 0:
+                print(f"  │    -> {r['anomalous_row_count']} anomalous rows flagged")
+
+
+# ──────────────────────────────────────────────────────────────────────
+# Display: evaluator (research metrics only)
 # ──────────────────────────────────────────────────────────────────────
 
 def _display_evaluator(evaluator_out: dict, per_metric: list):
@@ -212,9 +265,12 @@ def _display_evaluator(evaluator_out: dict, per_metric: list):
         print("\n[!] No evaluator output.")
         return
 
-    _section("③ EVALUATOR — METRIC COMPUTATION & FINDINGS", "═")
+    # Research metrics displayed separately from universal
+    research_metrics = [r for r in per_metric if r.get("metric_source") != "universal"]
 
-    for idx, r in enumerate(per_metric, 1):
+    _section("④ RESEARCH METRICS — COMPUTATION & FINDINGS", "═")
+
+    for idx, r in enumerate(research_metrics, 1):
         name   = r.get("metric_name", "?")
         err    = r.get("error")
         acount = r.get("anomalous_row_count", 0)
@@ -261,7 +317,7 @@ def _display_evaluator(evaluator_out: dict, per_metric: list):
 
     # Final verdict
     if evaluator_out:
-        _section("③ EVALUATOR — FINAL VERDICT", "═")
+        _section("⑤ FINAL VERDICT", "═")
 
         verdict = evaluator_out.get("final_verdict", "UNKNOWN")
         emoji   = {
@@ -313,11 +369,12 @@ def _display_evaluator(evaluator_out: dict, per_metric: list):
 
 def _save_report(state: dict):
     report = {
-        "thinker_output"    : state.get("thinker_output", {}),
-        "researcher_output" : state.get("researcher_output", {}),
-        "per_metric_results": state.get("per_metric_results", []),
-        "evaluator_output"  : state.get("evaluator_output", {}),
-        "errors"            : state.get("errors", []),
+        "universal_metric_results": state.get("universal_metric_results", []),
+        "thinker_output"          : state.get("thinker_output", {}),
+        "researcher_output"       : state.get("researcher_output", {}),
+        "per_metric_results"      : state.get("per_metric_results", []),
+        "evaluator_output"        : state.get("evaluator_output", {}),
+        "errors"                  : state.get("errors", []),
     }
     # Strip generated code from JSON report (it's verbose; kept on console)
     for r in report.get("per_metric_results", []):
@@ -337,6 +394,8 @@ def _save_report(state: dict):
 # ──────────────────────────────────────────────────────────────────────
 
 def display_result(state: dict):
+    # Universal metrics always shown first — they're computed before any LLM agent
+    _display_universal_metrics(state.get("universal_metric_results", []))
     _display_thinker(state.get("thinker_output", {}))
     _display_researcher(state.get("researcher_output", {}))
     _display_evaluator(
@@ -395,6 +454,7 @@ def _run_pipeline():
             problem = str(
                 item.get("problem_statement")
                 or item.get("issue")
+                or item.get("target")      # nebius/SWE-agent-trajectories uses "target"
                 or item.get("prompt")
                 or ""
             )
@@ -421,11 +481,17 @@ def _run_pipeline():
             )
 
             # --- resolution label ---
-            resolved_raw = item.get("resolved") or item.get("is_resolved") or item.get("success")
+            resolved_raw = (
+                item.get("resolved")
+                or item.get("is_resolved")
+                or item.get("success")
+                or item.get("exit_status")   # nebius uses "exit_status" e.g. "COMPLETED"
+            )
+            _POSITIVE = {"true", "1", "yes", "completed", "resolved", "success", "passed", "done"}
             if isinstance(resolved_raw, bool):
                 resolved = int(resolved_raw)
             elif resolved_raw is not None:
-                resolved = int(str(resolved_raw).lower() in ("true", "1", "yes"))
+                resolved = int(str(resolved_raw).lower() in _POSITIVE)
             else:
                 resolved = -1   # unknown
 
